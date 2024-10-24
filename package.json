@@ -1,0 +1,50 @@
+{
+  "name": "chunimai",
+  "scripts": {
+    "preinstall": "npx only-allow pnpm",
+    "dev": "dotenv -- turbo run dev --parallel",
+    "dev:qualifiers": "dotenv -- turbo run dev --parallel --filter=\"./apps/client/public\" --filter=\"./apps/server\"",
+    "dev:client": "dotenv -- turbo run dev --filter=\"./apps/client/*\"",
+    "dev:server": "dotenv -- turbo run dev --filter=\"./apps/server\"",
+    "build": "dotenv -- turbo run build",
+    "build:client": "dotenv -- turbo run build --filter=\"./apps/client/*\"",
+    "build:server": "dotenv -- turbo run build --filter=\"./apps/server\"",
+    "build:package": "dotenv -- turbo run build --filter=\"./packages/*\"",
+    "start": "dotenv -- turbo run start",
+    "start:client": "dotenv -- turbo run start --filter=\"./apps/client/*\"",
+    "start:server": "dotenv -- turbo run start --filter=\"./apps/server\"",
+    "db:push": "dotenv -- pnpm --filter @chunimai/db push",
+    "db:migrate:dev": "dotenv -- pnpm --filter @chunimai/db migrate:dev",
+    "db:migrate:deploy": "dotenv -- pnpm --filter @chunimai/db migrate:deploy",
+    "db:migrate:reset": "dotenv -- pnpm --filter @chunimai/db migrate:reset",
+    "db:seed": "dotenv -- pnpm --filter @chunimai/db seed",
+    "db:studio": "dotenv -- pnpm --filter @chunimai/db studio",
+    "db:generate": "dotenv -- pnpm --filter @chunimai/db generate",
+    "lint": "eslint . --no-error-on-unmatched-pattern",
+    "fmt": "prettier --write ."
+  },
+  "dependencies": {
+    "dotenv": "16.4.5",
+    "dotenv-cli": "7.4.2"
+  },
+  "devDependencies": {
+    "@types/node": "22.7.9",
+    "@typescript-eslint/eslint-plugin": "8.11.0",
+    "@typescript-eslint/parser": "8.11.0",
+    "eslint": "9.13.0",
+    "eslint-config-prettier": "9.1.0",
+    "eslint-plugin-import": "2.31.0",
+    "prettier": "3.3.3",
+    "rimraf": "6.0.1 ",
+    "ts-node": "10.9.2",
+    "turbo": "2.2.3",
+    "typescript": " 5.6.3"
+  },
+  "prettier": {
+    "singleQuote": true,
+    "printWidth": 80,
+    "tabWidth": 2,
+    "semi": false,
+    "arrowParens": "avoid"
+  }
+}

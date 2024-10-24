@@ -1,0 +1,28 @@
+# dependencies
+node_modules
+
+# testing
+coverage
+
+# misc
+dist
+.next
+.DS_Store
+.swc
+.idea
+playground.ts
+
+# debug
+.pnpm-debug.log*
+
+# local env files
+.env
+.env.dev
+.env.production
+.env.test
+
+# turbo
+.turbo
+next-env.d.ts
+
+deployment/

@@ -1,0 +1,6 @@
+packages:
+  - "apps/happy-baby/*"
+  - "apps/unnamed-404/*"
+  - "apps/esanlamsing-deluxe/*"
+# all group shares the same packages to avoid confusion in inferring deps
+  - "packages/*"
