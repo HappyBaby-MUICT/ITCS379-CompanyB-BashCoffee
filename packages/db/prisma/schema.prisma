@@ -1,10 +1,98 @@
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+    provider = "postgresql"
+    url      = env("DATABASE_URL")
 }
 
 generator client {
-  provider      = "prisma-client-js"
-  binaryTargets = ["native"]
-  output        = "../dist/client"
+    provider      = "prisma-client-js"
+    binaryTargets = ["native"]
+    output        = "../dist/client"
+}
+
+model ResPartner {
+    id         Int        @id @default(autoincrement())
+    name       String?
+    email      String?    @unique
+    phone      String?
+    street     String?
+    city       String?
+    country_id Int? // Foreign key to res_country
+    posOrders  PosOrder[]
+
+    @@map("res_partner")
+}
+
+model ProductTemplate {
+    id              Int      @id @default(autoincrement())
+    name            String?
+    description     String?
+    list_price      Float?
+    cost_price      Float?
+    type            String? // e.g., 'consu', 'service'
+    sale_ok         Boolean? @default(true)
+    purchase_ok     Boolean? @default(true)
+    uom_id          Int?
+    uom_category_id Int?
+
+    // Relations
+    products      Product[]
+    posOrderLines PosOrderLine[]
+
+    @@map("product_template")
+}
+
+model Product {
+    id                  Int      @id @default(autoincrement())
+    product_template_id Int
+    default_code        String?  @unique
+    barcode             String?  @unique
+    active              Boolean? @default(true)
+
+    // Relations
+    productTemplate ProductTemplate @relation(fields: [product_template_id], references: [id])
+    posOrderLines   PosOrderLine[]
+
+    @@map("product_product")
+}
+
+model PosOrder {
+    id           Int       @id @default(autoincrement())
+    name         String? // Order reference
+    date_order   DateTime?
+    amount_total Float?
+    partner_id   Int? // Reference to ResPartner
+    state        String? // Status of the order (e.g., 'paid', 'draft')
+
+    // Relations
+    partner    ResPartner?    @relation(fields: [partner_id], references: [id])
+    orderLines PosOrderLine[]
+    PosSession PosSession[]
+
+    @@map("pos_order")
+}
+
+model PosOrderLine {
+    id         Int    @id @default(autoincrement())
+    qty        Int
+    price_unit Float?
+    discount   Float?
+    order_id   Int
+    product_id Int
+
+    product         Product           @relation(fields: [product_id], references: [id])
+    order           PosOrder          @relation(fields: [order_id], references: [id])
+    ProductTemplate ProductTemplate[]
+
+    @@map("pos_order_line")
+}
+
+model PosSession {
+    id         Int        @id @default(autoincrement())
+    name       String?
+    start_at   DateTime?
+    stop_at    DateTime?
+    state      String?
+    pos_orders PosOrder[]
+
+    @@map("pos_session")
 }
