@@ -1,8 +1,8 @@
 {
-  "name": "@bash-coffee/esanlamsing-deluxe",
+  "name": "@bash-coffee/unnamed-404-app-2",
   "version": "1.0.0",
   "description": "",
-  "main": "dist/index.js",
+  "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
