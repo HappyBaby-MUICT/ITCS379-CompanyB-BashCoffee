@@ -1,0 +1,29 @@
+{
+  "name": "@chunimai/db",
+  "main": "dist/index.js",
+  "typings": "dist/index.d.ts",
+  "scripts": {
+    "build": "rimraf dist && pnpm generate && tsc --build",
+    "push": "prisma db push",
+    "migrate:dev": "prisma migrate dev",
+    "migrate:deploy": "prisma migrate deploy",
+    "migrate:reset": "prisma migrate reset",
+    "seed": "prisma db seed",
+    "studio": "prisma studio",
+    "generate": "prisma generate",
+    "prisma": "prisma",
+    "seed:ex": "ts-node prisma/seeds/ex.ts"
+  },
+  "prisma": {
+    "seed": "ts-node prisma/seeds/main.ts"
+  },
+  "dependencies": {
+    "@nestjs/common": "10.3.8",
+    "@prisma/client": "5.14.0",
+    "csv-parser": "3.0.0",
+    "install": "0.13.0"
+  },
+  "devDependencies": {
+    "prisma": "5.14.0"
+  }
+}

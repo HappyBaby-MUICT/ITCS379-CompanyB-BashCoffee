@@ -1,18 +1,20 @@
 {
-  "name": "bash-coffee",
+  "name": "chunimai",
   "scripts": {
     "preinstall": "npx only-allow pnpm",
     "dev": "dotenv -- turbo run dev --parallel",
     "build": "dotenv -- turbo run build",
     "build:package": "dotenv -- turbo run build --filter=\"./packages/*\"",
     "start": "dotenv -- turbo run start",
-    "db:push": "dotenv -- pnpm --filter @bash-coffee/db push",
-    "db:migrate:dev": "dotenv -- pnpm --filter @bash-coffee/db migrate:dev",
-    "db:migrate:deploy": "dotenv -- pnpm --filter @bash-coffee/db migrate:deploy",
-    "db:migrate:reset": "dotenv -- pnpm --filter @bash-coffee/db migrate:reset",
-    "db:seed": "dotenv -- pnpm --filter @bash-coffee/db seed",
-    "db:studio": "dotenv -- pnpm --filter @bash-coffee/db studio",
-    "db:generate": "dotenv -- pnpm --filter @bash-coffee/db generate",
+    "start:client": "dotenv -- turbo run start --filter=\"./apps/client/*\"",
+    "start:server": "dotenv -- turbo run start --filter=\"./apps/server\"",
+    "db:push": "dotenv -- pnpm --filter @chunimai/db push",
+    "db:migrate:dev": "dotenv -- pnpm --filter @chunimai/db migrate:dev",
+    "db:migrate:deploy": "dotenv -- pnpm --filter @chunimai/db migrate:deploy",
+    "db:migrate:reset": "dotenv -- pnpm --filter @chunimai/db migrate:reset",
+    "db:seed": "dotenv -- pnpm --filter @chunimai/db seed",
+    "db:studio": "dotenv -- pnpm --filter @chunimai/db studio",
+    "db:generate": "dotenv -- pnpm --filter @chunimai/db generate",
     "lint": "eslint . --no-error-on-unmatched-pattern",
     "fmt": "prettier --write ."
   },
@@ -21,18 +23,30 @@
     "dotenv-cli": "7.4.2"
   },
   "devDependencies": {
-    "eslint": "9.13.0",
+    "@types/node": "20.12.12",
+    "@typescript-eslint/eslint-plugin": "7.7.0",
+    "@typescript-eslint/parser": "7.7.0",
+    "eslint": "8.57.0",
+    "eslint-config-next": "14.2.3",
     "eslint-config-prettier": "9.1.0",
-    "eslint-plugin-import": "2.31.0",
-    "prettier": "3.3.3",
-    "rimraf": "6.0.1",
-    "turbo": "2.2.3"
+    "eslint-plugin-import": "2.29.1",
+    "eslint-plugin-react-hooks": "^4.6.0",
+    "eslint-plugin-react-refresh": "^0.4.6",
+    "prettier": "3.2.5",
+    "prettier-plugin-tailwindcss": "0.5.14",
+    "rimraf": "5.0.7",
+    "ts-node": "10.9.2",
+    "turbo": "1.13.3",
+    "typescript": "5.4.5"
   },
   "prettier": {
     "singleQuote": true,
     "printWidth": 80,
     "tabWidth": 2,
     "semi": false,
-    "arrowParens": "avoid"
+    "arrowParens": "avoid",
+    "plugins": [
+      "prettier-plugin-tailwindcss"
+    ]
   }
 }
