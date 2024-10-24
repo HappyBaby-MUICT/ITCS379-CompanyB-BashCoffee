@@ -1,19 +1,37 @@
 version: '3.8'
-
-volumes:
-  chunimai_data:
-
 services:
-  db:
-    container_name: chunimai-database
-    image: postgres:16-alpine
-    restart: on-failure
-    ports:
-      - 5432:5432
+  odoo:
+    image: odoo:16.0
     environment:
-      - POSTGRES_HOST=localhost
-      - POSTGRES_DB=chunimai
-      - POSTGRES_USER=local
+      - POSTGRES_DB=postgres
       - POSTGRES_PASSWORD=local
+      - POSTGRES_USER=local
+      - PGDATA=/var/lib/pgsql/data/pgdata name=value
+      - HOST=postgres
+      - USER=local
+      - PASSWORD=local
+    depends_on:
+      - psql
+    ports:
+      - "8069:8069"
     volumes:
-      - chunimai_data:/var/lib/postgresql/data
+      - data:/var/lib/odoo
+      - ./config:/etc/odoo
+      - ./custom-addons:/mnt/extra-addons
+  psql:
+    image: postgres:13
+    environment:
+      - POSTGRES_DB=postgres
+      - POSTGRES_PASSWORD=local
+      - POSTGRES_USER=local
+      - PGDATA=/var/lib/pgsql/data/pgdata name=value
+      - HOST=postgres
+      - USER=local
+      - PASSWORD=local
+    ports: 
+      - "5432:5432"
+    volumes:
+      - db:/var/lib/pgsql/data/pgdata
+volumes:
+  data:
+  db:
