@@ -1,0 +1,156 @@
+{
+  "type": "bubble",
+  "body": {
+    "type": "box",
+    "layout": "vertical",
+    "contents": [
+      {
+        "type": "text",
+        "text": "RECEIPT",
+        "weight": "bold",
+        "color": "#9B7C53",
+        "size": "sm"
+      },
+      {
+        "type": "text",
+        "text": "NO. 123",
+        "weight": "bold",
+        "size": "xxl",
+        "margin": "md"
+      },
+      {
+        "type": "text",
+        "text": "Bash Coffee, Mahidol University",
+        "size": "xs",
+        "color": "#aaaaaa",
+        "wrap": true
+      },
+      {
+        "type": "separator",
+        "margin": "xxl"
+      },
+      {
+        "type": "box",
+        "layout": "vertical",
+        "margin": "xxl",
+        "spacing": "sm",
+        "contents": [
+          {
+            "type": "box",
+            "layout": "vertical",
+            "contents": [
+              {
+                "type": "box",
+                "layout": "horizontal",
+                "contents": [
+                  {
+                    "type": "text",
+                    "text": "Latte",
+                    "size": "sm",
+                    "color": "#555555",
+                    "flex": 0
+                  },
+                  {
+                    "type": "text",
+                    "text": "85 THB",
+                    "size": "sm",
+                    "color": "#111111",
+                    "align": "end",
+                    "weight": "regular"
+                  }
+                ]
+              },
+              {
+                "type": "box",
+                "layout": "vertical",
+                "contents": [
+                  {
+                    "type": "text",
+                    "text": "- 100%",
+                    "size": "xs"
+                  },
+                  {
+                    "type": "text",
+                    "text": "- Oat Milk",
+                    "size": "xs"
+                  },
+                  {
+                    "type": "text",
+                    "text": "- note: more ice please",
+                    "size": "xs",
+                    "wrap": true
+                  }
+                ],
+                "paddingStart": "md",
+                "margin": "sm"
+              }
+            ]
+          },
+          {
+            "type": "separator",
+            "margin": "xxl"
+          },
+          {
+            "type": "box",
+            "layout": "horizontal",
+            "margin": "xxl",
+            "contents": [
+              {
+                "type": "text",
+                "text": "ITEMS",
+                "size": "sm",
+                "color": "#555555"
+              },
+              {
+                "type": "text",
+                "text": "1",
+                "size": "sm",
+                "color": "#111111",
+                "align": "end",
+                "weight": "bold"
+              }
+            ]
+          },
+          {
+            "type": "box",
+            "layout": "horizontal",
+            "contents": [
+              {
+                "type": "text",
+                "text": "TOTAL",
+                "size": "sm",
+                "color": "#555555"
+              },
+              {
+                "type": "text",
+                "text": "85 THB",
+                "size": "sm",
+                "color": "#111111",
+                "align": "end",
+                "weight": "bold"
+              }
+            ],
+            "paddingBottom": "xl"
+          }
+        ]
+      },
+      {
+        "type": "button",
+        "action": {
+          "type": "postback",
+          "label": "Confirm order",
+          "data": "Confirm order"
+        },
+        "style": "primary",
+        "offsetTop": "sm",
+        "color": "#4F3A32",
+        "offsetBottom": "none"
+      }
+    ]
+  },
+  "styles": {
+    "footer": {
+      "separator": true
+    }
+  }
+}
