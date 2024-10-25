@@ -6,8 +6,8 @@ import { LinePublicService } from './public.service'
 
 @Controller('/api/line/public')
 export class LinePublicController {
-  constructor(private readonly service: LinePublicService) { }
-  
+  constructor(private readonly service: LinePublicService) {}
+
   @Get('/')
   handlePing() {
     return { status: 'ok' }
@@ -25,36 +25,30 @@ export class LinePublicController {
 
     await Promise.all(
       events.map(async event => {
-        if (
-          event.type === 'message' &&
-          (event as MessageEvent).message.type === 'text'
-        ) {
-          const messageEvent = event as MessageEvent
+        switch (event.type) {
+          case 'message':
+            if ((event as MessageEvent).message.type === 'text') {
+              const messageEvent = event as MessageEvent
 
-          if (messageEvent?.message?.text?.toLowerCase() === 'quiz') {
-            if (messageEvent.replyToken) {
-              const question = 'What is the capital of France?'
-              const options = ['Paris', 'Berlin', 'Rome', 'Madrid']
-              await this.service.sendFlexMessage(
-                messageEvent.replyToken,
-                question,
-                options,
-              )
+              if (!messageEvent.replyToken) {
+                return
+              }
+
+              if (messageEvent?.message?.text?.toLowerCase() === 'order') {
+                // handle order event
+                await this.service.handleMenuMessage(messageEvent.replyToken)
+              }
             }
-          }
-        } else if (event.type === 'postback') {
-          // Handle postback answers
-          const postbackEvent = event as PostbackEvent
-          const userAnswer = postbackEvent.postback.data.split('=')[1]
-          const correctAnswer = '0'
-          const replyText =
-            userAnswer === correctAnswer ? 'Correct!' : 'Wrong answer!'
-          if (postbackEvent.replyToken) {
-            await this.service.sendTextMessage(
-              postbackEvent.replyToken,
-              replyText,
-            )
-          }
+            break
+          case 'postback':
+            // handle postback event
+            const postbackEvent = event as PostbackEvent
+            if (!postbackEvent.replyToken) {
+              return
+            }
+
+            await this.service.handlePostBack(postbackEvent.replyToken)
+            break
         }
       }),
     )

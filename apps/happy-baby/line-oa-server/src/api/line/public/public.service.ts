@@ -1,67 +1,51 @@
-import { Client, FlexMessage } from '@line/bot-sdk'
 import { Injectable } from '@nestjs/common'
+import { MenuSelector } from './constants/MenuSelector'
+import { messagingApi } from '@line/bot-sdk'
+import { FlexContainer, Message } from '@line/bot-sdk/dist/messaging-api/api'
+import { MenuDetail } from './constants/MenuDetail'
 
 @Injectable()
 export class LinePublicService {
-  private readonly client: Client
+  private readonly client
 
   constructor() {
-    this.client = new Client({
+    const { MessagingApiClient } = messagingApi
+    this.client = new MessagingApiClient({
       channelAccessToken: process.env.HAPPYBABY_LINE_CHANNEL as string,
-      channelSecret: process.env.HAPPYBABY_LINE_SECRET as string,
     })
   }
 
-  async sendTextMessage(replyToken: string, message: string) { 
-    await this.client.replyMessage(replyToken, {
-      type: 'text',
-      text: message,
-    })
+  private async sendTextMessage(replyToken: string, message: string) {
+    const payload: Message = { type: 'text', text: message }
+
+    await this.client.replyMessage({ replyToken, messages: [payload] })
   }
 
-  async sendFlexMessage(
+  private async sendFlexMessage(
     replyToken: string,
-    question: string,
-    options: string[],
+    flexMessage: FlexContainer,
   ) {
-    const flexMessage = {
-      type: 'flex',
-      altText: 'Test Quiz Game',
-      contents: {
-        type: 'bubble',
-        body: {
-          type: 'box',
-          layout: 'vertical',
-          contents: [
-            {
-              type: 'text',
-              text: question,
-              weight: 'bold',
-              size: 'lg',
-            },
-            {
-              type: 'separator',
-              margin: 'md',
-            },
-            {
-              type: 'box',
-              layout: 'vertical',
-              margin: 'lg',
-              spacing: 'sm',
-              contents: options.map((option, index) => ({
-                type: 'button',
-                action: {
-                  type: 'postback',
-                  label: option,
-                  data: `answer=${index}`,
-                },
-              })),
-            },
-          ],
+    await this.client.replyMessage({
+      replyToken,
+      messages: [
+        {
+          type: 'flex',
+          altText: 'Bash - Flex Message',
+          contents: flexMessage,
         },
-      },
-    } as FlexMessage
+      ],
+    })
+  }
 
-    await this.client.replyMessage(replyToken, [flexMessage])
+  async handleMenuMessage(replyToken: string) {
+    if (replyToken) {
+      await this.sendFlexMessage(replyToken, MenuSelector)
+    }
+  }
+
+  async handlePostBack(replyToken: string) { 
+    if (replyToken) {
+      await this.sendFlexMessage(replyToken, MenuDetail)
+    }
   }
 }
