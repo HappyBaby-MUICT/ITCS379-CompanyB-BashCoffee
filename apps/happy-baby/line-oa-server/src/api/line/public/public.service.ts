@@ -3,12 +3,13 @@ import { MenuSelector } from './constants/MenuSelector'
 import { messagingApi } from '@line/bot-sdk'
 import { FlexContainer, Message } from '@line/bot-sdk/dist/messaging-api/api'
 import { MenuDetail } from './constants/MenuDetail'
+import { PrismaService } from '@bash-coffee/db'
 
 @Injectable()
 export class LinePublicService {
   private readonly client
 
-  constructor() {
+  constructor(private readonly db: PrismaService) {
     const { MessagingApiClient } = messagingApi
     this.client = new MessagingApiClient({
       channelAccessToken: process.env.HAPPYBABY_LINE_CHANNEL as string,
@@ -43,7 +44,7 @@ export class LinePublicService {
     }
   }
 
-  async handlePostBack(replyToken: string) { 
+  async handlePostBack(replyToken: string) {
     if (replyToken) {
       await this.sendFlexMessage(replyToken, MenuDetail)
     }
