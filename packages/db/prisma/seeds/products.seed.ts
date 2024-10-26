@@ -1,3 +1,4 @@
+import path from 'path'
 import { PrismaClient } from '../../dist/client'
 import xlsx from 'xlsx'
 
@@ -13,9 +14,8 @@ type ProductRow = {
 export const seedProducts = async () => {
   const db = new PrismaClient()
 
-  const workbook = xlsx.readFile(
-    '/Users/zkrran/Github/ITCS379-CompanyB-BashCoffee/packages/db/prisma/seeds/data/store-menu.xlsx',
-  )
+  const workbook = xlsx.readFile(path.resolve(__dirname, './data/store-menu.xlsx'))
+
   const sheetName = 'Menu & Details'
 
   const sheet = workbook.Sheets[sheetName]
