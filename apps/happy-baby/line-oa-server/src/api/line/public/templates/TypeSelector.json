@@ -12,7 +12,7 @@
         "contents": [
           {
             "type": "text",
-            "text": "Coffee Menu",
+            "text": "Drink & Snack",
             "color": "#D5CBB1",
             "weight": "bold",
             "align": "center",
@@ -64,7 +64,7 @@
               },
               {
                 "type": "text",
-                "text": "Americano",
+                "text": "Tea",
                 "align": "center",
                 "size": "sm"
               }
@@ -72,9 +72,9 @@
             "spacing": "md",
             "action": {
               "type": "postback",
-              "label": "DrinkMenu",
-              "data": "Americano",
-              "displayText": "Drink - Americano"
+              "label": "SelectType",
+              "data": "Tea",
+              "displayText": "Type - Tea"
             }
           },
           {
@@ -92,7 +92,7 @@
               },
               {
                 "type": "text",
-                "text": "Espresso",
+                "text": "Coffee",
                 "align": "center",
                 "size": "sm"
               }
@@ -100,9 +100,9 @@
             "spacing": "md",
             "action": {
               "type": "postback",
-              "label": "DrinkMenu",
-              "data": "Espresso",
-              "displayText": "Drink - Espresso"
+              "label": "SelectType",
+              "data": "Coffee",
+              "displayText": "Type - Coffee"
             }
           },
           {
@@ -120,7 +120,7 @@
               },
               {
                 "type": "text",
-                "text": "Mocha",
+                "text": "Milk",
                 "align": "center",
                 "size": "sm"
               }
@@ -128,9 +128,9 @@
             "spacing": "md",
             "action": {
               "type": "postback",
-              "label": "DrinkMenu",
-              "data": "Mocha",
-              "displayText": "Drink - Mocha"
+              "label": "SelectType",
+              "data": "Milk",
+              "displayText": "Type - Milk"
             }
           }
         ]
@@ -154,7 +154,7 @@
               },
               {
                 "type": "text",
-                "text": "Latte",
+                "text": "Juice",
                 "align": "center",
                 "size": "sm"
               }
@@ -162,9 +162,9 @@
             "spacing": "md",
             "action": {
               "type": "postback",
-              "label": "DrinkMenu",
-              "data": "Latte",
-              "displayText": "Drink - Latte"
+              "label": "SelectType",
+              "data": "Juice",
+              "displayText": "Type - Juice"
             }
           },
           {
@@ -182,18 +182,17 @@
               },
               {
                 "type": "text",
-                "text": "Orange Americano",
+                "text": "Chocolate",
                 "align": "center",
-                "size": "sm",
-                "wrap": true
+                "size": "sm"
               }
             ],
             "spacing": "md",
             "action": {
               "type": "postback",
-              "label": "DrinkMenu",
-              "data": "Orange Americano",
-              "displayText": "Drink - Orange Americano"
+              "label": "SelectType",
+              "data": "Chocolate",
+              "displayText": "Type - Chocolate"
             }
           },
           {
@@ -211,7 +210,7 @@
               },
               {
                 "type": "text",
-                "text": "Macchiato",
+                "text": "Snack & Dessert",
                 "align": "center",
                 "size": "sm"
               }
@@ -219,9 +218,9 @@
             "spacing": "md",
             "action": {
               "type": "postback",
-              "label": "DrinkMenu",
-              "data": "Macchiato",
-              "displayText": "Drink - Macchiato"
+              "label": "SelectType",
+              "data": "Snack",
+              "displayText": "Type - Snack & Dessert"
             }
           }
         ]
