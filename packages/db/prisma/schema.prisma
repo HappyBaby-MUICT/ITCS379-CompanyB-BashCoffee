@@ -1,98 +1,1171 @@
-datasource db {
-    provider = "postgresql"
-    url      = env("DATABASE_URL")
-}
-
 generator client {
-    provider      = "prisma-client-js"
-    binaryTargets = ["native"]
-    output        = "../dist/client"
+  provider      = "prisma-client-js"
+  output        = "../dist/client"
+  binaryTargets = ["native"]
 }
 
-model ResPartner {
-    id         Int        @id @default(autoincrement())
-    name       String?
-    email      String?    @unique
-    phone      String?
-    street     String?
-    city       String?
-    country_id Int? // Foreign key to res_country
-    posOrders  PosOrder[]
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+model payment_country_rel {
+  payment_id       Int
+  country_id       Int
+  payment_provider payment_provider @relation(fields: [payment_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
 
-    @@map("res_partner")
+  @@id([payment_id, country_id])
+  @@index([country_id, payment_id])
 }
 
-model ProductTemplate {
-    id              Int      @id @default(autoincrement())
-    name            String?
-    description     String?
-    list_price      Float?
-    cost_price      Float?
-    type            String? // e.g., 'consu', 'service'
-    sale_ok         Boolean? @default(true)
-    purchase_ok     Boolean? @default(true)
-    uom_id          Int?
-    uom_category_id Int?
-
-    // Relations
-    products      Product[]
-    posOrderLines PosOrderLine[]
-
-    @@map("product_template")
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model payment_icon {
+  id                                           Int                                 @id @default(autoincrement())
+  sequence                                     Int?
+  create_uid                                   Int?
+  write_uid                                    Int?
+  name                                         String?                             @db.VarChar
+  create_date                                  DateTime?                           @db.Timestamp(6)
+  write_date                                   DateTime?                           @db.Timestamp(6)
+  payment_icon_payment_provider_rel            payment_icon_payment_provider_rel[]
 }
 
-model Product {
-    id                  Int      @id @default(autoincrement())
-    product_template_id Int
-    default_code        String?  @unique
-    barcode             String?  @unique
-    active              Boolean? @default(true)
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model payment_icon_payment_provider_rel {
+  payment_provider_id Int
+  payment_icon_id     Int
+  payment_icon        payment_icon     @relation(fields: [payment_icon_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  payment_provider    payment_provider @relation(fields: [payment_provider_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
 
-    // Relations
-    productTemplate ProductTemplate @relation(fields: [product_template_id], references: [id])
-    posOrderLines   PosOrderLine[]
-
-    @@map("product_product")
+  @@id([payment_provider_id, payment_icon_id])
+  @@index([payment_icon_id, payment_provider_id], map: "payment_icon_payment_provider_payment_icon_id_payment_provi_idx")
 }
 
-model PosOrder {
-    id           Int       @id @default(autoincrement())
-    name         String? // Order reference
-    date_order   DateTime?
-    amount_total Float?
-    partner_id   Int? // Reference to ResPartner
-    state        String? // Status of the order (e.g., 'paid', 'draft')
-
-    // Relations
-    partner    ResPartner?    @relation(fields: [partner_id], references: [id])
-    orderLines PosOrderLine[]
-    PosSession PosSession[]
-
-    @@map("pos_order")
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model payment_link_wizard {
+  id                                                  Int           @id @default(autoincrement())
+  res_id                                              Int
+  currency_id                                         Int?
+  partner_id                                          Int?
+  create_uid                                          Int?
+  write_uid                                           Int?
+  res_model                                           String        @db.VarChar
+  description                                         String?       @db.VarChar
+  payment_provider_selection                          String        @db.VarChar
+  amount                                              Decimal       @db.Decimal
+  amount_max                                          Decimal?      @db.Decimal
+  create_date                                         DateTime?     @db.Timestamp(6)
+  write_date                                          DateTime?     @db.Timestamp(6)
 }
 
-model PosOrderLine {
-    id         Int    @id @default(autoincrement())
-    qty        Int
-    price_unit Float?
-    discount   Float?
-    order_id   Int
-    product_id Int
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model payment_provider {
+  id                                                                    Int                                 @id @default(autoincrement())
+  sequence                                                              Int?
+  company_id                                                            Int
+  redirect_form_view_id                                                 Int?
+  inline_form_view_id                                                   Int?
+  token_inline_form_view_id                                             Int?
+  express_checkout_form_view_id                                         Int?
+  color                                                                 Int?
+  module_id                                                             Int?
+  create_uid                                                            Int?
+  write_uid                                                             Int?
+  code                                                                  String                              @db.VarChar
+  state                                                                 String                              @db.VarChar
+  module_state                                                          String?                             @db.VarChar
+  name                                                                  Json
+  display_as                                                            Json?
+  pre_msg                                                               Json?
+  pending_msg                                                           Json?
+  auth_msg                                                              Json?
+  done_msg                                                              Json?
+  cancel_msg                                                            Json?
+  maximum_amount                                                        Decimal?                            @db.Decimal
+  is_published                                                          Boolean?
+  allow_tokenization                                                    Boolean?
+  capture_manually                                                      Boolean?
+  allow_express_checkout                                                Boolean?
+  fees_active                                                           Boolean?
+  create_date                                                           DateTime?                           @db.Timestamp(6)
+  write_date                                                            DateTime?                           @db.Timestamp(6)
+  fees_dom_fixed                                                        Float?
+  fees_dom_var                                                          Float?
+  fees_int_fixed                                                        Float?
+  fees_int_var                                                          Float?
+  payment_country_rel                                                   payment_country_rel[]
+  payment_icon_payment_provider_rel                                     payment_icon_payment_provider_rel[]
+  payment_token                                                         payment_token[]
+  payment_transaction                                                   payment_transaction[]
 
-    product         Product           @relation(fields: [product_id], references: [id])
-    order           PosOrder          @relation(fields: [order_id], references: [id])
-    ProductTemplate ProductTemplate[]
-
-    @@map("pos_order_line")
+  @@index([company_id], map: "payment_provider_company_id_index")
 }
 
-model PosSession {
-    id         Int        @id @default(autoincrement())
-    name       String?
-    start_at   DateTime?
-    stop_at    DateTime?
-    state      String?
-    pos_orders PosOrder[]
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model payment_provider_onboarding_wizard {
+  id                                                                 Int        @id @default(autoincrement())
+  create_uid                                                         Int?
+  write_uid                                                          Int?
+  payment_method                                                     String?    @db.VarChar
+  paypal_user_type                                                   String?    @db.VarChar
+  paypal_email_account                                               String?    @db.VarChar
+  paypal_seller_account                                              String?    @db.VarChar
+  paypal_pdt_token                                                   String?    @db.VarChar
+  manual_name                                                        String?    @db.VarChar
+  journal_name                                                       String?    @db.VarChar
+  acc_number                                                         String?    @db.VarChar
+  manual_post_msg                                                    String?
+  create_date                                                        DateTime?  @db.Timestamp(6)
+  write_date                                                         DateTime?  @db.Timestamp(6)
+}
 
-    @@map("pos_session")
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model payment_refund_wizard {
+  id                                                    Int              @id @default(autoincrement())
+  payment_id                                            Int?
+  create_uid                                            Int?
+  write_uid                                             Int?
+  amount_to_refund                                      Decimal?         @db.Decimal
+  create_date                                           DateTime?        @db.Timestamp(6)
+  write_date                                            DateTime?        @db.Timestamp(6)
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model payment_token {
+  id                                            Int                        @id @default(autoincrement())
+  provider_id                                   Int
+  partner_id                                    Int
+  company_id                                    Int?
+  create_uid                                    Int?
+  write_uid                                     Int?
+  payment_details                               String?                    @db.VarChar
+  provider_ref                                  String                     @db.VarChar
+  verified                                      Boolean?
+  active                                        Boolean?
+  create_date                                   DateTime?                  @db.Timestamp(6)
+  write_date                                    DateTime?                  @db.Timestamp(6)
+  payment_provider                              payment_provider           @relation(fields: [provider_id], references: [id], onUpdate: NoAction)
+  payment_transaction                           payment_transaction[]
+
+  @@index([company_id], map: "payment_token_company_id_index")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model payment_transaction {
+  id                                                                          Int                               @id @default(autoincrement())
+  provider_id                                                                 Int
+  company_id                                                                  Int?
+  currency_id                                                                 Int
+  token_id                                                                    Int?
+  source_transaction_id                                                       Int?
+  callback_model_id                                                           Int?
+  callback_res_id                                                             Int?
+  partner_id                                                                  Int
+  partner_state_id                                                            Int?
+  partner_country_id                                                          Int?
+  create_uid                                                                  Int?
+  write_uid                                                                   Int?
+  reference                                                                   String                            @unique(map: "payment_transaction_reference_uniq") @db.VarChar
+  provider_reference                                                          String?                           @db.VarChar
+  state                                                                       String                            @db.VarChar
+  operation                                                                   String?                           @db.VarChar
+  landing_route                                                               String?                           @db.VarChar
+  callback_method                                                             String?                           @db.VarChar
+  callback_hash                                                               String?                           @db.VarChar
+  partner_name                                                                String?                           @db.VarChar
+  partner_lang                                                                String?                           @db.VarChar
+  partner_email                                                               String?                           @db.VarChar
+  partner_address                                                             String?                           @db.VarChar
+  partner_zip                                                                 String?                           @db.VarChar
+  partner_city                                                                String?                           @db.VarChar
+  partner_phone                                                               String?                           @db.VarChar
+  state_message                                                               String?
+  amount                                                                      Decimal                           @db.Decimal
+  fees                                                                        Decimal?                          @db.Decimal
+  is_post_processed                                                           Boolean?
+  tokenize                                                                    Boolean?
+  callback_is_done                                                            Boolean?
+  last_state_change                                                           DateTime?                         @db.Timestamp(6)
+  create_date                                                                 DateTime?                         @db.Timestamp(6)
+  write_date                                                                  DateTime?                         @db.Timestamp(6)
+  payment_id                                                                  Int?
+  payment_provider                                                            payment_provider                  @relation(fields: [provider_id], references: [id], onUpdate: NoAction)
+  payment_transaction                                                         payment_transaction?              @relation("payment_transactionTopayment_transaction", fields: [source_transaction_id], references: [id], onUpdate: NoAction)
+  other_payment_transaction                                                   payment_transaction[]             @relation("payment_transactionTopayment_transaction")
+  payment_token                                                               payment_token?                    @relation(fields: [token_id], references: [id], onDelete: Restrict, onUpdate: NoAction)
+
+  @@index([company_id], map: "payment_transaction_company_id_index")
+  @@index([operation], map: "payment_transaction_operation_index")
+  @@index([state], map: "payment_transaction_state_index")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model pos_bill {
+  id                                       Int                       @id @default(autoincrement())
+  create_uid                               Int?
+  write_uid                                Int?
+  name                                     String?                   @db.VarChar
+  value                                    Decimal                   @db.Decimal
+  create_date                              DateTime?                 @db.Timestamp(6)
+  write_date                               DateTime?                 @db.Timestamp(6)
+  pos_bill_pos_config_rel                  pos_bill_pos_config_rel[]
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model pos_bill_pos_config_rel {
+  pos_config_id Int
+  pos_bill_id   Int
+  pos_bill      pos_bill   @relation(fields: [pos_bill_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  pos_config    pos_config @relation(fields: [pos_config_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@id([pos_config_id, pos_bill_id])
+  @@index([pos_bill_id, pos_config_id])
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model pos_category {
+  id                                           Int                                    @id @default(autoincrement())
+  parent_id                                    Int?
+  sequence                                     Int?
+  create_uid                                   Int?
+  write_uid                                    Int?
+  name                                         Json
+  create_date                                  DateTime?                              @db.Timestamp(6)
+  write_date                                   DateTime?                              @db.Timestamp(6)
+  pos_category                                 pos_category?                          @relation("pos_categoryTopos_category", fields: [parent_id], references: [id], onUpdate: NoAction)
+  other_pos_category                           pos_category[]                         @relation("pos_categoryTopos_category")
+  pos_category_pos_config_rel                  pos_category_pos_config_rel[]
+  pos_category_res_config_settings_rel         pos_category_res_config_settings_rel[]
+  pos_config                                   pos_config[]
+  product_template                             product_template[]
+
+  @@index([parent_id], map: "pos_category_parent_id_index")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model pos_category_pos_config_rel {
+  pos_config_id   Int
+  pos_category_id Int
+  pos_category    pos_category @relation(fields: [pos_category_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  pos_config      pos_config   @relation(fields: [pos_config_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@id([pos_config_id, pos_category_id])
+  @@index([pos_category_id, pos_config_id])
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model pos_category_res_config_settings_rel {
+  res_config_settings_id Int
+  pos_category_id        Int
+  pos_category           pos_category        @relation(fields: [pos_category_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@id([res_config_settings_id, pos_category_id])
+  @@index([pos_category_id, res_config_settings_id], map: "pos_category_res_config_setti_pos_category_id_res_config_se_idx")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model pos_close_session_wizard {
+  id                                                       Int              @id @default(autoincrement())
+  account_id                                               Int?
+  create_uid                                               Int?
+  write_uid                                                Int?
+  message                                                  String?
+  account_readonly                                         Boolean?
+  create_date                                              DateTime?        @db.Timestamp(6)
+  write_date                                               DateTime?        @db.Timestamp(6)
+  amount_to_balance                                        Float?
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model pos_config {
+  id                                                             Int                                      @id @default(autoincrement())
+  picking_type_id                                                Int
+  journal_id                                                     Int?
+  invoice_journal_id                                             Int?
+  iface_start_categ_id                                           Int?
+  sequence_id                                                    Int?
+  sequence_line_id                                               Int?
+  pricelist_id                                                   Int
+  company_id                                                     Int
+  group_pos_manager_id                                           Int?
+  group_pos_user_id                                              Int?
+  tip_product_id                                                 Int?
+  default_fiscal_position_id                                     Int?
+  rounding_method                                                Int?
+  warehouse_id                                                   Int?
+  route_id                                                       Int?
+  limited_products_amount                                        Int?
+  limited_partners_amount                                        Int?
+  create_uid                                                     Int?
+  write_uid                                                      Int?
+  name                                                           String                                   @db.VarChar
+  iface_tax_included                                             String                                   @db.VarChar
+  proxy_ip                                                       String?                                  @db.VarChar(45)
+  uuid                                                           String?                                  @db.VarChar
+  picking_policy                                                 String                                   @db.VarChar
+  receipt_header                                                 String?
+  receipt_footer                                                 String?
+  iface_cashdrawer                                               Boolean?
+  iface_electronic_scale                                         Boolean?
+  iface_customer_facing_display_via_proxy                        Boolean?
+  iface_customer_facing_display_local                            Boolean?
+  iface_print_via_proxy                                          Boolean?
+  iface_scan_via_proxy                                           Boolean?
+  iface_big_scrollbars                                           Boolean?
+  iface_print_auto                                               Boolean?
+  iface_print_skip_screen                                        Boolean?
+  restrict_price_control                                         Boolean?
+  is_margins_costs_accessible_to_every_user                      Boolean?
+  set_maximum_difference                                         Boolean?
+  active                                                         Boolean?
+  iface_tipproduct                                               Boolean?
+  use_pricelist                                                  Boolean?
+  tax_regime_selection                                           Boolean?
+  start_category                                                 Boolean?
+  limit_categories                                               Boolean?
+  module_pos_restaurant                                          Boolean?
+  module_pos_discount                                            Boolean?
+  module_pos_mercury                                             Boolean?
+  is_posbox                                                      Boolean?
+  is_header_or_footer                                            Boolean?
+  module_pos_hr                                                  Boolean?
+  other_devices                                                  Boolean?
+  cash_rounding                                                  Boolean?
+  only_round_cash_method                                         Boolean?
+  manual_discount                                                Boolean?
+  ship_later                                                     Boolean?
+  limited_products_loading                                       Boolean?
+  product_load_background                                        Boolean?
+  limited_partners_loading                                       Boolean?
+  partner_load_background                                        Boolean?
+  create_date                                                    DateTime?                                @db.Timestamp(6)
+  write_date                                                     DateTime?                                @db.Timestamp(6)
+  amount_authorized_diff                                         Float?
+  epson_printer_ip                                               String?                                  @db.VarChar
+  pos_bill_pos_config_rel                                        pos_bill_pos_config_rel[]
+  pos_category_pos_config_rel                                    pos_category_pos_config_rel[]
+  pos_category                                                   pos_category?                            @relation(fields: [iface_start_categ_id], references: [id], onUpdate: NoAction)
+  product_pricelist                                              product_pricelist                        @relation(fields: [pricelist_id], references: [id], onUpdate: NoAction)
+  product_product                                                product_product?                         @relation(fields: [tip_product_id], references: [id], onUpdate: NoAction)
+  pos_config_pos_payment_method_rel                              pos_config_pos_payment_method_rel[]
+  pos_config_product_pricelist_rel                               pos_config_product_pricelist_rel[]
+  pos_detail_configs                                             pos_detail_configs[]
+  pos_make_payment                                               pos_make_payment[]
+  pos_session                                                    pos_session[]
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model pos_config_pos_payment_method_rel {
+  pos_config_id         Int
+  pos_payment_method_id Int
+  pos_config            pos_config         @relation(fields: [pos_config_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  pos_payment_method    pos_payment_method @relation(fields: [pos_payment_method_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@id([pos_config_id, pos_payment_method_id])
+  @@index([pos_payment_method_id, pos_config_id], map: "pos_config_pos_payment_method_pos_payment_method_id_pos_con_idx")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model pos_config_product_pricelist_rel {
+  pos_config_id        Int
+  product_pricelist_id Int
+  pos_config           pos_config        @relation(fields: [pos_config_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  product_pricelist    product_pricelist @relation(fields: [product_pricelist_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@id([pos_config_id, product_pricelist_id])
+  @@index([product_pricelist_id, pos_config_id], map: "pos_config_product_pricelist__product_pricelist_id_pos_conf_idx")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model pos_detail_configs {
+  pos_details_wizard_id Int
+  pos_config_id         Int
+  pos_config            pos_config         @relation(fields: [pos_config_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  pos_details_wizard    pos_details_wizard @relation(fields: [pos_details_wizard_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@id([pos_details_wizard_id, pos_config_id])
+  @@index([pos_config_id, pos_details_wizard_id])
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model pos_details_wizard {
+  id                                                 Int                  @id @default(autoincrement())
+  create_uid                                         Int?
+  write_uid                                          Int?
+  start_date                                         DateTime             @db.Timestamp(6)
+  end_date                                           DateTime             @db.Timestamp(6)
+  create_date                                        DateTime?            @db.Timestamp(6)
+  write_date                                         DateTime?            @db.Timestamp(6)
+  pos_detail_configs                                 pos_detail_configs[]
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model pos_make_payment {
+  id                                               Int                @id @default(autoincrement())
+  config_id                                        Int
+  payment_method_id                                Int
+  create_uid                                       Int?
+  write_uid                                        Int?
+  payment_name                                     String?            @db.VarChar
+  amount                                           Decimal            @db.Decimal
+  payment_date                                     DateTime           @db.Timestamp(6)
+  create_date                                      DateTime?          @db.Timestamp(6)
+  write_date                                       DateTime?          @db.Timestamp(6)
+  pos_config                                       pos_config         @relation(fields: [config_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  pos_payment_method                               pos_payment_method @relation(fields: [payment_method_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model pos_order {
+  id                                                                  Int                      @id @default(autoincrement())
+  user_id                                                             Int?
+  company_id                                                          Int
+  pricelist_id                                                        Int
+  partner_id                                                          Int?
+  sequence_number                                                     Int?
+  session_id                                                          Int
+  account_move                                                        Int?
+  procurement_group_id                                                Int?
+  nb_print                                                            Int?
+  sale_journal                                                        Int?
+  fiscal_position_id                                                  Int?
+  create_uid                                                          Int?
+  write_uid                                                           Int?
+  access_token                                                        String?                  @db.VarChar
+  name                                                                String                   @db.VarChar
+  state                                                               String?                  @db.VarChar
+  pos_reference                                                       String?                  @db.VarChar
+  note                                                                String?
+  amount_tax                                                          Decimal                  @db.Decimal
+  amount_total                                                        Decimal                  @db.Decimal
+  amount_paid                                                         Decimal                  @db.Decimal
+  amount_return                                                       Decimal                  @db.Decimal
+  currency_rate                                                       Decimal?                 @db.Decimal
+  tip_amount                                                          Decimal?                 @db.Decimal
+  to_invoice                                                          Boolean?
+  to_ship                                                             Boolean?
+  is_tipped                                                           Boolean?
+  date_order                                                          DateTime?                @db.Timestamp(6)
+  create_date                                                         DateTime?                @db.Timestamp(6)
+  write_date                                                          DateTime?                @db.Timestamp(6)
+  product_pricelist                                                   product_pricelist        @relation(fields: [pricelist_id], references: [id], onUpdate: NoAction)
+  pos_session                                                         pos_session              @relation(fields: [session_id], references: [id], onUpdate: NoAction)
+  pos_order_line                                                      pos_order_line[]
+  pos_payment                                                         pos_payment[]
+
+  @@index([company_id], map: "pos_order_company_id_index")
+  @@index([date_order], map: "pos_order_date_order_index")
+  @@index([pos_reference], map: "pos_order_pos_reference_index")
+  @@index([session_id], map: "pos_order_session_id_index")
+  @@index([state], map: "pos_order_state_index")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model pos_order_line {
+  id                                             Int                              @id @default(autoincrement())
+  company_id                                     Int?
+  product_id                                     Int
+  order_id                                       Int
+  refunded_orderline_id                          Int?
+  create_uid                                     Int?
+  write_uid                                      Int?
+  name                                           String                           @db.VarChar
+  notice                                         String?                          @db.VarChar
+  full_product_name                              String?                          @db.VarChar
+  customer_note                                  String?                          @db.VarChar
+  price_unit                                     Decimal?                         @db.Decimal
+  qty                                            Decimal?                         @db.Decimal
+  price_subtotal                                 Decimal                          @db.Decimal
+  price_subtotal_incl                            Decimal                          @db.Decimal
+  total_cost                                     Decimal?                         @db.Decimal
+  discount                                       Decimal?                         @db.Decimal
+  is_total_cost_computed                         Boolean?
+  create_date                                    DateTime?                        @db.Timestamp(6)
+  write_date                                     DateTime?                        @db.Timestamp(6)
+  price_extra                                    Float?
+  pos_order                                      pos_order                        @relation(fields: [order_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  product_product                                product_product                  @relation(fields: [product_id], references: [id], onUpdate: NoAction)
+  pos_order_line                                 pos_order_line?                  @relation("pos_order_lineTopos_order_line", fields: [refunded_orderline_id], references: [id], onUpdate: NoAction)
+  other_pos_order_line                           pos_order_line[]                 @relation("pos_order_lineTopos_order_line")
+  pos_pack_operation_lot                         pos_pack_operation_lot[]
+
+  @@index([order_id], map: "pos_order_line_order_id_index")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model pos_pack_operation_lot {
+  id                                                     Int             @id @default(autoincrement())
+  pos_order_line_id                                      Int?
+  create_uid                                             Int?
+  write_uid                                              Int?
+  lot_name                                               String?         @db.VarChar
+  create_date                                            DateTime?       @db.Timestamp(6)
+  write_date                                             DateTime?       @db.Timestamp(6)
+  pos_order_line                                         pos_order_line? @relation(fields: [pos_order_line_id], references: [id], onUpdate: NoAction)
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model pos_payment {
+  id                                          Int                @id @default(autoincrement())
+  pos_order_id                                Int
+  payment_method_id                           Int
+  session_id                                  Int?
+  company_id                                  Int?
+  account_move_id                             Int?
+  create_uid                                  Int?
+  write_uid                                   Int?
+  name                                        String?            @db.VarChar
+  card_type                                   String?            @db.VarChar
+  cardholder_name                             String?            @db.VarChar
+  transaction_id                              String?            @db.VarChar
+  payment_status                              String?            @db.VarChar
+  ticket                                      String?            @db.VarChar
+  amount                                      Decimal            @db.Decimal
+  is_change                                   Boolean?
+  payment_date                                DateTime           @db.Timestamp(6)
+  create_date                                 DateTime?          @db.Timestamp(6)
+  write_date                                  DateTime?          @db.Timestamp(6)
+  pos_payment_method                          pos_payment_method @relation(fields: [payment_method_id], references: [id], onUpdate: NoAction)
+  pos_order                                   pos_order          @relation(fields: [pos_order_id], references: [id], onUpdate: NoAction)
+  pos_session                                 pos_session?       @relation(fields: [session_id], references: [id], onUpdate: NoAction)
+
+  @@index([pos_order_id], map: "pos_payment_pos_order_id_index")
+  @@index([session_id], map: "pos_payment_session_id_index")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model pos_payment_method {
+  id                                                                         Int                                 @id @default(autoincrement())
+  outstanding_account_id                                                     Int?
+  receivable_account_id                                                      Int?
+  journal_id                                                                 Int?
+  company_id                                                                 Int?
+  create_uid                                                                 Int?
+  write_uid                                                                  Int?
+  use_payment_terminal                                                       String?                             @db.VarChar
+  name                                                                       Json
+  is_cash_count                                                              Boolean?
+  split_transactions                                                         Boolean?
+  active                                                                     Boolean?
+  create_date                                                                DateTime?                           @db.Timestamp(6)
+  write_date                                                                 DateTime?                           @db.Timestamp(6)
+  pos_config_pos_payment_method_rel                                          pos_config_pos_payment_method_rel[]
+  pos_make_payment                                                           pos_make_payment[]
+  pos_payment                                                                pos_payment[]
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model pos_session {
+  id                                          Int                           @id @default(autoincrement())
+  message_main_attachment_id                  Int?
+  config_id                                   Int
+  user_id                                     Int
+  sequence_number                             Int?
+  login_number                                Int?
+  cash_journal_id                             Int?
+  move_id                                     Int?
+  create_uid                                  Int?
+  write_uid                                   Int?
+  name                                        String                        @unique(map: "pos_session_uniq_name") @db.VarChar
+  state                                       String                        @db.VarChar
+  opening_notes                               String?
+  cash_register_balance_end_real              Decimal?                      @db.Decimal
+  cash_register_balance_start                 Decimal?                      @db.Decimal
+  cash_real_transaction                       Decimal?                      @db.Decimal
+  rescue                                      Boolean?
+  update_stock_at_closing                     Boolean?
+  start_at                                    DateTime?                     @db.Timestamp(6)
+  stop_at                                     DateTime?                     @db.Timestamp(6)
+  create_date                                 DateTime?                     @db.Timestamp(6)
+  write_date                                  DateTime?                     @db.Timestamp(6)
+  pos_order                                   pos_order[]
+  pos_payment                                 pos_payment[]
+  pos_config                                  pos_config                    @relation(fields: [config_id], references: [id], onUpdate: NoAction)
+
+  @@index([config_id], map: "pos_session_config_id_index")
+  @@index([move_id], map: "pos_session_move_id_index")
+  @@index([state], map: "pos_session_state_index")
+  @@index([user_id], map: "pos_session_user_id_index")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model pos_session_check_product_wizard {
+  id                                                               Int        @id @default(autoincrement())
+  create_uid                                                       Int?
+  write_uid                                                        Int?
+  create_date                                                      DateTime?  @db.Timestamp(6)
+  write_date                                                       DateTime?  @db.Timestamp(6)
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model product_attr_exclusion_value_ids_rel {
+  product_template_attribute_exclusion_id Int
+  product_template_attribute_value_id     Int
+  product_template_attribute_exclusion    product_template_attribute_exclusion @relation(fields: [product_template_attribute_exclusion_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "product_attr_exclusion_value__product_template_attribute_e_fkey")
+  product_template_attribute_value        product_template_attribute_value     @relation(fields: [product_template_attribute_value_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "product_attr_exclusion_value__product_template_attribute_v_fkey")
+
+  @@id([product_template_attribute_exclusion_id, product_template_attribute_value_id])
+  @@index([product_template_attribute_value_id, product_template_attribute_exclusion_id], map: "product_attr_exclusion_value__product_template_attribute_va_idx")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model product_attribute {
+  id                                                Int                                      @id @default(autoincrement())
+  sequence                                          Int?
+  create_uid                                        Int?
+  write_uid                                         Int?
+  create_variant                                    String                                   @db.VarChar
+  display_type                                      String                                   @db.VarChar
+  name                                              Json
+  create_date                                       DateTime?                                @db.Timestamp(6)
+  write_date                                        DateTime?                                @db.Timestamp(6)
+  product_attribute_product_template_rel            product_attribute_product_template_rel[]
+  product_attribute_value                           product_attribute_value[]
+  product_template_attribute_line                   product_template_attribute_line[]
+  product_template_attribute_value                  product_template_attribute_value[]
+
+  @@index([sequence], map: "product_attribute_sequence_index")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model product_attribute_custom_value {
+  id                                                             Int                              @id @default(autoincrement())
+  custom_product_template_attribute_value_id                     Int
+  create_uid                                                     Int?
+  write_uid                                                      Int?
+  custom_value                                                   String?                          @db.VarChar
+  create_date                                                    DateTime?                        @db.Timestamp(6)
+  write_date                                                     DateTime?                        @db.Timestamp(6)
+  product_template_attribute_value                               product_template_attribute_value @relation(fields: [custom_product_template_attribute_value_id], references: [id], onUpdate: NoAction, map: "product_attribute_custom_valu_custom_product_template_attr_fkey")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model product_attribute_product_template_rel {
+  product_attribute_id Int
+  product_template_id  Int
+  product_attribute    product_attribute @relation(fields: [product_attribute_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "product_attribute_product_template_re_product_attribute_id_fkey")
+  product_template     product_template  @relation(fields: [product_template_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@id([product_attribute_id, product_template_id])
+  @@index([product_template_id, product_attribute_id], map: "product_attribute_product_tem_product_template_id_product_a_idx")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model product_attribute_value {
+  id                                                          Int                                                           @id @default(autoincrement())
+  sequence                                                    Int?
+  attribute_id                                                Int
+  color                                                       Int?
+  create_uid                                                  Int?
+  write_uid                                                   Int?
+  html_color                                                  String?                                                       @db.VarChar
+  name                                                        Json
+  is_custom                                                   Boolean?
+  create_date                                                 DateTime?                                                     @db.Timestamp(6)
+  write_date                                                  DateTime?                                                     @db.Timestamp(6)
+  product_attribute                                           product_attribute                                             @relation(fields: [attribute_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  product_attribute_value_product_template_attribute_line_rel product_attribute_value_product_template_attribute_line_rel[]
+  product_template_attribute_value                            product_template_attribute_value[]
+
+  @@unique([name, attribute_id], map: "product_attribute_value_value_company_uniq")
+  @@index([attribute_id], map: "product_attribute_value_attribute_id_index")
+  @@index([sequence], map: "product_attribute_value_sequence_index")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model product_attribute_value_product_template_attribute_line_rel {
+  product_attribute_value_id         Int
+  product_template_attribute_line_id Int
+  product_template_attribute_line    product_template_attribute_line @relation(fields: [product_template_attribute_line_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "product_attribute_value_produ_product_template_attribute_l_fkey")
+  product_attribute_value            product_attribute_value         @relation(fields: [product_attribute_value_id], references: [id], onUpdate: NoAction, map: "product_attribute_value_product_product_attribute_value_id_fkey")
+
+  @@id([product_attribute_value_id, product_template_attribute_line_id])
+  @@index([product_template_attribute_line_id, product_attribute_value_id], map: "product_attribute_value_produ_product_template_attribute_li_idx")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model product_category {
+  id                                               Int                                   @id @default(autoincrement())
+  parent_id                                        Int?
+  create_uid                                       Int?
+  write_uid                                        Int?
+  name                                             String                                @db.VarChar
+  complete_name                                    String?                               @db.VarChar
+  parent_path                                      String?                               @db.VarChar
+  create_date                                      DateTime?                             @db.Timestamp(6)
+  write_date                                       DateTime?                             @db.Timestamp(6)
+  removal_strategy_id                              Int?
+  packaging_reserve_method                         String?                               @db.VarChar
+  product_category                                 product_category?                     @relation("product_categoryToproduct_category", fields: [parent_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  other_product_category                           product_category[]                    @relation("product_categoryToproduct_category")
+  product_removal                                  product_removal?                      @relation(fields: [removal_strategy_id], references: [id], onUpdate: NoAction)
+  product_pricelist_item                           product_pricelist_item[]
+  product_template                                 product_template[]
+
+  @@index([name(ops: raw("gin_trgm_ops"))], map: "product_category_name_index", type: Gin)
+  @@index([parent_id], map: "product_category_parent_id_index")
+  @@index([parent_path], map: "product_category_parent_path_index")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model product_label_layout {
+  id                                                   Int                                         @id @default(autoincrement())
+  custom_quantity                                      Int
+  create_uid                                           Int?
+  write_uid                                            Int?
+  print_format                                         String                                      @db.VarChar
+  extra_html                                           String?
+  create_date                                          DateTime?                                   @db.Timestamp(6)
+  write_date                                           DateTime?                                   @db.Timestamp(6)
+  picking_quantity                                     String                                      @db.VarChar
+  product_label_layout_product_product_rel             product_label_layout_product_product_rel[]
+  product_label_layout_product_template_rel            product_label_layout_product_template_rel[]
+  product_label_layout_stock_move_line_rel             product_label_layout_stock_move_line_rel[]
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model product_label_layout_product_product_rel {
+  product_label_layout_id Int
+  product_product_id      Int
+  product_label_layout    product_label_layout @relation(fields: [product_label_layout_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "product_label_layout_product_produ_product_label_layout_id_fkey")
+  product_product         product_product      @relation(fields: [product_product_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "product_label_layout_product_product_re_product_product_id_fkey")
+
+  @@id([product_label_layout_id, product_product_id])
+  @@index([product_product_id, product_label_layout_id], map: "product_label_layout_product__product_product_id_product_la_idx")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model product_label_layout_product_template_rel {
+  product_label_layout_id Int
+  product_template_id     Int
+  product_label_layout    product_label_layout @relation(fields: [product_label_layout_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "product_label_layout_product_templ_product_label_layout_id_fkey")
+  product_template        product_template     @relation(fields: [product_template_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "product_label_layout_product_template__product_template_id_fkey")
+
+  @@id([product_label_layout_id, product_template_id])
+  @@index([product_template_id, product_label_layout_id], map: "product_label_layout_product__product_template_id_product_l_idx")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model product_label_layout_stock_move_line_rel {
+  product_label_layout_id Int
+  stock_move_line_id      Int
+  product_label_layout    product_label_layout @relation(fields: [product_label_layout_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "product_label_layout_stock_move_li_product_label_layout_id_fkey")
+
+  @@id([product_label_layout_id, stock_move_line_id])
+  @@index([stock_move_line_id, product_label_layout_id], map: "product_label_layout_stock_mo_stock_move_line_id_product_la_idx")
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model product_packaging {
+  id                                                Int                     @id @default(autoincrement())
+  sequence                                          Int?
+  product_id                                        Int?
+  company_id                                        Int?
+  create_uid                                        Int?
+  write_uid                                         Int?
+  name                                              String                  @db.VarChar
+  barcode                                           String?                 @unique(map: "product_packaging_barcode_uniq") @db.VarChar
+  qty                                               Decimal?                @db.Decimal
+  create_date                                       DateTime?               @db.Timestamp(6)
+  write_date                                        DateTime?               @db.Timestamp(6)
+  package_type_id                                   Int?
+  product_product                                   product_product?        @relation(fields: [product_id], references: [id], onUpdate: NoAction)
+
+  @@index([company_id], map: "product_packaging_company_id_index")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model product_pricelist {
+  id                                                                                 Int                                         @id @default(autoincrement())
+  sequence                                                                           Int?
+  currency_id                                                                        Int
+  company_id                                                                         Int?
+  create_uid                                                                         Int?
+  write_uid                                                                          Int?
+  discount_policy                                                                    String                                      @db.VarChar
+  name                                                                               Json
+  active                                                                             Boolean?
+  create_date                                                                        DateTime?                                   @db.Timestamp(6)
+  write_date                                                                         DateTime?                                   @db.Timestamp(6)
+  pos_config                                                                         pos_config[]
+  pos_config_product_pricelist_rel                                                   pos_config_product_pricelist_rel[]
+  pos_order                                                                          pos_order[]
+  product_pricelist_item_product_pricelist_item_base_pricelist_idToproduct_pricelist product_pricelist_item[]                    @relation("product_pricelist_item_base_pricelist_idToproduct_pricelist")
+  product_pricelist_item_product_pricelist_item_pricelist_idToproduct_pricelist      product_pricelist_item[]                    @relation("product_pricelist_item_pricelist_idToproduct_pricelist")
+  product_pricelist_res_config_settings_rel                                          product_pricelist_res_config_settings_rel[]
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model product_pricelist_item {
+  id                                                                            Int                @id @default(autoincrement())
+  pricelist_id                                                                  Int
+  company_id                                                                    Int?
+  currency_id                                                                   Int?
+  categ_id                                                                      Int?
+  product_tmpl_id                                                               Int?
+  product_id                                                                    Int?
+  base_pricelist_id                                                             Int?
+  create_uid                                                                    Int?
+  write_uid                                                                     Int?
+  applied_on                                                                    String             @db.VarChar
+  base                                                                          String             @db.VarChar
+  compute_price                                                                 String             @db.VarChar
+  min_quantity                                                                  Decimal?           @db.Decimal
+  fixed_price                                                                   Decimal?           @db.Decimal
+  price_discount                                                                Decimal?           @db.Decimal
+  price_round                                                                   Decimal?           @db.Decimal
+  price_surcharge                                                               Decimal?           @db.Decimal
+  price_min_margin                                                              Decimal?           @db.Decimal
+  price_max_margin                                                              Decimal?           @db.Decimal
+  active                                                                        Boolean?
+  date_start                                                                    DateTime?          @db.Timestamp(6)
+  date_end                                                                      DateTime?          @db.Timestamp(6)
+  create_date                                                                   DateTime?          @db.Timestamp(6)
+  write_date                                                                    DateTime?          @db.Timestamp(6)
+  percent_price                                                                 Float?
+  product_pricelist_product_pricelist_item_base_pricelist_idToproduct_pricelist product_pricelist? @relation("product_pricelist_item_base_pricelist_idToproduct_pricelist", fields: [base_pricelist_id], references: [id], onUpdate: NoAction)
+  product_category                                                              product_category?  @relation(fields: [categ_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  product_pricelist_product_pricelist_item_pricelist_idToproduct_pricelist      product_pricelist  @relation("product_pricelist_item_pricelist_idToproduct_pricelist", fields: [pricelist_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  product_product                                                               product_product?   @relation(fields: [product_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  product_template                                                              product_template?  @relation(fields: [product_tmpl_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([compute_price], map: "product_pricelist_item_compute_price_index")
+  @@index([pricelist_id], map: "product_pricelist_item_pricelist_id_index")
+}
+
+model product_pricelist_res_config_settings_rel {
+  res_config_settings_id Int
+  product_pricelist_id   Int
+  product_pricelist      product_pricelist   @relation(fields: [product_pricelist_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "product_pricelist_res_config_settings_product_pricelist_id_fkey")
+
+  @@id([res_config_settings_id, product_pricelist_id])
+  @@index([product_pricelist_id, res_config_settings_id], map: "product_pricelist_res_config__product_pricelist_id_res_conf_idx")
+}
+
+model product_product {
+  id                                              Int                                            @id @default(autoincrement())
+  message_main_attachment_id                      Int?
+  product_tmpl_id                                 Int
+  create_uid                                      Int?
+  write_uid                                       Int?
+  default_code                                    String?                                        @db.VarChar
+  barcode                                         String?                                        @db.VarChar
+  combination_indices                             String?                                        @db.VarChar
+  volume                                          Decimal?                                       @db.Decimal
+  weight                                          Decimal?                                       @db.Decimal
+  active                                          Boolean?
+  can_image_variant_1024_be_zoomed                Boolean?
+  create_date                                     DateTime?                                      @db.Timestamp(6)
+  write_date                                      DateTime?                                      @db.Timestamp(6)
+  pos_config                                      pos_config[]
+  pos_order_line                                  pos_order_line[]
+  product_label_layout_product_product_rel        product_label_layout_product_product_rel[]
+  product_packaging                               product_packaging[]
+  product_pricelist_item                          product_pricelist_item[]
+  product_template                                product_template                               @relation(fields: [product_tmpl_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  product_product_stock_track_confirmation_rel    product_product_stock_track_confirmation_rel[]
+  product_replenish                               product_replenish[]
+  product_supplierinfo                            product_supplierinfo[]
+  product_tag_product_product_rel                 product_tag_product_product_rel[]
+  product_variant_combination                     product_variant_combination[]
+
+  @@index([combination_indices], map: "product_product_combination_indices_index")
+  @@index([default_code], map: "product_product_default_code_index")
+  @@index([product_tmpl_id], map: "product_product_product_tmpl_id_index")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model product_product_stock_track_confirmation_rel {
+  stock_track_confirmation_id Int
+  product_product_id          Int
+  // stock_track_confirmation    stock_track_confirmation @relation(fields: [stock_track_confirmation_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "product_product_stock_track_co_stock_track_confirmation_id_fkey")
+  product_product             product_product          @relation(fields: [product_product_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "product_product_stock_track_confirmatio_product_product_id_fkey")
+
+  @@id([stock_track_confirmation_id, product_product_id])
+  @@index([product_product_id, stock_track_confirmation_id], map: "product_product_stock_track_c_product_product_id_stock_trac_idx")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model product_removal {
+  id                                              Int                @id @default(autoincrement())
+  create_uid                                      Int?
+  write_uid                                       Int?
+  name                                            String             @db.VarChar
+  method                                          String             @db.VarChar
+  create_date                                     DateTime?          @db.Timestamp(6)
+  write_date                                      DateTime?          @db.Timestamp(6)
+  product_category                                product_category[]
+  // res_users_product_removal_create_uidTores_users res_users?         @relation("product_removal_create_uidTores_users", fields: [create_uid], references: [id], onUpdate: NoAction)
+  // res_users_product_removal_write_uidTores_users  res_users?         @relation("product_removal_write_uidTores_users", fields: [write_uid], references: [id], onUpdate: NoAction)
+  // stock_location                                  stock_location[]
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model product_replenish {
+  id                                                Int                                 @id @default(autoincrement())
+  product_id                                        Int
+  product_tmpl_id                                   Int
+  product_uom_id                                    Int
+  warehouse_id                                      Int
+  company_id                                        Int?
+  create_uid                                        Int?
+  write_uid                                         Int?
+  product_has_variants                              Boolean
+  date_planned                                      DateTime                            @db.Timestamp(6)
+  create_date                                       DateTime?                           @db.Timestamp(6)
+  write_date                                        DateTime?                           @db.Timestamp(6)
+  quantity                                          Float
+  product_product                                   product_product                     @relation(fields: [product_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  product_template                                  product_template                    @relation(fields: [product_tmpl_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  // uom_uom                                           uom_uom                             @relation(fields: [product_uom_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  // stock_warehouse                                   stock_warehouse                     @relation(fields: [warehouse_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  // res_users_product_replenish_write_uidTores_users  res_users?                          @relation("product_replenish_write_uidTores_users", fields: [write_uid], references: [id], onUpdate: NoAction)
+  product_replenish_stock_route_rel                 product_replenish_stock_route_rel[]
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model product_replenish_stock_route_rel {
+  product_replenish_id Int
+  stock_route_id       Int
+  product_replenish    product_replenish @relation(fields: [product_replenish_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  // stock_route          stock_route       @relation(fields: [stock_route_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@id([product_replenish_id, stock_route_id])
+  @@index([stock_route_id, product_replenish_id], map: "product_replenish_stock_route_stock_route_id_product_replen_idx")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model product_supplier_taxes_rel {
+  prod_id          Int
+  tax_id           Int
+  product_template product_template @relation(fields: [prod_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  // account_tax      account_tax      @relation(fields: [tax_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@id([prod_id, tax_id])
+  @@index([tax_id, prod_id])
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model product_supplierinfo {
+  id                                                   Int               @id @default(autoincrement())
+  partner_id                                           Int
+  sequence                                             Int?
+  company_id                                           Int?
+  currency_id                                          Int
+  product_id                                           Int?
+  product_tmpl_id                                      Int?
+  delay                                                Int
+  create_uid                                           Int?
+  write_uid                                            Int?
+  product_name                                         String?           @db.VarChar
+  product_code                                         String?           @db.VarChar
+  date_start                                           DateTime?         @db.Date
+  date_end                                             DateTime?         @db.Date
+  min_qty                                              Decimal           @db.Decimal
+  price                                                Decimal           @db.Decimal
+  create_date                                          DateTime?         @db.Timestamp(6)
+  write_date                                           DateTime?         @db.Timestamp(6)
+  // res_company                                          res_company?      @relation(fields: [company_id], references: [id], onUpdate: NoAction)
+  // res_users_product_supplierinfo_create_uidTores_users res_users?        @relation("product_supplierinfo_create_uidTores_users", fields: [create_uid], references: [id], onUpdate: NoAction)
+  // res_currency                                         res_currency      @relation(fields: [currency_id], references: [id], onUpdate: NoAction)
+  // res_partner                                          res_partner       @relation(fields: [partner_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  product_product                                      product_product?  @relation(fields: [product_id], references: [id], onUpdate: NoAction)
+  product_template                                     product_template? @relation(fields: [product_tmpl_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  // res_users_product_supplierinfo_write_uidTores_users  res_users?        @relation("product_supplierinfo_write_uidTores_users", fields: [write_uid], references: [id], onUpdate: NoAction)
+
+  @@index([company_id], map: "product_supplierinfo_company_id_index")
+  @@index([product_tmpl_id], map: "product_supplierinfo_product_tmpl_id_index")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model product_tag {
+  id                                          Int                                @id @default(autoincrement())
+  color                                       Int?
+  create_uid                                  Int?
+  write_uid                                   Int?
+  name                                        Json                               @unique(map: "product_tag_name_uniq")
+  create_date                                 DateTime?                          @db.Timestamp(6)
+  write_date                                  DateTime?                          @db.Timestamp(6)
+  // res_users_product_tag_create_uidTores_users res_users?                         @relation("product_tag_create_uidTores_users", fields: [create_uid], references: [id], onUpdate: NoAction)
+  // res_users_product_tag_write_uidTores_users  res_users?                         @relation("product_tag_write_uidTores_users", fields: [write_uid], references: [id], onUpdate: NoAction)
+  product_tag_product_product_rel             product_tag_product_product_rel[]
+  product_tag_product_template_rel            product_tag_product_template_rel[]
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model product_tag_product_product_rel {
+  product_product_id Int
+  product_tag_id     Int
+  product_product    product_product @relation(fields: [product_product_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  product_tag        product_tag     @relation(fields: [product_tag_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@id([product_product_id, product_tag_id])
+  @@index([product_tag_id, product_product_id], map: "product_tag_product_product_r_product_tag_id_product_produc_idx")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model product_tag_product_template_rel {
+  product_template_id Int
+  product_tag_id      Int
+  product_tag         product_tag      @relation(fields: [product_tag_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  product_template    product_template @relation(fields: [product_template_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@id([product_template_id, product_tag_id])
+  @@index([product_tag_id, product_template_id], map: "product_tag_product_template__product_tag_id_product_templa_idx")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model product_taxes_rel {
+  prod_id          Int
+  tax_id           Int
+  product_template product_template @relation(fields: [prod_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@id([prod_id, tax_id])
+  @@index([tax_id, prod_id])
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+/// This model contains an expression index which requires additional setup for migrations. Visit https://pris.ly/d/expression-indexes for more info.
+model product_template {
+  id                                               Int                                         @id @default(autoincrement())
+  message_main_attachment_id                       Int?
+  sequence                                         Int?
+  categ_id                                         Int
+  uom_id                                           Int
+  uom_po_id                                        Int
+  company_id                                       Int?
+  color                                            Int?
+  create_uid                                       Int?
+  write_uid                                        Int?
+  detailed_type                                    String                                      @db.VarChar
+  type                                             String?                                     @db.VarChar
+  default_code                                     String?                                     @db.VarChar
+  priority                                         String?                                     @db.VarChar
+  name                                             Json
+  description                                      Json?
+  description_purchase                             Json?
+  description_sale                                 Json?
+  list_price                                       Decimal?                                    @db.Decimal
+  volume                                           Decimal?                                    @db.Decimal
+  weight                                           Decimal?                                    @db.Decimal
+  sale_ok                                          Boolean?
+  purchase_ok                                      Boolean?
+  active                                           Boolean?
+  can_image_1024_be_zoomed                         Boolean?
+  has_configurable_attributes                      Boolean?
+  create_date                                      DateTime?                                   @db.Timestamp(6)
+  write_date                                       DateTime?                                   @db.Timestamp(6)
+  tracking                                         String                                      @db.VarChar
+  description_picking                              Json?
+  description_pickingout                           Json?
+  description_pickingin                            Json?
+  sale_delay                                       Float?
+  pos_categ_id                                     Int?
+  available_in_pos                                 Boolean?
+  to_weight                                        Boolean?
+  product_attribute_product_template_rel           product_attribute_product_template_rel[]
+  product_label_layout_product_template_rel        product_label_layout_product_template_rel[]
+  product_pricelist_item                           product_pricelist_item[]
+  product_product                                  product_product[]
+  product_replenish                                product_replenish[]
+  product_supplier_taxes_rel                       product_supplier_taxes_rel[]
+  product_supplierinfo                             product_supplierinfo[]
+  product_tag_product_template_rel                 product_tag_product_template_rel[]
+  product_taxes_rel                                product_taxes_rel[]
+  product_category                                 product_category                            @relation(fields: [categ_id], references: [id], onUpdate: NoAction)
+  // res_company                                      res_company?                                @relation(fields: [company_id], references: [id], onUpdate: NoAction)
+  // res_users_product_template_create_uidTores_users res_users?                                  @relation("product_template_create_uidTores_users", fields: [create_uid], references: [id], onUpdate: NoAction)
+  pos_category                                     pos_category?                               @relation(fields: [pos_categ_id], references: [id], onUpdate: NoAction)
+  // uom_uom_product_template_uom_idTouom_uom         uom_uom                                     @relation("product_template_uom_idTouom_uom", fields: [uom_id], references: [id], onUpdate: NoAction)
+  // uom_uom_product_template_uom_po_idTouom_uom      uom_uom                                     @relation("product_template_uom_po_idTouom_uom", fields: [uom_po_id], references: [id], onUpdate: NoAction)
+  // res_users_product_template_write_uidTores_users  res_users?                                  @relation("product_template_write_uidTores_users", fields: [write_uid], references: [id], onUpdate: NoAction)
+  product_template_attribute_exclusion             product_template_attribute_exclusion[]
+  product_template_attribute_line                  product_template_attribute_line[]
+  product_template_attribute_value                 product_template_attribute_value[]
+
+  @@index([company_id], map: "product_template_company_id_index")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model product_template_attribute_exclusion {
+  id                                                                   Int                                    @id @default(autoincrement())
+  product_template_attribute_value_id                                  Int?
+  product_tmpl_id                                                      Int
+  create_uid                                                           Int?
+  write_uid                                                            Int?
+  create_date                                                          DateTime?                              @db.Timestamp(6)
+  write_date                                                           DateTime?                              @db.Timestamp(6)
+  product_attr_exclusion_value_ids_rel                                 product_attr_exclusion_value_ids_rel[]
+  product_template_attribute_value                                     product_template_attribute_value?      @relation(fields: [product_template_attribute_value_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "product_template_attribute_ex_product_template_attribute_v_fkey")
+  // res_users_product_template_attribute_exclusion_create_uidTores_users res_users?                             @relation("product_template_attribute_exclusion_create_uidTores_users", fields: [create_uid], references: [id], onUpdate: NoAction)
+  product_template                                                     product_template                       @relation(fields: [product_tmpl_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  // res_users_product_template_attribute_exclusion_write_uidTores_users  res_users?                             @relation("product_template_attribute_exclusion_write_uidTores_users", fields: [write_uid], references: [id], onUpdate: NoAction)
+
+  @@index([product_template_attribute_value_id], map: "product_template_attribute_exclusion_product_template_attribute")
+  @@index([product_tmpl_id], map: "product_template_attribute_exclusion_product_tmpl_id_index")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model product_template_attribute_line {
+  id                                                              Int                                                           @id @default(autoincrement())
+  product_tmpl_id                                                 Int
+  attribute_id                                                    Int
+  value_count                                                     Int?
+  create_uid                                                      Int?
+  write_uid                                                       Int?
+  active                                                          Boolean?
+  create_date                                                     DateTime?                                                     @db.Timestamp(6)
+  write_date                                                      DateTime?                                                     @db.Timestamp(6)
+  product_attribute_value_product_template_attribute_line_rel     product_attribute_value_product_template_attribute_line_rel[]
+  product_attribute                                               product_attribute                                             @relation(fields: [attribute_id], references: [id], onUpdate: NoAction)
+  // res_users_product_template_attribute_line_create_uidTores_users res_users?                                                    @relation("product_template_attribute_line_create_uidTores_users", fields: [create_uid], references: [id], onUpdate: NoAction)
+  product_template                                                product_template                                              @relation(fields: [product_tmpl_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  // res_users_product_template_attribute_line_write_uidTores_users  res_users?                                                    @relation("product_template_attribute_line_write_uidTores_users", fields: [write_uid], references: [id], onUpdate: NoAction)
+  product_template_attribute_value                                product_template_attribute_value[]
+
+  @@index([attribute_id], map: "product_template_attribute_line_attribute_id_index")
+  @@index([product_tmpl_id], map: "product_template_attribute_line_product_tmpl_id_index")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model product_template_attribute_value {
+  id                                                               Int                                    @id @default(autoincrement())
+  product_attribute_value_id                                       Int
+  attribute_line_id                                                Int
+  product_tmpl_id                                                  Int?
+  attribute_id                                                     Int?
+  color                                                            Int?
+  create_uid                                                       Int?
+  write_uid                                                        Int?
+  price_extra                                                      Decimal?                               @db.Decimal
+  ptav_active                                                      Boolean?
+  create_date                                                      DateTime?                              @db.Timestamp(6)
+  write_date                                                       DateTime?                              @db.Timestamp(6)
+  product_attr_exclusion_value_ids_rel                             product_attr_exclusion_value_ids_rel[]
+  product_attribute_custom_value                                   product_attribute_custom_value[]
+  product_template_attribute_exclusion                             product_template_attribute_exclusion[]
+  product_attribute_value                                          product_attribute_value                @relation(fields: [product_attribute_value_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "product_template_attribute_valu_product_attribute_value_id_fkey")
+  product_attribute                                                product_attribute?                     @relation(fields: [attribute_id], references: [id], onUpdate: NoAction)
+  product_template_attribute_line                                  product_template_attribute_line        @relation(fields: [attribute_line_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  // res_users_product_template_attribute_value_create_uidTores_users res_users?                             @relation("product_template_attribute_value_create_uidTores_users", fields: [create_uid], references: [id], onUpdate: NoAction)
+  product_template                                                 product_template?                      @relation(fields: [product_tmpl_id], references: [id], onUpdate: NoAction)
+  // res_users_product_template_attribute_value_write_uidTores_users  res_users?                             @relation("product_template_attribute_value_write_uidTores_users", fields: [write_uid], references: [id], onUpdate: NoAction)
+  product_variant_combination                                      product_variant_combination[]
+
+  @@unique([attribute_line_id, product_attribute_value_id], map: "product_template_attribute_value_attribute_value_unique")
+  @@index([attribute_id], map: "product_template_attribute_value_attribute_id_index")
+  @@index([attribute_line_id], map: "product_template_attribute_value_attribute_line_id_index")
+  @@index([product_attribute_value_id], map: "product_template_attribute_value_product_attribute_value_id_ind")
+  @@index([product_tmpl_id], map: "product_template_attribute_value_product_tmpl_id_index")
+}
+
+
+model product_variant_combination {
+  product_product_id                  Int
+  product_template_attribute_value_id Int
+  product_product                     product_product                  @relation(fields: [product_product_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  product_template_attribute_value    product_template_attribute_value @relation(fields: [product_template_attribute_value_id], references: [id], onUpdate: NoAction)
+
+  @@id([product_product_id, product_template_attribute_value_id])
+  @@index([product_template_attribute_value_id, product_product_id])
 }
