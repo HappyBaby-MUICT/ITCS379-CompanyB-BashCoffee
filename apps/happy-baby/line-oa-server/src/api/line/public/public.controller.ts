@@ -18,8 +18,9 @@ export class LinePublicController {
     @Req() req: FastifyRequest<{ Body: { events: LineEvent[] } }>,
   ) {
     const events = req.body?.events
+    const userId = events[0].source.userId
 
-    if (!events) {
+    if (!events || !userId) {
       return { status: 'ok' }
     }
 
@@ -34,20 +35,38 @@ export class LinePublicController {
                 return
               }
 
-              if (messageEvent?.message?.text?.toLowerCase() === 'order') {
-                // handle order event
-                await this.service.handleMenuMessage(messageEvent.replyToken)
+              switch (messageEvent?.message?.text?.toLowerCase()) {
+                case 'order':
+                  await this.service.handleMenuMessage(
+                    userId,
+                    messageEvent.replyToken,
+                  )
+                  break
               }
             }
             break
           case 'postback':
             // handle postback event
             const postbackEvent = event as PostbackEvent
+            const postBackData = JSON.parse(postbackEvent.postback.data)
+
             if (!postbackEvent.replyToken) {
               return
             }
 
-            await this.service.handlePostBack(postbackEvent.replyToken)
+            if (!postBackData) {
+              return 
+            }
+
+            switch (postBackData.state) { 
+              case 'order':
+                await this.service.handleMenuClick(
+                  userId,
+                  postbackEvent.replyToken,
+                  postBackData.menu,
+                )
+                break
+            }
             break
         }
       }),

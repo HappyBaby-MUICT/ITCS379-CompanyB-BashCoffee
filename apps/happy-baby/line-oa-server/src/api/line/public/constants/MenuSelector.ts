@@ -1,6 +1,44 @@
-import { FlexContainer } from '@line/bot-sdk/dist/messaging-api/api'
+import { FlexBox, FlexContainer } from '@line/bot-sdk/dist/messaging-api/api'
 
-export const MenuSelector: FlexContainer = {
+const generateMenuItems = (
+  menus: { name: string; list_price: number }[],
+): FlexBox[] => {
+  return menus.map(menu => ({
+    type: 'box',
+    layout: 'vertical',
+    contents: [
+      {
+        type: 'image',
+        url: 'https://scdn.line-apps.com/n/channel_devcenter/img/fx/01_1_cafe.png',
+        size: 'md',
+        align: 'center',
+        aspectMode: 'cover',
+        margin: 'none',
+      },
+      {
+        type: 'text',
+        text: JSON.parse(menu.name).en_US,
+        align: 'center',
+        size: 'sm',
+        wrap: true,
+      },
+    ],
+    spacing: 'md',
+    action: {
+      type: 'postback',
+      label: 'DrinkMenu',
+      data: JSON.stringify({
+        menu: JSON.parse(menu.name).en_US,
+        state: 'order',
+      }),
+      displayText: `Drink - ${JSON.parse(menu.name).en_US}`,
+    },
+  }))
+}
+
+export const createMenuSelector = (
+  menus: { name: string; list_price: number }[],
+): FlexContainer => ({
   type: 'bubble',
   size: 'giga',
   direction: 'ltr',
@@ -26,22 +64,9 @@ export const MenuSelector: FlexContainer = {
         paddingStart: 'xl',
         paddingTop: 'lg',
         paddingBottom: 'lg',
-        offsetEnd: 'none',
-        cornerRadius: 'none',
-        offsetStart: 'none',
-        offsetBottom: 'none',
-        offsetTop: 'none',
         justifyContent: 'center',
       },
     ],
-    margin: 'none',
-    spacing: 'none',
-    offsetStart: 'none',
-    offsetEnd: 'none',
-    offsetBottom: 'none',
-    paddingAll: 'none',
-    paddingTop: 'none',
-    cornerRadius: 'none',
   },
   body: {
     type: 'box',
@@ -50,188 +75,14 @@ export const MenuSelector: FlexContainer = {
       {
         type: 'box',
         layout: 'horizontal',
-        contents: [
-          {
-            type: 'box',
-            layout: 'vertical',
-            contents: [
-              {
-                type: 'image',
-                url: 'https://scdn.line-apps.com/n/channel_devcenter/img/fx/01_1_cafe.png',
-                size: 'md',
-                align: 'center',
-                animated: false,
-                aspectMode: 'cover',
-                margin: 'none',
-              },
-              {
-                type: 'text',
-                text: 'Americano',
-                align: 'center',
-                size: 'sm',
-              },
-            ],
-            spacing: 'md',
-            action: {
-              type: 'postback',
-              label: 'DrinkMenu',
-              data: 'Americano',
-              displayText: 'Drink - Americano',
-            },
-          },
-          {
-            type: 'box',
-            layout: 'vertical',
-            contents: [
-              {
-                type: 'image',
-                url: 'https://scdn.line-apps.com/n/channel_devcenter/img/fx/01_1_cafe.png',
-                size: 'md',
-                align: 'center',
-                animated: false,
-                aspectMode: 'cover',
-                margin: 'none',
-              },
-              {
-                type: 'text',
-                text: 'Espresso',
-                align: 'center',
-                size: 'sm',
-              },
-            ],
-            spacing: 'md',
-            action: {
-              type: 'postback',
-              label: 'DrinkMenu',
-              data: 'Espresso',
-              displayText: 'Drink - Espresso',
-            },
-          },
-          {
-            type: 'box',
-            layout: 'vertical',
-            contents: [
-              {
-                type: 'image',
-                url: 'https://scdn.line-apps.com/n/channel_devcenter/img/fx/01_1_cafe.png',
-                size: 'md',
-                align: 'center',
-                animated: false,
-                aspectMode: 'cover',
-                margin: 'none',
-              },
-              {
-                type: 'text',
-                text: 'Mocha',
-                align: 'center',
-                size: 'sm',
-              },
-            ],
-            spacing: 'md',
-            action: {
-              type: 'postback',
-              label: 'DrinkMenu',
-              data: 'Mocha',
-              displayText: 'Drink - Mocha',
-            },
-          },
-        ],
+        contents: generateMenuItems(menus.slice(0, 3)),
       },
       {
         type: 'box',
         layout: 'horizontal',
-        contents: [
-          {
-            type: 'box',
-            layout: 'vertical',
-            contents: [
-              {
-                type: 'image',
-                url: 'https://scdn.line-apps.com/n/channel_devcenter/img/fx/01_1_cafe.png',
-                size: 'md',
-                align: 'center',
-                animated: false,
-                aspectMode: 'cover',
-                margin: 'none',
-              },
-              {
-                type: 'text',
-                text: 'Latte',
-                align: 'center',
-                size: 'sm',
-              },
-            ],
-            spacing: 'md',
-            action: {
-              type: 'postback',
-              label: 'DrinkMenu',
-              data: 'Latte',
-              displayText: 'Drink - Latte',
-            },
-          },
-          {
-            type: 'box',
-            layout: 'vertical',
-            contents: [
-              {
-                type: 'image',
-                url: 'https://scdn.line-apps.com/n/channel_devcenter/img/fx/01_1_cafe.png',
-                size: 'md',
-                align: 'center',
-                animated: false,
-                aspectMode: 'cover',
-                margin: 'none',
-              },
-              {
-                type: 'text',
-                text: 'Orange Americano',
-                align: 'center',
-                size: 'sm',
-                wrap: true,
-              },
-            ],
-            spacing: 'md',
-            action: {
-              type: 'postback',
-              label: 'DrinkMenu',
-              data: 'Orange Americano',
-              displayText: 'Drink - Orange Americano',
-            },
-          },
-          {
-            type: 'box',
-            layout: 'vertical',
-            contents: [
-              {
-                type: 'image',
-                url: 'https://scdn.line-apps.com/n/channel_devcenter/img/fx/01_1_cafe.png',
-                size: 'md',
-                align: 'center',
-                animated: false,
-                aspectMode: 'cover',
-                margin: 'none',
-              },
-              {
-                type: 'text',
-                text: 'Macchiato',
-                align: 'center',
-                size: 'sm',
-              },
-            ],
-            spacing: 'md',
-            action: {
-              type: 'postback',
-              label: 'DrinkMenu',
-              data: 'Macchiato',
-              displayText: 'Drink - Macchiato',
-            },
-          },
-        ],
+        contents: generateMenuItems(menus.slice(3, 6)),
       },
     ],
-    offsetTop: 'none',
-    offsetBottom: 'none',
-    offsetEnd: 'none',
     spacing: 'lg',
   },
   styles: {
@@ -239,4 +90,4 @@ export const MenuSelector: FlexContainer = {
       separator: false,
     },
   },
-}
+})

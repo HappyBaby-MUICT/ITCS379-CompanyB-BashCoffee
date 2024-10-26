@@ -82,13 +82,7 @@ export interface MemberLeftEvent extends LineEvent {
   }
 }
 
-export type LineEventUnion =
-  | MessageEvent
-  | PostbackEvent
-  | FollowEvent
-  | UnfollowEvent
-  | JoinEvent
-  | LeaveEvent
-  | BeaconEvent
-  | MemberJoinedEvent
-  | MemberLeftEvent
+export type MenuName = {
+  en_US: string
+  th_TH: string
+}
