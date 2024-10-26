@@ -22,7 +22,8 @@
     "@nestjs/common": "10.3.8",
     "@prisma/client": "5.21.0",
     "csv-parser": "3.0.0",
-    "install": "0.13.0"
+    "install": "0.13.0",
+    "xlsx": "0.18.5"
   },
   "devDependencies": {
     "prisma": "5.21.0"
