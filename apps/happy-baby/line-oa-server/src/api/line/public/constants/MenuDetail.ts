@@ -109,7 +109,8 @@ export const createMenuDetail = ({
             contents: [
               {
                 type: "text",
-                text: "- Brown Sugar Jelly"
+                text: "- Brown Sugar Jelly",
+                position: "absolute"
               },
               {
                 type: "text",
