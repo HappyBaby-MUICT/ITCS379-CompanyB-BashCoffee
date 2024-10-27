@@ -266,8 +266,6 @@ export class LinePublicService {
       return
     }
 
-    console.log(price)
-
     const order = await this.db.pos_order.create({
       data: {
         user_id: parseInt(userId),

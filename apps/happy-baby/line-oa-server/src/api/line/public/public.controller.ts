@@ -57,9 +57,6 @@ export class LinePublicController {
               return
             }
 
-            console.log('Parsed Postback Data:', postBackData)
-            console.log('Postback State:', postBackData.state)
-
             switch (postBackData.state) {
               case 'order':
                 await this.service.handleMenuClick(

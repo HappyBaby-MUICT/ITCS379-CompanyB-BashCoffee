@@ -31,7 +31,7 @@ const generateMenuItems = (
         },
       ],
       spacing: 'md',
-      maxWidth: "100px",
+      maxWidth: "120px",
       action: {
         type: 'postback',
         label: 'DrinkMenu',
