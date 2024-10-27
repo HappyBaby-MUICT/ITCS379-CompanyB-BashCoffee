@@ -44,7 +44,14 @@ export const seedProducts = async () => {
       if (!isNaN(variant.price)) {
         const productTemplate = await db.product_template.create({
           data: {
-            name: productName ? { en_US: variant.name + " " + productName } : {},
+            name: productName
+              ? {
+                  en_US:
+                    variant.name != 'Bakery'
+                      ? variant.name + ' ' + productName
+                      : productName,
+                }
+              : {},
             description: description ? { en_US: description } : {},
             detailed_type: 'consu',
             sale_ok: true,
