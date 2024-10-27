@@ -32,6 +32,18 @@ services:
       - "5432:5432"
     volumes:
       - db:/var/lib/pgsql/data/pgdata
+  
+  flowise:
+    image: flowiseai/flowise:latest
+    container_name: flowise
+    ports:
+      - "15542:3000"
+    environment:
+      - PORT=3000
+      - DEBUG=true
+    volumes:
+      - ~/.flowise:/root/.flowise
+
 volumes:
   data:
   db:

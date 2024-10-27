@@ -2,12 +2,14 @@
   "name": "@bash-coffee/esanlamsing-deluxe-app-1",
   "version": "1.0.0",
   "private": true,
+  "type": "module",
   "scripts": {
     "dev": "dotenv -- nodemon src/index.js",
     "build": "rimraf dist && cp -r src dist",
     "start": "dotenv -- node dist/index.js"
   },
   "dependencies": {
+    "@line/bot-sdk": "9.4.2",
     "@prisma/client": "4.16.2",
     "compression": "1.7.4",
     "dotenv": "16.3.1",
