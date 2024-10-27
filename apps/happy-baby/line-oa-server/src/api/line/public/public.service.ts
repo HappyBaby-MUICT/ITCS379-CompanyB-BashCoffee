@@ -1,11 +1,16 @@
 import { FlexContainer, Message } from '@line/bot-sdk/dist/messaging-api/api'
-import { createMenuSelector } from './constants/MenuSelector'
+import {
+  addOnConfirmMessage,
+  createMenuSelector,
+} from './constants/MenuSelector'
 import { PrismaService } from '@bash-coffee/db'
-import { messagingApi } from '@line/bot-sdk'
+import { FlexBubble, messagingApi, RichMenu } from '@line/bot-sdk'
 import { Injectable } from '@nestjs/common'
 import { JsonValue, Decimal } from '@prisma/client/runtime/library'
 import { createMenuDetail } from './constants/MenuDetail'
 import { MenuName } from './dto'
+import { SweetnessLevel } from './constants/SweetnessLevel'
+import { createPaymentMessage } from './constants/Payment'
 
 @Injectable()
 export class LinePublicService {
@@ -123,10 +128,12 @@ export class LinePublicService {
       name: name,
       price: menuDetail.list_price?.toString() ?? '0',
       description: description,
-      imageUrl: 'https://via.placeholder.com/150',
-      sweetness: '100%', 
+      imageUrl: 'https://placehold.jp/150x150.png',
+      sweetness: '100%',
       addOns: [],
     })
+
+    const addOnMessage = addOnConfirmMessage(menu)
 
     messages.push({
       type: 'flex',
@@ -134,36 +141,147 @@ export class LinePublicService {
       contents: flexMessage,
     })
 
+    messages.push({
+      type: 'flex',
+      altText: 'Bash - Add-Ons',
+      contents: addOnMessage,
+    })
+
     try {
       await this.client.replyMessage({
         replyToken,
         messages,
       })
-      await this.client.createRichMenu({
-        size: {
-          width: 2500,
-          height: 1686,
+    } catch (error) {
+      console.error('Error sending menu detail message:', error)
+    }
+  }
+
+  async handleAddOnSelection(
+    userId: string,
+    replyToken: string,
+    menu: string,
+    addOn: string,
+    selectedAddOns: string[],
+  ) {
+    selectedAddOns.push(addOn)
+
+    const addOnConfirmFlexMessage = addOnConfirmMessage(menu, selectedAddOns)
+
+    const messages: Message[] = [
+      {
+        type: 'text',
+        text: 'You have added addons: ' + selectedAddOns.join(', '),
+      },
+      {
+        type: 'text',
+        text: 'Do you want to add more addons?',
+      },
+      {
+        type: 'flex',
+        altText: 'Select more add-ons or finish',
+        contents: addOnConfirmFlexMessage,
+      },
+    ]
+
+    try {
+      await this.client.replyMessage({
+        replyToken,
+        messages,
+      })
+    } catch (error) {
+      console.error('Error handling add-on selection:', error)
+    }
+  }
+
+  async handleSweetnessSelection(
+    userId: string,
+    replyToken: string,
+    menu: string,
+    selectedAddOns: string[],
+  ) {
+    const messages: Message[] = [
+      {
+        type: 'text',
+        text: 'Please select sweetness',
+      },
+      {
+        type: 'flex',
+        altText: 'Select sweetness level',
+        contents: SweetnessLevel(menu, selectedAddOns),
+      },
+    ]
+
+    try {
+      await this.client.replyMessage({
+        replyToken,
+        messages,
+      })
+    } catch (error) {
+      console.error('Error handling sweetness selection:', error)
+    }
+  }
+
+  async handleCheckout(
+    userId: string,
+    replyToken: string,
+    menu: string,
+    selectedAddOns: string[],
+    sweetness: number,
+  ) {
+    const menuDetail = await this.db.product_template.findFirst({
+      where: {
+        name: {
+          path: ['en_US'],
+          equals: menu,
         },
-        selected: true,
-        name: 'richmenu',
-        chatBarText: 'Tap here',
-        areas: [
+      },
+    })
+
+    if (!menuDetail) {
+      console.error('Menu not found or has missing fields:', menu)
+      return
+    }
+
+    const name = (menuDetail.name as MenuName)?.en_US
+    const description = (menuDetail.description as MenuName)?.en_US
+
+    if (!name || !description) {
+      console.error('Menu has missing fields:', menu)
+      return
+    }
+
+    const paymentMessage = createPaymentMessage({
+      receiptNumber: 'test-12',
+      deliveryMethod: 'Pick up',
+      phoneNumber: '1234567890',
+      items: [
+        {
+          name,
+          price: menuDetail.list_price?.toNumber() ?? 0,
+          sweetness: sweetness.toString(),
+          addOns: selectedAddOns,
+        },
+      ],
+      totalItems: 1,
+      totalPrice: menuDetail.list_price?.toNumber() ?? 0,
+      qrUrl: 'https://placehold.jp/150x150.png',
+    })
+
+    try {
+      await this.client.replyMessage({
+        replyToken,
+        messages: [
           {
-            bounds: {
-              x: 0,
-              y: 0,
-              width: 2500,
-              height: 1686,
-            },
-            action: {
-              type: 'message',
-              text: 'order',
-            },
+            type: 'flex',
+            altText: 'Payment',
+            contents: paymentMessage,
           },
         ],
       })
     } catch (error) {
-      console.error('Error sending menu detail message:', error)
+      console.error('Error handling checkout:', error)
     }
+
   }
 }

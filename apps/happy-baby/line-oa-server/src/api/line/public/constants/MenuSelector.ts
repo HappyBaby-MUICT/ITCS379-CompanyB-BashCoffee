@@ -1,4 +1,10 @@
-import { FlexBox, FlexContainer } from '@line/bot-sdk/dist/messaging-api/api'
+import {
+  FlexBox,
+  FlexBubble,
+  FlexContainer,
+  FlexMessage,
+  TemplateMessage,
+} from '@line/bot-sdk/dist/messaging-api/api'
 
 const generateMenuItems = (
   menus: { name: string; list_price: number }[],
@@ -29,6 +35,7 @@ const generateMenuItems = (
       label: 'DrinkMenu',
       data: JSON.stringify({
         menu: JSON.parse(menu.name).en_US,
+        price: menu.list_price,
         state: 'order',
       }),
       displayText: `Drink - ${JSON.parse(menu.name).en_US}`,
@@ -91,3 +98,111 @@ export const createMenuSelector = (
     },
   },
 })
+
+export const addOnConfirmMessage = (
+  menu: string,
+  selectedAddOns: string[] = [],
+): FlexBubble => {
+  return {
+    type: 'bubble',
+    size: 'giga',
+    header: {
+      type: 'box',
+      layout: 'vertical',
+      contents: [
+        {
+          type: 'text',
+          text: 'Do you want add-on?',
+          align: 'center',
+        },
+      ],
+    },
+    body: {
+      type: 'box',
+      layout: 'vertical',
+      contents: [
+        {
+          type: 'box',
+          layout: 'vertical',
+          contents: [
+            {
+              type: 'text',
+              text: 'Oat Milk - ฿15',
+            },
+          ],
+          borderWidth: 'light',
+          borderColor: '#747476',
+          alignItems: 'center',
+          paddingTop: 'sm',
+          paddingBottom: 'sm',
+          cornerRadius: 'md',
+          action: {
+            type: 'postback',
+            label: 'oatmilk',
+            data: JSON.stringify({
+              state: 'add_on_yes',
+              addOn: 'Oat Milk',
+              menu,
+              selectedAddOns,
+            }),
+            displayText: 'Add-On: Oat Milk',
+          },
+        },
+        {
+          type: 'box',
+          layout: 'vertical',
+          contents: [
+            {
+              type: 'text',
+              text: 'Brown Sugar Jelly - ฿10',
+            },
+          ],
+          borderWidth: 'light',
+          borderColor: '#747476',
+          alignItems: 'center',
+          paddingTop: 'sm',
+          paddingBottom: 'sm',
+          cornerRadius: 'md',
+          action: {
+            type: 'postback',
+            label: 'jelly',
+            data: JSON.stringify({
+              state: 'add_on_yes',
+              addOn: 'Brown Sugar Jelly',
+              menu,
+              selectedAddOns,
+            }),
+            displayText: 'Add-On: Brown Sugar Jelly',
+          },
+        },
+        {
+          type: 'box',
+          layout: 'vertical',
+          contents: [
+            {
+              type: 'text',
+              text: 'No, thanks!',
+            },
+          ],
+          borderWidth: 'light',
+          borderColor: '#747476',
+          alignItems: 'center',
+          paddingTop: 'sm',
+          paddingBottom: 'sm',
+          cornerRadius: 'md',
+          action: {
+            type: 'postback',
+            label: 'no-addon',
+            data: JSON.stringify({
+              state: 'sweetness_select',
+              menu,
+              selectedAddOns,
+            }),
+            displayText: 'No, thanks!',
+          },
+        },
+      ],
+      spacing: 'md',
+    },
+  }
+}

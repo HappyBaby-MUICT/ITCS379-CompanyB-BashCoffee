@@ -46,7 +46,6 @@ export class LinePublicController {
             }
             break
           case 'postback':
-            // handle postback event
             const postbackEvent = event as PostbackEvent
             const postBackData = JSON.parse(postbackEvent.postback.data)
 
@@ -55,15 +54,47 @@ export class LinePublicController {
             }
 
             if (!postBackData) {
-              return 
+              return
             }
 
-            switch (postBackData.state) { 
+            console.log('Parsed Postback Data:', postBackData)
+            console.log('Postback State:', postBackData.state)
+
+            switch (postBackData.state) {
               case 'order':
                 await this.service.handleMenuClick(
                   userId,
                   postbackEvent.replyToken,
                   postBackData.menu,
+                )
+                break
+              case 'add_on_yes':
+                await this.service.handleAddOnSelection(
+                  userId,
+                  postbackEvent.replyToken,
+                  postBackData.menu,
+                  postBackData.addOn,
+                  postBackData.selectedAddOns,
+                )
+                break
+              case 'sweetness_select':
+                await this.service.handleSweetnessSelection(
+                  userId,
+                  postbackEvent.replyToken,
+                  postBackData.menu,
+                  postBackData.selectedAddOns,
+                )
+                break
+              case 'goto_checkout':
+                console.log('Going to checkout')
+                console.log(postBackData)
+
+                await this.service.handleCheckout(
+                  userId,
+                  postbackEvent.replyToken,
+                  postBackData.menu,
+                  postBackData.selectedAddOns,
+                  postBackData.sweetness
                 )
                 break
             }
