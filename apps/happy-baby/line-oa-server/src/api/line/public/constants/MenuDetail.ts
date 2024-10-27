@@ -5,7 +5,6 @@ interface MenuDetailProps {
   price: string
   description: string
   imageUrl: string
-  sweetness: string
   addOns: { name: string; price: number }[]
 }
 
@@ -14,7 +13,6 @@ export const createMenuDetail = ({
   price,
   description,
   imageUrl,
-  sweetness,
   addOns,
 }: MenuDetailProps): FlexContainer => {
   return {
@@ -70,7 +68,7 @@ export const createMenuDetail = ({
             },
             {
               type: 'text',
-              text: sweetness,
+              text: '0%-100%',
               size: 'sm',
             },
           ],
@@ -86,24 +84,44 @@ export const createMenuDetail = ({
               text: 'Add-on',
               weight: 'bold',
             },
-            ...addOns.map(addOn => ({
-              type: 'box',
-              layout: 'baseline',
-              contents: [
-                {
-                  type: 'text',
-                  text: `- ${addOn.name}`,
-                },
-                {
-                  type: 'text',
-                  text: `฿${addOn.price}`,
-                  size: 'sm',
-                  color: '#A2A3A3',
-                  align: 'end',
-                },
-              ],
-              spacing: 'md',
-            })) as FlexComponent[],
+            {
+            type: "box",
+            layout: "baseline",
+            contents: [
+              {
+                type: "text",
+                text: "- Oat Milk"
+              },
+              {
+                type: "text",
+                text: "฿15",
+                size: "sm",
+                offsetBottom: "sm",
+                color: "#A2A3A3",
+                align: "end"
+              }
+            ],
+            spacing: "md"
+          },
+          {
+            type: "box",
+            layout: "baseline",
+            contents: [
+              {
+                type: "text",
+                text: "- Brown Sugar Jelly"
+              },
+              {
+                type: "text",
+                text: "฿10",
+                size: "sm",
+                offsetBottom: "sm",
+                color: "#A2A3A3",
+                align: "end"
+              }
+            ],
+            spacing: "md"
+          },
           ],
           margin: 'md',
           spacing: 'sm',

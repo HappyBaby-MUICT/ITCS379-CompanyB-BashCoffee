@@ -28,6 +28,7 @@ export const createPaymentMessage = ({
   totalPrice,
   qrUrl,
 }: PaymentProps) => {
+  const receiptNo = receiptNumber.split('-');
   return {
     type: 'bubble',
     body: {
@@ -43,7 +44,7 @@ export const createPaymentMessage = ({
         },
         {
           type: 'text',
-          text: `NO. ${receiptNumber}`,
+          text: `NO. ${receiptNo.length > 1 ? receiptNo[1] : 'N/A'}`,
           weight: 'bold',
           size: 'xxl',
           margin: 'md',

@@ -175,7 +175,7 @@ export class LinePublicService {
       },
       {
         type: 'text',
-        text: 'Do you want to add more addons?',
+        text: 'Do you want to add more add-on?',
       },
       {
         type: 'flex',
@@ -203,7 +203,7 @@ export class LinePublicService {
     const messages: Message[] = [
       {
         type: 'text',
-        text: 'Please select sweetness',
+        text: 'Please select sweetness level',
       },
       {
         type: 'flex',

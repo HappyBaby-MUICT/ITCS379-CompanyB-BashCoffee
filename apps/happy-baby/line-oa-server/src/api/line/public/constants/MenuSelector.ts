@@ -31,6 +31,7 @@ const generateMenuItems = (
         },
       ],
       spacing: 'md',
+      maxWidth: "100px",
       action: {
         type: 'postback',
         label: 'DrinkMenu',
@@ -61,7 +62,7 @@ export const createMenuSelector = (
         contents: [
           {
             type: 'text',
-            text: 'Coffee Menu',
+            text: 'Menu',
             color: '#D5CBB1',
             weight: 'bold',
             align: 'center',
@@ -73,6 +74,11 @@ export const createMenuSelector = (
         paddingStart: 'xl',
         paddingTop: 'lg',
         paddingBottom: 'lg',
+        offsetEnd: "none",
+        cornerRadius: "none",
+        offsetStart: "none",
+        offsetBottom: "none",
+        offsetTop: "none",
         justifyContent: 'center',
       },
     ],
