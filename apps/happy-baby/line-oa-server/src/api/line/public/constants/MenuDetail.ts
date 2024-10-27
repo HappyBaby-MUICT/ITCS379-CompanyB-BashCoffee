@@ -27,7 +27,7 @@ export const createMenuDetail = ({
       aspectMode: 'cover',
       action: {
         type: 'uri',
-        uri: 'https://line.me/',
+        uri: imageUrl,
       },
     },
     body: {

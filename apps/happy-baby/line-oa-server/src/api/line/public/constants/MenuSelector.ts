@@ -9,38 +9,40 @@ import {
 const generateMenuItems = (
   menus: { name: string; list_price: number }[],
 ): FlexBox[] => {
-  return menus.map(menu => ({
-    type: 'box',
-    layout: 'vertical',
-    contents: [
-      {
-        type: 'image',
-        url: 'https://scdn.line-apps.com/n/channel_devcenter/img/fx/01_1_cafe.png',
-        size: 'md',
-        align: 'center',
-        aspectMode: 'cover',
-        margin: 'none',
+  return menus.map(menu => {;
+    return {
+      type: 'box',
+      layout: 'vertical',
+      contents: [
+        {
+          type: 'image',
+          url: `https://haishin.selenadia.net/netdeliver/images/line-oa/${JSON.parse(menu.name).en_US.toLowerCase().replace(/ /g, '_')}.png`,
+          size: 'md',
+          align: 'center',
+          aspectMode: 'cover',
+          margin: 'none',
+        },
+        {
+          type: 'text',
+          text: JSON.parse(menu.name).en_US,
+          align: 'center',
+          size: 'sm',
+          wrap: true,
+        },
+      ],
+      spacing: 'md',
+      action: {
+        type: 'postback',
+        label: 'DrinkMenu',
+        data: JSON.stringify({
+          menu: JSON.parse(menu.name).en_US,
+          price: menu.list_price,
+          state: 'order',
+        }),
+        displayText: `Drink - ${JSON.parse(menu.name).en_US}`,
       },
-      {
-        type: 'text',
-        text: JSON.parse(menu.name).en_US,
-        align: 'center',
-        size: 'sm',
-        wrap: true,
-      },
-    ],
-    spacing: 'md',
-    action: {
-      type: 'postback',
-      label: 'DrinkMenu',
-      data: JSON.stringify({
-        menu: JSON.parse(menu.name).en_US,
-        price: menu.list_price,
-        state: 'order',
-      }),
-      displayText: `Drink - ${JSON.parse(menu.name).en_US}`,
-    },
-  }))
+    }
+  })
 }
 
 export const createMenuSelector = (
