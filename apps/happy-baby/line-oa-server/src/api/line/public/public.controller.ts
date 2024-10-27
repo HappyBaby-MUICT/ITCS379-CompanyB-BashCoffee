@@ -85,9 +85,17 @@ export class LinePublicController {
                   postBackData.selectedAddOns,
                 )
                 break
+              // case 'order_note':
+              //   await this.service.handleOrderNote(
+              //     userId,
+              //     postbackEvent.replyToken,
+              //     postBackData.menu,
+              //     postBackData.selectedAddOns,
+              //     postBackData.sweetness,
+              //     postBackData.note,
+              //   )
+              //   break
               case 'goto_checkout':
-                console.log('Going to checkout')
-                console.log(postBackData)
 
                 await this.service.handleCheckout(
                   userId,

@@ -128,7 +128,7 @@ export class LinePublicService {
       name: name,
       price: menuDetail.list_price?.toString() ?? '0',
       description: description,
-      imageUrl: 'https://placehold.jp/150x150.png',
+      imageUrl: `https://haishin.selenadia.net/netdeliver/images/line-oa/${name.toLowerCase().replace(/ /g, '_')}.png`,
       sweetness: '100%',
       addOns: [],
     })
@@ -222,6 +222,16 @@ export class LinePublicService {
     }
   }
 
+  // async handleOrderNote(
+  //   userId: string,
+  //   replyToken: string,
+  //   menu: string,
+  //   selectedAddOns: string[],
+  //   sweetness: number,
+  // ) {
+
+  // }
+
   async handleCheckout(
     userId: string,
     replyToken: string,
@@ -235,7 +245,11 @@ export class LinePublicService {
           path: ['en_US'],
           equals: menu,
         },
+        
       },
+      include: {
+        product_product: true,
+      }
     })
 
     if (!menuDetail) {
@@ -245,16 +259,57 @@ export class LinePublicService {
 
     const name = (menuDetail.name as MenuName)?.en_US
     const description = (menuDetail.description as MenuName)?.en_US
+    const price = menuDetail.list_price?.toNumber()
 
-    if (!name || !description) {
+    if (!name || !description || !price) {
       console.error('Menu has missing fields:', menu)
       return
     }
 
+    console.log(price)
+
+    const order = await this.db.pos_order.create({
+      data: {
+        user_id: parseInt(userId),
+        company_id: 1,
+        pricelist_id: 1,
+        session_id: 1,
+        state: 'draft',
+        name: `Customer:${userId}`,
+        amount_total: price,
+        amount_tax: 0,
+        amount_paid: 0,
+        amount_return: 0,
+        date_order: new Date(),
+      
+      },
+    })
+
+    await this.db.pos_order_line.create({
+      data: {
+        order_id: order.id,
+        product_id: menuDetail.product_product[0].id,
+        name: `Customer:${userId}`, 
+        price_subtotal: price, 
+        price_subtotal_incl: price,
+        qty: 1,
+        create_uid: 2,
+        write_uid: 2,
+        company_id: 1,
+        full_product_name: name,
+        price_unit: price,
+        discount: 0,
+        is_total_cost_computed: true,
+        create_date: new Date(),
+        write_date: new Date(),
+        price_extra: 0,
+      }
+    })
+
     const paymentMessage = createPaymentMessage({
-      receiptNumber: 'test-12',
+      receiptNumber: `RECEIPT-${order.id}`,
       deliveryMethod: 'Pick up',
-      phoneNumber: '1234567890',
+      phoneNumber: '0123456789',
       items: [
         {
           name,
@@ -282,6 +337,5 @@ export class LinePublicService {
     } catch (error) {
       console.error('Error handling checkout:', error)
     }
-
   }
 }
