@@ -4,6 +4,8 @@ import { FastifyRequest } from 'fastify'
 import { LineEvent, MessageEvent, PostbackEvent } from './dto'
 import { LinePublicService } from './public.service'
 
+const userStates: Record<string, { state: string }> = {}
+
 @Controller('/api/line/public')
 export class LinePublicController {
   constructor(private readonly service: LinePublicService) {}
@@ -17,97 +19,86 @@ export class LinePublicController {
   async handleWebhook(
     @Req() req: FastifyRequest<{ Body: { events: LineEvent[] } }>,
   ) {
-    const events = req.body?.events
-    const userId = events[0].source.userId
+    const events = req.body?.events || []
+    const userId = events[0]?.source?.userId
 
-    if (!events || !userId) {
-      return { status: 'ok' }
-    }
+    if (!events.length || !userId) return { status: 'ok' }
 
     await Promise.all(
       events.map(async event => {
-        switch (event.type) {
-          case 'message':
-            if ((event as MessageEvent).message.type === 'text') {
-              const messageEvent = event as MessageEvent
-
-              if (!messageEvent.replyToken) {
-                return
-              }
-
-              switch (messageEvent?.message?.text?.toLowerCase()) {
-                case 'order':
-                  await this.service.handleMenuMessage(
-                    userId,
-                    messageEvent.replyToken,
-                  )
-                  break
-              }
-            }
-            break
-          case 'postback':
-            const postbackEvent = event as PostbackEvent
-            const postBackData = JSON.parse(postbackEvent.postback.data)
-
-            if (!postbackEvent.replyToken) {
-              return
-            }
-
-            if (!postBackData) {
-              return
-            }
-
-            switch (postBackData.state) {
-              case 'order':
-                await this.service.handleMenuClick(
-                  userId,
-                  postbackEvent.replyToken,
-                  postBackData.menu,
-                )
-                break
-              case 'add_on_yes':
-                await this.service.handleAddOnSelection(
-                  userId,
-                  postbackEvent.replyToken,
-                  postBackData.menu,
-                  postBackData.addOn,
-                  postBackData.selectedAddOns,
-                )
-                break
-              case 'sweetness_select':
-                await this.service.handleSweetnessSelection(
-                  userId,
-                  postbackEvent.replyToken,
-                  postBackData.menu,
-                  postBackData.selectedAddOns,
-                )
-                break
-              // case 'order_note':
-              //   await this.service.handleOrderNote(
-              //     userId,
-              //     postbackEvent.replyToken,
-              //     postBackData.menu,
-              //     postBackData.selectedAddOns,
-              //     postBackData.sweetness,
-              //     postBackData.note,
-              //   )
-              //   break
-              case 'goto_checkout':
-
-                await this.service.handleCheckout(
-                  userId,
-                  postbackEvent.replyToken,
-                  postBackData.menu,
-                  postBackData.selectedAddOns,
-                  postBackData.sweetness
-                )
-                break
-            }
-            break
+        if (event.type === 'message') {
+          await this.handleMessageEvent(event as MessageEvent, userId)
+        } else if (event.type === 'postback') {
+          await this.handlePostbackEvent(event as PostbackEvent, userId)
         }
       }),
     )
 
     return { status: 'ok' }
+  }
+
+  private async handleMessageEvent(event: MessageEvent, userId: string) {
+    const { replyToken, message } = event
+    if (!replyToken || message.type !== 'text' || !message.text) return
+
+    const userState = userStates[userId]?.state
+
+    switch (userState) {
+      case 'entering_address':
+        await this.service.saveDeliveryAddress(userId, replyToken, message.text)
+        userStates[userId] = { state: 'entering_phone' }
+        break
+
+      case 'entering_phone':
+        await this.service.savePhoneNumber(userId, replyToken, message.text)
+        userStates[userId] = { state: '' }
+        break
+
+      default:
+        await this.service.handleGeneralInput(userId, replyToken, message.text)
+    }
+  }
+
+  private async handlePostbackEvent(event: PostbackEvent, userId: string) {
+    const { replyToken, postback } = event
+    if (!replyToken || !postback.data) return
+
+    const postBackData = JSON.parse(postback.data)
+    const state = postBackData?.state
+
+    const handlers: Record<string, () => Promise<void>> = {
+      order: () =>
+        this.service.handleMenuClick(userId, replyToken, postBackData.menu),
+      add_on_yes: () =>
+        this.service.handleAddOnSelection(
+          userId,
+          replyToken,
+          postBackData.menu,
+          postBackData.addOn,
+          postBackData.selectedAddOns,
+        ),
+      sweetness_select: () =>
+        this.service.handleSweetnessSelection(
+          userId,
+          replyToken,
+          postBackData.menu,
+          postBackData.selectedAddOns,
+        ),
+      goto_confirm: () =>
+        this.service.handleConfirm(
+          userId,
+          replyToken,
+          postBackData.menu,
+          postBackData.selectedAddOns || [],
+          postBackData.sweetness || 0,
+        ),
+      goto_delivery_address: async () => {
+        userStates[userId] = { state: 'entering_address' }
+        this.service.handleDelivery(replyToken,)
+      },
+      jump_success: () => this.service.updateMenuStatus(replyToken, userId),
+    }
+
+    if (handlers[state]) await handlers[state]()
   }
 }

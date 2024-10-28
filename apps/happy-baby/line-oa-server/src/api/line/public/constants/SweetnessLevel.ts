@@ -38,7 +38,7 @@ export const SweetnessLevel = (menu: string, selectedAddOns: string[] = []): Fle
             type: 'postback',
             label: 'sweetlevel',
             data: JSON.stringify({
-              state: 'goto_checkout',
+              state: 'goto_confirm',
               menu,
               selectedAddOns,
               sweetness: 100,
@@ -65,7 +65,7 @@ export const SweetnessLevel = (menu: string, selectedAddOns: string[] = []): Fle
             type: 'postback',
             label: 'sweetlevel',
             data: JSON.stringify({
-              state: 'goto_checkout',
+              state: 'goto_confirm',
               menu,
               selectedAddOns,
               sweetness: 75,
@@ -92,7 +92,7 @@ export const SweetnessLevel = (menu: string, selectedAddOns: string[] = []): Fle
             type: 'postback',
             label: 'sweetlevel',
             data: JSON.stringify({
-              state: 'goto_checkout',
+              state: 'goto_confirm',
               menu,
               selectedAddOns,
               sweetness: 50,
@@ -119,7 +119,7 @@ export const SweetnessLevel = (menu: string, selectedAddOns: string[] = []): Fle
             type: 'postback',
             label: 'sweetlevel',
             data: JSON.stringify({
-              state: 'goto_checkout',
+              state: 'goto_confirm',
               menu,
               selectedAddOns,
               sweetness: 25,
@@ -146,7 +146,7 @@ export const SweetnessLevel = (menu: string, selectedAddOns: string[] = []): Fle
             type: 'postback',
             label: 'sweetlevel',
             data: JSON.stringify({
-              state: 'goto_checkout',
+              state: 'goto_confirm',
               menu,
               selectedAddOns,
               sweetness: 0,

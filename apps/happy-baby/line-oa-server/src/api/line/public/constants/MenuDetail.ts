@@ -1,10 +1,15 @@
-import { FlexComponent, FlexContainer } from '@line/bot-sdk/dist/messaging-api/api'
+import {
+  FlexComponent,
+  FlexContainer,
+} from '@line/bot-sdk/dist/messaging-api/api'
+import { bakeryMenus, jellyMenus, oatMilkMenus } from './EligibleMenus'
 
 interface MenuDetailProps {
   name: string
   price: string
   description: string
   imageUrl: string
+  sweetness: string
   addOns: { name: string; price: number }[]
 }
 
@@ -13,8 +18,57 @@ export const createMenuDetail = ({
   price,
   description,
   imageUrl,
+  sweetness,
   addOns,
 }: MenuDetailProps): FlexContainer => {
+  const addOnComponent: FlexComponent[] = []
+  const isShowSweetness = !bakeryMenus.some(bakery => name.includes(bakery))
+
+  if (oatMilkMenus.some(oat => name.includes(oat))) {
+    addOnComponent.push({
+      type: 'box',
+      layout: 'baseline',
+      contents: [
+        {
+          type: 'text',
+          text: '- Oat Milk',
+        },
+        {
+          type: 'text',
+          text: '฿15',
+          size: 'sm',
+          offsetBottom: 'sm',
+          color: '#A2A3A3',
+          align: 'end',
+        },
+      ],
+      spacing: 'md',
+    })
+  }
+
+  if (jellyMenus.some(jelly => name.includes(jelly))) {
+    addOnComponent.push({
+      type: 'box',
+      layout: 'baseline',
+      contents: [
+        {
+          type: 'text',
+          text: '- Brown Sugar Jelly',
+          position: 'absolute',
+        },
+        {
+          type: 'text',
+          text: '฿10',
+          size: 'sm',
+          offsetBottom: 'sm',
+          color: '#A2A3A3',
+          align: 'end',
+        },
+      ],
+      spacing: 'md',
+    })
+  }
+
   return {
     type: 'bubble',
     hero: {
@@ -60,7 +114,7 @@ export const createMenuDetail = ({
         {
           type: 'box',
           layout: 'vertical',
-          contents: [
+          contents: isShowSweetness ? [
             {
               type: 'text',
               text: 'Sweetness level',
@@ -71,59 +125,14 @@ export const createMenuDetail = ({
               text: '0%-100%',
               size: 'sm',
             },
-          ],
+          ] : [],
           margin: 'md',
           spacing: 'sm',
         },
         {
           type: 'box',
           layout: 'vertical',
-          contents: [
-            {
-              type: 'text',
-              text: 'Add-on',
-              weight: 'bold',
-            },
-            {
-            type: "box",
-            layout: "baseline",
-            contents: [
-              {
-                type: "text",
-                text: "- Oat Milk"
-              },
-              {
-                type: "text",
-                text: "฿15",
-                size: "sm",
-                offsetBottom: "sm",
-                color: "#A2A3A3",
-                align: "end"
-              }
-            ],
-            spacing: "md"
-          },
-          {
-            type: "box",
-            layout: "baseline",
-            contents: [
-              {
-                type: "text",
-                text: "- Brown Sugar Jelly",
-                position: "absolute"
-              },
-              {
-                type: "text",
-                text: "฿10",
-                size: "sm",
-                offsetBottom: "sm",
-                color: "#A2A3A3",
-                align: "end"
-              }
-            ],
-            spacing: "md"
-          },
-          ],
+          contents: addOnComponent,
           margin: 'md',
           spacing: 'sm',
         },
@@ -140,7 +149,13 @@ export const createMenuDetail = ({
           action: {
             type: 'postback',
             label: 'Add to my order',
-            data: `AddMenu:${name}`,
+            data: JSON.stringify({
+              state: 'goto_confirm',
+              menu: name,
+              price,
+              sweetness,
+              addOns,
+            }),
             displayText: `Drink: ${name}`,
           },
         },

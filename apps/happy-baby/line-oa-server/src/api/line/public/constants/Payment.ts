@@ -28,7 +28,7 @@ export const createPaymentMessage = ({
   totalPrice,
   qrUrl,
 }: PaymentProps) => {
-  const receiptNo = receiptNumber.split('-');
+
   return {
     type: 'bubble',
     body: {
@@ -44,21 +44,21 @@ export const createPaymentMessage = ({
         },
         {
           type: 'text',
-          text: `NO. ${receiptNo.length > 1 ? receiptNo[1] : 'N/A'}`,
+          text: `NO. ${receiptNumber || 'N/A'}`,
           weight: 'bold',
           size: 'xxl',
           margin: 'md',
         },
         {
           type: 'text',
-          text: `Delivery: ${deliveryMethod}`,
+          text: `Delivery: ${deliveryMethod || 'N/A'}`,
           size: 'xs',
           color: '#aaaaaa',
           wrap: true,
         },
         {
           type: 'text',
-          text: `Phone number: ${phoneNumber}`,
+          text: `Phone number: ${phoneNumber || 'N/A'}`,
           size: 'xs',
           color: '#aaaaaa',
           wrap: true,
@@ -73,50 +73,55 @@ export const createPaymentMessage = ({
           layout: 'vertical',
           margin: 'xxl',
           spacing: 'sm',
-          contents: items.map(item => ({
-            type: 'box',
-            layout: 'vertical',
-            contents: [
-              {
-                type: 'box',
-                layout: 'horizontal',
-                contents: [
-                  {
-                    type: 'text',
-                    text: item.name,
-                    size: 'sm',
-                    color: '#555555',
-                    flex: 0,
-                  },
-                  {
-                    type: 'text',
-                    text: `${item.price} THB`,
-                    size: 'sm',
-                    color: '#111111',
-                    align: 'end',
-                  },
-                ],
-              },
-              {
-                type: 'box',
-                layout: 'vertical',
-                contents: [
-                  item.sweetness && {
-                    type: 'text',
-                    text: `- ${item.sweetness}%`,
-                    size: 'xs',
-                  },
-                  ...(item.addOns?.map((addOn) => ({
-                    type: 'text',
-                    text: `- ${addOn}`,
-                    size: 'xs',
-                  })) ?? []),
-                ].filter(Boolean),
-                paddingStart: 'md',
-                margin: 'sm',
-              },
-            ],
-          })),
+          contents: items.map(item => {
+            const addOnsContent = (item.addOns ?? []).map(addOn => ({
+              type: 'text',
+              text: ''+ addOn || '',
+              size: 'xs',
+            }))
+
+            const sweetnessText = item.sweetness
+              ? {
+                  type: 'text',
+                  text: `- sweetness: ${item.sweetness}%`,
+                  size: 'xs',
+                }
+              : null
+
+            return {
+              type: 'box',
+              layout: 'vertical',
+              contents: [
+                {
+                  type: 'box',
+                  layout: 'horizontal',
+                  contents: [
+                    {
+                      type: 'text',
+                      text: item.name || 'N/A', // Add default value
+                      size: 'sm',
+                      color: '#555555',
+                      flex: 0,
+                    },
+                    {
+                      type: 'text',
+                      text: `${item.price || 0} THB`, // Add default value
+                      size: 'sm',
+                      color: '#111111',
+                      align: 'end',
+                    },
+                  ],
+                },
+                {
+                  type: 'box',
+                  layout: 'vertical',
+                  contents: [sweetnessText, ...addOnsContent].filter(Boolean), // Filter out null values
+                  paddingStart: 'md',
+                  margin: 'sm',
+                },
+              ],
+            }
+          }),
         },
         {
           type: 'separator',
@@ -135,7 +140,7 @@ export const createPaymentMessage = ({
             },
             {
               type: 'text',
-              text: `${totalItems}`,
+              text: `${totalItems || 0}`, // Add default value
               size: 'sm',
               color: '#111111',
               align: 'end',
@@ -155,7 +160,7 @@ export const createPaymentMessage = ({
             },
             {
               type: 'text',
-              text: `${totalPrice} THB`,
+              text: `${totalPrice || 0} THB`, // Add default value
               size: 'sm',
               color: '#111111',
               align: 'end',
@@ -171,7 +176,7 @@ export const createPaymentMessage = ({
           contents: [
             {
               type: 'image',
-              url: qrUrl,
+              url: qrUrl || 'https://placehold.jp/150x150.png',
               aspectMode: 'cover',
               size: 'xl',
               margin: 'md',
@@ -195,7 +200,9 @@ export const createPaymentMessage = ({
           action: {
             type: 'postback',
             label: 'Save QR',
-            data: 'saveqr',
+            data: JSON.stringify({
+              state: 'jump_success',
+            }),
           },
           style: 'primary',
           color: '#4F3A32',

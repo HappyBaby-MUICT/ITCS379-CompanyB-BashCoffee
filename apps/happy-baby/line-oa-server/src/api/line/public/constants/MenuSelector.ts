@@ -1,15 +1,15 @@
 import {
   FlexBox,
   FlexBubble,
+  FlexComponent,
   FlexContainer,
-  FlexMessage,
-  TemplateMessage,
 } from '@line/bot-sdk/dist/messaging-api/api'
+import { jellyMenus, oatMilkMenus } from './EligibleMenus'
 
 const generateMenuItems = (
   menus: { name: string; list_price: number }[],
 ): FlexBox[] => {
-  return menus.map(menu => {;
+  return menus.map(menu => {
     return {
       type: 'box',
       layout: 'vertical',
@@ -39,7 +39,7 @@ const generateMenuItems = (
           price: menu.list_price,
           state: 'order',
         }),
-        displayText: `Drink - ${JSON.parse(menu.name).en_US}`,
+        displayText: `Menu - ${JSON.parse(menu.name).en_US}`,
       },
     }
   })
@@ -68,26 +68,26 @@ export const createMenuSelector = (
             size: 'md',
           },
         ],
-        backgroundColor: "#4F3A32",
-        alignItems: "center",
-        paddingStart: "xl",
-        paddingTop: "lg",
-        paddingBottom: "lg",
-        offsetEnd: "none",
-        cornerRadius: "none",
-        offsetStart: "none",
-        offsetBottom: "none",
-        offsetTop: "none",
-        justifyContent: "center"
+        backgroundColor: '#4F3A32',
+        alignItems: 'center',
+        paddingStart: 'xl',
+        paddingTop: 'lg',
+        paddingBottom: 'lg',
+        offsetEnd: 'none',
+        cornerRadius: 'none',
+        offsetStart: 'none',
+        offsetBottom: 'none',
+        offsetTop: 'none',
+        justifyContent: 'center',
       },
     ],
-    margin: "none",
-    spacing: "none",
-    offsetStart: "none",
-    offsetEnd: "none",
-    offsetBottom: "none",
-    paddingAll: "none",
-    paddingTop: "none",
+    margin: 'none',
+    spacing: 'none',
+    offsetStart: 'none',
+    offsetEnd: 'none',
+    offsetBottom: 'none',
+    paddingAll: 'none',
+    paddingTop: 'none',
   },
   body: {
     type: 'box',
@@ -97,15 +97,15 @@ export const createMenuSelector = (
         type: 'box',
         layout: 'horizontal',
         contents: generateMenuItems(menus.slice(0, 3)),
-        spacing: "none",
-        justifyContent: "space-evenly"
+        spacing: 'none',
+        justifyContent: 'space-evenly',
       },
       {
         type: 'box',
         layout: 'horizontal',
         contents: generateMenuItems(menus.slice(3, 6)),
-         spacing: "none",
-        justifyContent: "space-evenly"
+        spacing: 'none',
+        justifyContent: 'space-evenly',
       },
     ],
     spacing: 'lg',
@@ -121,6 +121,67 @@ export const addOnConfirmMessage = (
   menu: string,
   selectedAddOns: string[] = [],
 ): FlexBubble => {
+  const addOns: FlexComponent[] = []
+  if (oatMilkMenus.some(oatMenu => menu.includes(oatMenu))) {
+    addOns.push({
+      type: 'box',
+      layout: 'vertical',
+      contents: [
+        {
+          type: 'text',
+          text: 'Oat Milk - ฿15',
+        },
+      ],
+      borderWidth: 'light',
+      borderColor: '#747476',
+      alignItems: 'center',
+      paddingTop: 'sm',
+      paddingBottom: 'sm',
+      cornerRadius: 'md',
+      action: {
+        type: 'postback',
+        label: 'oatmilk',
+        data: JSON.stringify({
+          state: 'add_on_yes',
+          addOn: 'Oat Milk',
+          menu,
+          selectedAddOns,
+        }),
+        displayText: 'Add-On: Oat Milk',
+      },
+    })
+  }
+
+  if (jellyMenus.some(jellyMenu => menu.includes(jellyMenu))) {
+    addOns.push({
+      type: 'box',
+      layout: 'vertical',
+      contents: [
+        {
+          type: 'text',
+          text: 'Brown Sugar Jelly - ฿10',
+        },
+      ],
+      borderWidth: 'light',
+      borderColor: '#747476',
+      alignItems: 'center',
+      paddingTop: 'sm',
+      paddingBottom: 'sm',
+      cornerRadius: 'md',
+      action: {
+        type: 'postback',
+        label: 'jelly',
+        data: JSON.stringify({
+          state: 'add_on_yes',
+          addOn: 'Brown Sugar Jelly',
+          menu,
+          selectedAddOns,
+        }),
+        displayText: 'Add-On: Brown Sugar Jelly',
+      },
+    })
+  }
+
   return {
     type: 'bubble',
     size: 'giga',
@@ -139,60 +200,7 @@ export const addOnConfirmMessage = (
       type: 'box',
       layout: 'vertical',
       contents: [
-        {
-          type: 'box',
-          layout: 'vertical',
-          contents: [
-            {
-              type: 'text',
-              text: 'Oat Milk - ฿15',
-            },
-          ],
-          borderWidth: 'light',
-          borderColor: '#747476',
-          alignItems: 'center',
-          paddingTop: 'sm',
-          paddingBottom: 'sm',
-          cornerRadius: 'md',
-          action: {
-            type: 'postback',
-            label: 'oatmilk',
-            data: JSON.stringify({
-              state: 'add_on_yes',
-              addOn: 'Oat Milk',
-              menu,
-              selectedAddOns,
-            }),
-            displayText: 'Add-On: Oat Milk',
-          },
-        },
-        {
-          type: 'box',
-          layout: 'vertical',
-          contents: [
-            {
-              type: 'text',
-              text: 'Brown Sugar Jelly - ฿10',
-            },
-          ],
-          borderWidth: 'light',
-          borderColor: '#747476',
-          alignItems: 'center',
-          paddingTop: 'sm',
-          paddingBottom: 'sm',
-          cornerRadius: 'md',
-          action: {
-            type: 'postback',
-            label: 'jelly',
-            data: JSON.stringify({
-              state: 'add_on_yes',
-              addOn: 'Brown Sugar Jelly',
-              menu,
-              selectedAddOns,
-            }),
-            displayText: 'Add-On: Brown Sugar Jelly',
-          },
-        },
+        ...addOns,
         {
           type: 'box',
           layout: 'vertical',
