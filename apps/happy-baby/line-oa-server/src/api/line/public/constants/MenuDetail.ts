@@ -10,7 +10,7 @@ interface MenuDetailProps {
   description: string
   imageUrl: string
   sweetness: string
-  addOns: { name: string; price: number }[]
+  selctedAddOns: { name: string; price: number }[]
 }
 
 export const createMenuDetail = ({
@@ -19,10 +19,10 @@ export const createMenuDetail = ({
   description,
   imageUrl,
   sweetness,
-  addOns,
+  selctedAddOns
 }: MenuDetailProps): FlexContainer => {
   const addOnComponent: FlexComponent[] = []
-  const isShowSweetness = !bakeryMenus.some(bakery => name.includes(bakery))
+  const isBakery =  bakeryMenus.some(bakery => name.includes(bakery))
 
   if (oatMilkMenus.some(oat => name.includes(oat))) {
     addOnComponent.push({
@@ -114,7 +114,7 @@ export const createMenuDetail = ({
         {
           type: 'box',
           layout: 'vertical',
-          contents: isShowSweetness
+          contents: !isBakery
             ? [
                 {
                   type: 'text',
@@ -157,11 +157,11 @@ export const createMenuDetail = ({
             type: 'postback',
             label: 'Add to my order',
             data: JSON.stringify({
-              state: 'goto_confirm',
+              state: isBakery ? 'goto_confirm' : 'add_on_yes',
               menu: name,
               price,
               sweetness,
-              addOns,
+              selctedAddOns,
             }),
             displayText: `Menu - ${name}`,
           },

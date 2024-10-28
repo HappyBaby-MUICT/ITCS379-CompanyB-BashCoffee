@@ -146,24 +146,15 @@ export class LinePublicService {
       description: description,
       imageUrl: `https://haishin.selenadia.net/netdeliver/images/line-oa/${name.toLowerCase().replace(/ /g, '_')}.png`,
       sweetness: 'none',
-      addOns: [],
+      selctedAddOns: [],
     })
 
-    const addOnMessage = addOnConfirmMessage(menu)
 
     messages.push({
       type: 'flex',
       altText: 'Bash - Menu Detail',
       contents: flexMessage,
     })
-
-    if (!bakeryMenus.some(bakery => name.includes(bakery))) {
-      messages.push({
-        type: 'flex',
-        altText: 'Bash - Add-Ons',
-        contents: addOnMessage,
-      })
-    }
 
     try {
       await this.client.replyMessage({
@@ -179,29 +170,33 @@ export class LinePublicService {
     userId: string,
     replyToken: string,
     menu: string,
-    addOn: string,
-    selectedAddOns: string[],
+    selectedAddOns: string[] = [],
   ) {
-    selectedAddOns.push(addOn)
-
     const addOnConfirmFlexMessage = addOnConfirmMessage(menu, selectedAddOns)
 
-    const messages: Message[] = [
-      {
+    const messages: Message[] = []
+
+    if (selectedAddOns.length === 0) {
+      messages.push({
         type: 'text',
         text: 'You have added addons: ' + selectedAddOns.join(', '),
-      },
+      })
+    }
+
+    messages.push(
       {
         type: 'text',
-        text: 'Do you want to add more add-on?',
+        text:
+          selectedAddOns.length === 0
+            ? 'Do you want to add an add-on?'
+            : 'Do you want to add more add-on?',
       },
       {
         type: 'flex',
-        altText: 'Select more add-ons or finish',
+        altText: 'Select an add-ons',
         contents: addOnConfirmFlexMessage,
       },
-    ]
-
+    )
     try {
       await this.client.replyMessage({
         replyToken,
@@ -275,6 +270,7 @@ export class LinePublicService {
 
     let customerNote = ''
     if (sweetness) {
+      console.log('sweetness have')
       customerNote += `sweetness: ${sweetness}, `
     }
     if (selectedAddOns.length > 0) {
@@ -491,12 +487,12 @@ export class LinePublicService {
           deliveryAddress = noteParts['DeliveryAddress']
         }
 
+        console.log(noteParts)
+
         return {
           name: line.full_product_name ?? 'Unknown',
           price: line.price_unit ? line.price_unit.toNumber() : 0,
-          sweetness: noteParts['sweetness']
-            ? `${noteParts['sweetness']}`
-            : 'N/A',
+          sweetness: noteParts['sweetness'] ? `${noteParts['sweetness']}` : '-',
           addOns,
         }
       })
@@ -505,7 +501,7 @@ export class LinePublicService {
         receiptNumber: `${order.id}`,
         deliveryMethod: deliveryAddress?.toLowerCase().includes('ict')
           ? 'Pick up at Bash Coffee'
-          : 'Delivery',
+          : deliveryAddress,
         phoneNumber: phone,
         items: paymentItems,
         totalItems,

@@ -65,6 +65,7 @@ export class LinePublicController {
 
     const postBackData = JSON.parse(postback.data)
     const state = postBackData?.state
+    console.log(postBackData)
 
     const handlers: Record<string, () => Promise<void>> = {
       order: () =>
@@ -74,7 +75,6 @@ export class LinePublicController {
           userId,
           replyToken,
           postBackData.menu,
-          postBackData.addOn,
           postBackData.selectedAddOns,
         ),
       sweetness_select: () =>
@@ -94,7 +94,7 @@ export class LinePublicController {
         ),
       goto_delivery_address: async () => {
         userStates[userId] = { state: 'entering_address' }
-        this.service.handleDelivery(replyToken,)
+        this.service.handleDelivery(replyToken)
       },
       jump_success: () => this.service.updateMenuStatus(replyToken, userId),
     }
