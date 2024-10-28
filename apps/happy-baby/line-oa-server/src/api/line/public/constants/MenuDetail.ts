@@ -114,20 +114,27 @@ export const createMenuDetail = ({
         {
           type: 'box',
           layout: 'vertical',
-          contents: isShowSweetness ? [
-            {
-              type: 'text',
-              text: 'Sweetness level',
-              weight: 'bold',
-            },
-            {
-              type: 'text',
-              text: '0%-100%',
-              size: 'sm',
-            },
-          ] : [],
+          contents: isShowSweetness
+            ? [
+                {
+                  type: 'text',
+                  text: 'Sweetness level',
+                  weight: 'bold',
+                },
+                {
+                  type: 'text',
+                  text: '0%-100%',
+                  size: 'sm',
+                },
+              ]
+            : [],
           margin: 'md',
           spacing: 'sm',
+        },
+        {
+          type: 'text',
+          text: 'Add-ons',
+          weight: 'bold',
         },
         {
           type: 'box',
@@ -156,7 +163,7 @@ export const createMenuDetail = ({
               sweetness,
               addOns,
             }),
-            displayText: `Drink: ${name}`,
+            displayText: `Menu - ${name}`,
           },
         },
       ],
