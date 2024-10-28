@@ -335,8 +335,7 @@ export class LinePublicService {
           {
             type: 'text',
             text:
-              'Your order has been added to the system as follows!' +
-              posOrderLine.toString(),
+              'Your order has been added to the system!'
           },
           {
             type: 'flex',
