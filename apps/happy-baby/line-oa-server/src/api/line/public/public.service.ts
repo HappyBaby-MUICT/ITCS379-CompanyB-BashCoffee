@@ -270,7 +270,6 @@ export class LinePublicService {
 
     let customerNote = ''
     if (sweetness) {
-      console.log('sweetness have')
       customerNote += `sweetness: ${sweetness}, `
     }
     if (selectedAddOns.length > 0) {
@@ -487,7 +486,6 @@ export class LinePublicService {
           deliveryAddress = noteParts['DeliveryAddress']
         }
 
-        console.log(noteParts)
 
         return {
           name: line.full_product_name ?? 'Unknown',

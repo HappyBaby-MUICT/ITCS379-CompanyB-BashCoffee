@@ -65,8 +65,7 @@ export class LinePublicController {
 
     const postBackData = JSON.parse(postback.data)
     const state = postBackData?.state
-    console.log(postBackData)
-
+    
     const handlers: Record<string, () => Promise<void>> = {
       order: () =>
         this.service.handleMenuClick(userId, replyToken, postBackData.menu),
