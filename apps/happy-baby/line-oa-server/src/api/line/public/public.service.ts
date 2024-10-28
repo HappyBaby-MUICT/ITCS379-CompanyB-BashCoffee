@@ -176,7 +176,7 @@ export class LinePublicService {
 
     const messages: Message[] = []
 
-    if (selectedAddOns.length === 0) {
+    if (selectedAddOns.length !== 0) {
       messages.push({
         type: 'text',
         text: 'You have added addons: ' + selectedAddOns.join(', '),
