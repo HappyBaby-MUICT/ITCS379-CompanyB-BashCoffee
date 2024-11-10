@@ -19,10 +19,10 @@ export const createMenuDetail = ({
   description,
   imageUrl,
   sweetness,
-  selctedAddOns
+  selctedAddOns,
 }: MenuDetailProps): FlexContainer => {
   const addOnComponent: FlexComponent[] = []
-  const isBakery =  bakeryMenus.some(bakery => name.includes(bakery))
+  const isBakery = bakeryMenus.some(bakery => name.includes(bakery))
 
   if (oatMilkMenus.some(oat => name.includes(oat))) {
     addOnComponent.push({

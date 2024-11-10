@@ -28,7 +28,6 @@ export const createPaymentMessage = ({
   totalPrice,
   qrUrl,
 }: PaymentProps) => {
-
   return {
     type: 'bubble',
     body: {
@@ -76,7 +75,7 @@ export const createPaymentMessage = ({
           contents: items.map(item => {
             const addOnsContent = (item.addOns ?? []).map(addOn => ({
               type: 'text',
-              text: ''+ addOn || '',
+              text: '' + addOn || '',
               size: 'xs',
             }))
 

@@ -149,7 +149,6 @@ export class LinePublicService {
       selctedAddOns: [],
     })
 
-
     messages.push({
       type: 'flex',
       altText: 'Bash - Menu Detail',
@@ -334,8 +333,7 @@ export class LinePublicService {
         messages: [
           {
             type: 'text',
-            text:
-              'Your order has been added to the system!'
+            text: 'Your order has been added to the system!',
           },
           {
             type: 'flex',
@@ -484,7 +482,6 @@ export class LinePublicService {
         if (noteParts['DeliveryAddress']) {
           deliveryAddress = noteParts['DeliveryAddress']
         }
-
 
         return {
           name: line.full_product_name ?? 'Unknown',

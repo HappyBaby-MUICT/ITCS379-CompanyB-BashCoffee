@@ -1,6 +1,9 @@
-import { FlexContainer } from "@line/bot-sdk/dist/messaging-api/api"
+import { FlexContainer } from '@line/bot-sdk/dist/messaging-api/api'
 
-export const SweetnessLevel = (menu: string, selectedAddOns: string[] = []): FlexContainer => {
+export const SweetnessLevel = (
+  menu: string,
+  selectedAddOns: string[] = [],
+): FlexContainer => {
   return {
     type: 'bubble',
     size: 'giga',
