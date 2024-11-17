@@ -63,26 +63,13 @@ export class LinePublicService {
   }
 
   private async createPaymentLink(amount: number) {
-    const payment = await this.payment.checkout.sessions.create({
+    const paymentIntent = await this.payment.paymentIntents.create({
+      amount: amount * 100,
+      currency: 'thb',
       payment_method_types: ['card', 'promptpay'],
-      line_items: [
-        {
-          price_data: {
-            currency: 'thb',
-            product_data: {
-              name: 'Bash Coffee: Order',
-            },
-            unit_amount: amount * 100,
-          },
-          quantity: 1,
-          success_url: 'https://bash-coffee.com/success',
-          cancel_url: 'https://bash-coffee.com/cancel',
-        },
-      ],
-      mode: 'payment',
     })
 
-    return payment.url
+    return paymentIntent
   }
 
   async handleMenuMessage(userId: string, replyToken: string) {
@@ -494,6 +481,10 @@ export class LinePublicService {
       const totalItems = order.pos_order_line.length
       const totalPrice = order.pos_order_line[0].price_subtotal.toNumber()
       const paymentLink = await this.createPaymentLink(totalPrice)
+      let qrUrl = ''
+      if (paymentLink.next_action && paymentLink.next_action.promptpay_display_qr_code) {
+        qrUrl = paymentLink.next_action.promptpay_display_qr_code.image_url_png
+      }
       let deliveryAddress = ''
 
       const paymentItems = order.pos_order_line.map(line => {
@@ -531,7 +522,7 @@ export class LinePublicService {
         items: paymentItems,
         totalItems,
         totalPrice,
-        qrUrl: paymentLink,
+        qrUrl,
       })
 
       await this.client.replyMessage({
