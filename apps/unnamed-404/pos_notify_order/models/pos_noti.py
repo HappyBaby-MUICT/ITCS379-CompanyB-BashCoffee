@@ -18,6 +18,8 @@ class LineWebhookController(http.Controller):
                 # Check if user requests order status
                 if user_message == 'check order status':
                     response_message = self.get_latest_order_status(user_id)
+                elif user_message == 'play sound notification':
+                    self.send_audio_reply(reply_token, "sound-notification.mp3") #path/to/sound-notification.mp3
                 else:
                     response_message = "Send 'Check Order Status' to get your latest order update."
 
@@ -69,3 +71,27 @@ class LineWebhookController(http.Controller):
         # Send the reply to LINE
         response = requests.post(url, headers=headers, json=payload)
         print("Reply sent. Status code:", response.status_code, "Response:", response.text)
+
+    def send_audio_reply(self, reply_token, audio_url):
+        # LINE API Reply endpoint
+        url = "https://api.line.me/v2/bot/message/reply"  # Replace with the LINE API endpoint
+        headers = {
+            "Content-Type": "application/json",
+            "Authorization": "Bearer 8aazj0E0D3DG4H6ulH1JNs80Qg8Z9bqoiNP6uM5H1+X+c2ryycfmlr9afCu7HwsdpNdqMQybBJWAScFeDTIRZh9QQ8S6zhiGtkyPTdLG7wcZ8LXpBmUj96oTWn0lDimtbOGWkMWMAVRpNTNYwzam0QdB04t89/1O/w1cDnyilFU="  # Replace with your LINE Channel Access Token
+        }
+
+        # Define the reply payload for audio message
+        payload = {
+            "replyToken": reply_token,
+            "messages": [
+                {
+                    "type": "audio",
+                    "originalContentUrl": audio_url,  # URL to the audio file
+                    "duration": 60000  # Duration of the audio in milliseconds
+                }
+            ]
+        }
+
+        # Send the audio reply to LINE
+        response = requests.post(url, headers=headers, json=payload)
+        print("Audio reply sent. Status code:", response.status_code, "Response:", response.text)
