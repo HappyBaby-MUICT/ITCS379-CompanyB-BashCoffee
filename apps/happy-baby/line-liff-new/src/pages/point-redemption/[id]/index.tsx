@@ -1,4 +1,3 @@
-import { useState } from 'react'
 import MembershipLayout from '@/component/MembershipLayout'
 import Link from 'next/link'
 import { IoArrowBack } from 'react-icons/io5'
@@ -12,6 +11,7 @@ export default function PointRedemptionID() {
     e.preventDefault() // Prevent default form submission
     router.push(`${router.asPath}/coupon`)
   }
+
   return (
     <MembershipLayout>
       <div className="flex flex-col items-center w-full gap-8">
@@ -35,19 +35,23 @@ export default function PointRedemptionID() {
                     className="object-cover"
                   />
                 </div>
-                <p className="text-lg font-bold text-[#2D1810] my-2">
-                  A Free Drink on Us
-                </p>
-                <div className="flex gap-2 px-1 bg-[#E9E5D7] w-fit rounded-md items-center">
-                  <p className="text-md text-[#2D1810]">10</p>
-                  <TbParkingCircleFilled size={20} />
+                <div className="flex justify-between items-center mt-4">
+                  <p className="text-lg font-bold text-[#2D1810]">
+                    A Free Drink on Us
+                  </p>
+                  <div className="flex gap-2 px-1 bg-[#E9E5D7] w-fit rounded-md items-center">
+                    <p className="text-lg text-[#2D1810]">10</p>
+                    <TbParkingCircleFilled size={24} />
+                  </div>
                 </div>
                 <p className="text-md font-bold text-[#2D1810] mt-2">
                   Condition
                 </p>
                 <ul className="list-disc text-sm text-[#2D1810] ml-5 space-y-1">
-                  <li>The add-on isn't included.</li>
-                  <li>This coupon can be used in online order and at Bash Coffee.</li>
+                  <li>The add-on is not included.</li>
+                  <li>
+                    This coupon can be used in online order and at Bash Coffee.
+                  </li>
                 </ul>
               </div>
               <button

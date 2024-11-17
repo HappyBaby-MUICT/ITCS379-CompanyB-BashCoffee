@@ -1,28 +1,27 @@
 import MembershipLayout from '@/component/MembershipLayout'
 import Link from 'next/link'
 import { IoArrowBack } from 'react-icons/io5'
-import { IoIosGift } from 'react-icons/io'
+import { RiCoupon2Line } from 'react-icons/ri'
 
-export default function Coupon() {
-
+export default function MyCoupon() {
   return (
     <MembershipLayout>
       <div className="flex flex-col items-center w-full gap-8">
         <div className="flex flex-col items-center gap-2 w-full">
           <div className="flex gap-2 items-center justify-between my-2 w-full">
-            <Link href="/point-redemption">
+            <Link href="/">
               <IoArrowBack size={24} color="#AB9064" />
             </Link>
             <div className="flex gap-2 items-center my-2">
-              <IoIosGift size={20} />
-              <p className=" font-bold text-md">Point Redemption</p>
+              <RiCoupon2Line size={20} />
+              <p className=" font-bold text-md">My Coupon</p>
             </div>
           </div>
-          <div className="flex flex-col gap-4 w-full bg-[#D5CBB1] p-4 rounded-xl">
+          <div className="flex flex-col gap-4 w-full bg-[#D5CBB1] p-4 rounded-xl mb-2">
             <div className="flex flex-col gap- w-full">
               <div className="relative w-full rounded-xl overflow-hidden aspect-[16/9]">
                 <img
-                  src="../../redeemitem.jpg"
+                  src="../redeemitem.jpg"
                   alt="pointredeempic"
                   className="object-cover"
                 />
@@ -48,6 +47,9 @@ export default function Coupon() {
               COPY CODE
             </button>
           </div>
+          <p className="text-lg text-[#454648] my-2">
+            No redeemed coupon here!
+          </p>
         </div>
       </div>
     </MembershipLayout>

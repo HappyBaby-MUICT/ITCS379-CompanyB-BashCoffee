@@ -14,6 +14,7 @@ export default function Home() {
     e.preventDefault() // Prevent default form submission
     router.push('/signin') // Navigate to the OTP verification page
   }
+
   return (
     <MembershipLayout>
       <div className="flex flex-col items-center w-full gap-8">

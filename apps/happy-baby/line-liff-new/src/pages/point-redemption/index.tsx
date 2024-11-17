@@ -1,8 +1,8 @@
-import { useState } from 'react'
 import MembershipLayout from '@/component/MembershipLayout'
 import Link from 'next/link'
 import { IoArrowBack } from 'react-icons/io5'
 import { IoIosGift } from 'react-icons/io'
+import { TbParkingCircleFilled } from 'react-icons/tb'
 
 export default function PointRedemption() {
   return (
@@ -28,10 +28,15 @@ export default function PointRedemption() {
                     className="object-cover"
                   />
                 </div>
-                <p className="text-lg font-bold text-[#2D1810] mt-2">
-                  A Free Drink on Us
-                </p>
-                <p className="text-lg text-[#2D1810]">10 Points</p>
+                <div className="flex justify-between items-center  mt-4">
+                  <p className="text-lg font-bold text-[#2D1810]">
+                    A Free Drink on Us
+                  </p>
+                  <div className="flex gap-2 px-1 bg-[#E9E5D7] w-fit rounded-md items-center">
+                    <p className="text-lg text-[#2D1810]">10</p>
+                    <TbParkingCircleFilled size={24} />
+                  </div>
+                </div>
               </div>
             </div>
           </Link>

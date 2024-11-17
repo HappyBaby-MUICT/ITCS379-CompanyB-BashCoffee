@@ -1,5 +1,5 @@
 {
-  "name": "chunimai",
+  "name": "CompanyB-BashCoffee",
   "scripts": {
     "preinstall": "npx only-allow pnpm",
     "dev": "dotenv -- turbo run dev --parallel",
