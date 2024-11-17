@@ -4,7 +4,7 @@ import {
   createMenuSelector,
 } from './constants/MenuSelector'
 import { PrismaService } from '@bash-coffee/db'
-import { FlexBubble, messagingApi, RichMenu } from '@line/bot-sdk'
+import { FlexBubble, messagingApi, RichMenu, QuickReply, QuickReplyItem } from '@line/bot-sdk'
 import { Injectable } from '@nestjs/common'
 import { JsonValue, Decimal } from '@prisma/client/runtime/library'
 import { createMenuDetail } from './constants/MenuDetail'
@@ -355,6 +355,7 @@ export class LinePublicService {
     if (text && text.toLowerCase() === 'order') {
       await this.handleMenuMessage(userId, replyToken)
     }
+    
   }
 
   async handleDelivery(replyToken: string) {
@@ -558,4 +559,100 @@ export class LinePublicService {
     }
     return
   }
+
+
+  async handleChatBot(replyToken: string, userId: string, lineMessage: any) {
+    async function fetchChatBotResponse(message: any) {
+      const response = await fetch(
+        'http://localhost:15542/api/v1/prediction/e5fd9fe3-ddf3-438a-a078-f4f4a2e07eef',
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(message)
+        }
+      );
+      const result = await response.json();
+
+      return result;
+    }
+    console.log(lineMessage);
+    console.log(userId);
+
+
+    await fetchChatBotResponse({"question": lineMessage, "overrideConfig": {"sessionId": userId},})
+    .then((response) => {
+      // console.log(response['text']);
+      try{
+        this.client.replyMessage({
+          replyToken,
+          messages: [
+            {
+              type: 'text',
+              text: response['text'],
+              quickReply: this.getStopChatQuickReply,
+            }
+          ] 
+        });
+      }
+      catch (error) {
+        console.error('Error sending chatbot response:', error)
+      }
+    });
+  }
+  
+  private getStartChatQuickReply: QuickReply = {
+    items: [
+      {
+        type: 'action',
+        action: {
+          type: 'postback',
+          label: 'คุยกับบอท',
+          data: JSON.stringify({ state: 'start_chat' })
+        },
+      },
+    ],
+  };
+  
+  private getStopChatQuickReply: QuickReply = {
+    items: [
+      {
+        type: 'action',
+        action: {
+          type: 'postback',
+          label: 'หยุดคุยกับบอท',
+          data: JSON.stringify({ state: 'stop_chat' })
+        },
+      },
+    ],
+  };
+  
+  async handleQuickReply(replyToken: string, quicktype: string) {
+    if(quicktype === 'เริ่มต้น') {
+      await this.client.replyMessage({
+        replyToken,
+        messages: [
+          {
+            type: 'text',
+            text: 'หากต้องการเริ่มต้นคุยกับบอทโปรดพิมพ์ "คุยกับบอท"',
+            quickReply: this.getStartChatQuickReply,
+          },
+        ],
+      });
+    }
+    else if(quicktype === 'หยุดคุยกับบอท') {
+      this.client.replyMessage({
+        replyToken,
+        messages: [
+          {
+            type: 'text',
+            text: 'กรุณาพิมพ์ข้อความที่ต้องการ',
+            quickReply: this.getStopChatQuickReply,
+          },
+        ],
+      });
+    }
+  }
+
 }
