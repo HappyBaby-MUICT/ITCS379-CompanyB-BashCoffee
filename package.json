@@ -4,7 +4,7 @@
     "preinstall": "npx only-allow pnpm",
     "dev": "dotenv -- turbo run dev --parallel",
     "dev:happybaby": "dotenv -- turbo run dev --filter=\"./apps/happy-baby/*\"",
-    "dev:happybaby:liff": "dotenv -- turbo run dev --filter=\"./apps/happy-baby/line-liff\"",
+    "dev:happybaby:liff": "dotenv -- turbo run dev --filter=\"./apps/happy-baby/line-liff-new\"",
     "build": "dotenv -- turbo run build",
     "build:package": "dotenv -- turbo run build --filter=\"./packages/*\"",
     "start": "dotenv -- turbo run start",
