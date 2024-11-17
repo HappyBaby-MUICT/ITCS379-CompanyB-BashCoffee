@@ -1,0 +1,217 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Light mode colors */
+    @apply font-sans;
+    --default-foreground: 0 0% 5%; /* Changed to a dark color for light mode */
+    --background: 0 0% 100%;
+    --foreground: var(--default-foreground);
+    --card: 0 0% 93%;
+    --card-foreground: var(--default-foreground);
+    --popover: 0 0% 95%;
+    --popover-foreground: var(--default-foreground);
+    --primary: 14 100% 66%;
+    --primary-foreground: 100 100% 100%;
+    --secondary: 0 0% 16%;
+    --secondary-foreground: var(--default-foreground);
+    --muted: 0 0% 90%;
+    --muted-foreground: 0 0% 35%;
+    --accent: 0 0% 85%;
+    --accent-foreground: var(--default-foreground);
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: var(--default-foreground);
+    --chunithm-foreground: var(--default-foreground);
+    --border: 0 0% 86%;
+    --input: 0 0% 86%;
+    --ring: 0 0% 90%;
+    --radius: 0.5rem;
+    --navbar-height: 65px;
+    --footer-height: 200px;
+  }
+
+  /* Dark mode overrides */
+  .dark {
+    --default-foreground: 210 40% 98%;
+    --background: 0 0% 5%;
+    --foreground: var(--default-foreground);
+    --card: 0 0% 7%;
+    --card-foreground: var(--default-foreground);
+    --popover: 0 0% 4.9%;
+    --popover-foreground: var(--default-foreground);
+    --muted: 0 0% 17.5%;
+    --muted-foreground: 0 0% 65.1%;
+    --accent: 0 0% 17.5%;
+    --accent-foreground: var(--default-foreground);
+    --border: 0 0% 16%;
+    --input: 0 0% 16%;
+    --ring: 0 0% 10%;
+  }
+
+  .bg-background {
+    background-color: hsl(var(--background));
+  }
+
+  .text-foreground {
+    color: hsl(var(--foreground));
+  }
+
+  .bg-card {
+    background-color: hsl(var(--card));
+  }
+
+  .bg-popover {
+    background-color: hsl(var(--popover));
+  }
+
+  .text-primary {
+    color: hsl(var(--primary));
+  }
+
+  .border-border {
+    border-color: hsl(var(--border));
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground antialiased;
+  }
+}
+
+@layer components {
+  .fi {
+    @apply flex items-center;
+  }
+
+  .text-subtitle {
+    @apply opacity-60;
+  }
+
+  .p-page {
+    @apply py-5;
+  }
+
+  .s-page {
+    @apply space-y-6;
+  }
+}
+
+.root {
+  display: flex;
+  min-height: 100vh;
+  /* background: hsl(var(--content)); */
+}
+
+.content {
+  flex: 1 1 0%;
+  display: flex;
+  flex-direction: column;
+  min-width: 0px;
+  gap: 8px;
+  overflow: auto;
+}
+
+@media (min-width: 0px) {
+  .content {
+    /* padding-left: 54px;
+    padding-right: 54px; */
+    padding-top: calc(12px + var(--header-height));
+    padding-bottom: 16px;
+  }
+}
+
+@media (min-width: 600px) {
+  .content {
+    padding-top: calc(12px + var(--header-height));
+    padding-bottom: 16px;
+  }
+}
+
+@media (min-width: 900px) {
+  .content {
+    padding-top: 0px;
+    padding-bottom: 0px;
+  }
+}
+
+.sidebar {
+  position: relative;
+  -webkit-transition:
+    -webkit-transform 0.3s,
+    width 0.3s;
+  transition:
+    transform 0.3s,
+    width 0.3s;
+  z-index: 10005;
+  width: 280px;
+  @apply top-0 flex flex-shrink-0 flex-col gap-4 border-r border-border bg-background p-4 py-8;
+}
+
+.sidebar-show {
+  --sidebar-active: 1;
+}
+
+.header {
+  z-index: 10000;
+  position: fixed;
+  height: var(--header-height);
+  width: 100vw;
+  @apply gap-4 border-b border-border bg-background;
+}
+
+@media (min-width: 0px) {
+  .header {
+    display: flex;
+  }
+
+  .sidebar {
+    position: fixed;
+    -webkit-transform: translateX(calc(100% * (var(--sidebar-active, 0) - 1)));
+    -moz-transform: translateX(calc(100% * (var(--sidebar-active, 0) - 1)));
+    -ms-transform: translateX(calc(100% * (var(--sidebar-active, 0) - 1)));
+    transform: translateX(calc(100% * (var(--sidebar-active, 0) - 1)));
+  }
+}
+
+@media (min-width: 900px) {
+  .header {
+    display: none;
+  }
+
+  .sidebar {
+    position: -webkit-sticky;
+    position: sticky;
+    -webkit-transform: none;
+    -moz-transform: none;
+    -ms-transform: none;
+    transform: none;
+  }
+}
+
+.main-container {
+  @apply mx-auto w-full max-w-[1500px] px-0 py-4 lg:px-4 lg:py-7;
+}
+
+.aspect-card {
+  aspect-ratio: 4 / 2.125;
+}
+
+.image-mask {
+  mask-image: linear-gradient(270deg, rgba(0, 0, 0, 0) 0%, rgb(0, 0, 0) 700px);
+}
+
+body {
+  overscroll-behavior-y: none;
+  overscroll-behavior-x: none;
+}
+
+.yarl__no_scroll {
+  pointer-events: all !important;
+}
