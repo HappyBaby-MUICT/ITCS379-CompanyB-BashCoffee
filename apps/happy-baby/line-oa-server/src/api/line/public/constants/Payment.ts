@@ -1,6 +1,5 @@
 import {
   FlexContainer,
-  FlexComponent,
 } from '@line/bot-sdk/dist/messaging-api/api'
 
 interface PaymentProps {
@@ -168,40 +167,38 @@ export const createPaymentMessage = ({
           ],
           paddingBottom: 'xl',
         },
-        {
-          type: 'box',
-          layout: 'vertical',
-          margin: 'xxl',
-          contents: [
-            {
-              type: 'image',
-              url: qrUrl || 'https://placehold.jp/150x150.png',
-              aspectMode: 'cover',
-              size: 'xl',
-              margin: 'md',
-            },
-            {
-              type: 'text',
-              text: 'Scan or save the PromptPay QR to pay your order',
-              color: '#aaaaaa',
-              wrap: true,
-              margin: 'md',
-              size: 'xs',
-              align: 'center',
-            },
-          ],
-          spacing: 'lg',
-          justifyContent: 'center',
-          alignItems: 'center',
-        },
+        // {
+        //   type: 'box',
+        //   layout: 'vertical',
+        //   margin: 'xxl',
+        //   contents: [
+        //     {
+        //       type: 'image',
+        //       url: qrUrl || 'https://placehold.jp/150x150.png',
+        //       aspectMode: 'cover',
+        //       size: 'xl',
+        //       margin: 'md',
+        //     },
+        //     {
+        //       type: 'text',
+        //       text: 'Scan or save the PromptPay QR to pay your order',
+        //       color: '#aaaaaa',
+        //       wrap: true,
+        //       margin: 'md',
+        //       size: 'xs',
+        //       align: 'center',
+        //     },
+        //   ],
+        //   spacing: 'lg',
+        //   justifyContent: 'center',
+        //   alignItems: 'center',
+        // },
         {
           type: 'button',
           action: {
-            type: 'postback',
-            label: 'Save QR',
-            data: JSON.stringify({
-              state: 'jump_success',
-            }),
+            type: 'uri',
+            label: 'Proceed to payment page',
+            uri: qrUrl,
           },
           style: 'primary',
           color: '#4F3A32',

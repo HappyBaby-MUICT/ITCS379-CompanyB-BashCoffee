@@ -1,9 +1,9 @@
+import { FollowEvent } from '@line/bot-sdk'
 import { Controller, Get, Post, Req } from '@nestjs/common'
 import { FastifyRequest } from 'fastify'
 
 import { LineEvent, MessageEvent, PostbackEvent } from './dto'
 import { LinePublicService } from './public.service'
-import { FollowEvent } from '@line/bot-sdk'
 
 const userStates: Record<string, { state: string }> = {}
 
@@ -23,7 +23,7 @@ export class LinePublicController {
     const events = req.body?.events || []
     const userId = events[0]?.source?.userId
 
-    if (!events.length || !userId) return { status: 'ok' }
+    if (!events.length || !userId) {return { status: 'ok' }}
 
     await Promise.all(
       events.map(async event => {
@@ -42,7 +42,7 @@ export class LinePublicController {
 
   private async handleMessageEvent(event: MessageEvent, userId: string) {
     const { replyToken, message } = event
-    if (!replyToken || message.type !== 'text' || !message.text) return;
+    if (!replyToken || message.type !== 'text' || !message.text) {return;}
 
     // if (!userStates[userId]) {
       // userStates[userId] = { state: '' };
@@ -111,7 +111,7 @@ export class LinePublicController {
         ),
       goto_delivery_address: async () => {
         userStates[userId] = { state: 'entering_address' }
-        this.service.handleDelivery(replyToken)
+        await this.service.handleDelivery(replyToken)
       },
       jump_success: () => this.service.updateMenuStatus(replyToken, userId),
       start_chat: async () => {
@@ -124,7 +124,7 @@ export class LinePublicController {
       }
     }
     
-    if (handlers[state]) await handlers[state]()
+    if (handlers[state]) {await handlers[state]()}
   }
 
 

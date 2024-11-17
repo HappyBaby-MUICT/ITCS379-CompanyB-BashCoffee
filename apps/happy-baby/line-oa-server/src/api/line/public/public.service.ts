@@ -1,28 +1,32 @@
+import { PrismaService } from '@bash-coffee/db'
+import { QuickReply, messagingApi } from '@line/bot-sdk'
 import { FlexContainer, Message } from '@line/bot-sdk/dist/messaging-api/api'
+import { Injectable } from '@nestjs/common'
+import { Decimal, JsonValue } from '@prisma/client/runtime/library'
+import stripe from 'stripe'
+
+// import { bakeryMenus } from './constants/EligibleMenus'
+import { createMenuDetail } from './constants/MenuDetail'
 import {
   addOnConfirmMessage,
   createMenuSelector,
 } from './constants/MenuSelector'
-import { PrismaService } from '@bash-coffee/db'
-import { FlexBubble, messagingApi, RichMenu, QuickReply, QuickReplyItem } from '@line/bot-sdk'
-import { Injectable } from '@nestjs/common'
-import { JsonValue, Decimal } from '@prisma/client/runtime/library'
-import { createMenuDetail } from './constants/MenuDetail'
-import { MenuName } from './dto'
-import { SweetnessLevel } from './constants/SweetnessLevel'
-import { createPaymentMessage } from './constants/Payment'
-import { bakeryMenus } from './constants/EligibleMenus'
 import { createOrderDetail } from './constants/OrderDetail'
+import { createPaymentMessage } from './constants/Payment'
+import { SweetnessLevel } from './constants/SweetnessLevel'
+import { MenuName } from './dto'
 
 @Injectable()
 export class LinePublicService {
   private readonly client
+  private readonly payment
 
   constructor(private readonly db: PrismaService) {
     const { MessagingApiClient } = messagingApi
     this.client = new MessagingApiClient({
       channelAccessToken: process.env.HAPPYBABY_LINE_CHANNEL as string,
     })
+    this.payment = new stripe(process.env.STRIPE_SECRET_KEY as string)
   }
 
   private transformMenus = (
@@ -40,6 +44,7 @@ export class LinePublicService {
     for (let i = 0; i < array.length; i += size) {
       result.push(array.slice(i, i + size))
     }
+
     return result
   }
 
@@ -57,15 +62,25 @@ export class LinePublicService {
     return parsedNote
   }
 
-  private async sendMessages(replyToken: string, messages: Message[]) {
-    const messageChunks = this.chunkArray(messages, 5)
+  private async createPaymentLink(amount: number) {
+    const payment = await this.payment.checkout.sessions.create({
+      payment_method_types: ['card', 'promptpay'],
+      line_items: [
+        {
+          price_data: {
+            currency: 'thb',
+            product_data: {
+              name: 'Bash Coffee: Order',
+            },
+            unit_amount: amount * 100,
+          },
+          quantity: 1,
+        },
+      ],
+      mode: 'payment',
+    })
 
-    for (const chunk of messageChunks) {
-      await this.client.replyMessage({
-        replyToken,
-        messages: chunk,
-      })
-    }
+    return payment.url
   }
 
   async handleMenuMessage(userId: string, replyToken: string) {
@@ -108,6 +123,7 @@ export class LinePublicService {
       }
 
       for (const batch of messageBatches) {
+        // eslint-disable-next-line no-await-in-loop
         await this.client.pushMessage({ to: userId, messages: batch })
       }
     } catch (error) {
@@ -127,6 +143,7 @@ export class LinePublicService {
 
     if (!menuDetail) {
       console.error('Menu not found or has missing fields:', menu)
+
       return
     }
 
@@ -255,6 +272,7 @@ export class LinePublicService {
 
     if (!menuDetail) {
       console.error('Menu not found or has missing fields:', menu)
+
       return
     }
 
@@ -264,6 +282,7 @@ export class LinePublicService {
 
     if (!name || !description || !price) {
       console.error('Menu has missing fields:', menu)
+
       return
     }
 
@@ -298,7 +317,7 @@ export class LinePublicService {
       },
     })
 
-    const posOrderLine = await this.db.pos_order_line.create({
+    await this.db.pos_order_line.create({
       data: {
         order_id: order.id,
         product_id: menuDetail.product_product[0].id,
@@ -355,12 +374,11 @@ export class LinePublicService {
     if (text && text.toLowerCase() === 'order') {
       await this.handleMenuMessage(userId, replyToken)
     }
-    
   }
 
   async handleDelivery(replyToken: string) {
     try {
-      this.client.replyMessage({
+      await this.client.replyMessage({
         replyToken,
         messages: [
           {
@@ -369,7 +387,9 @@ export class LinePublicService {
           },
         ],
       })
-    } catch {}
+    } catch {
+      console.error('Error handling delivery address')
+    }
   }
 
   async saveDeliveryAddress(
@@ -397,6 +417,7 @@ export class LinePublicService {
           replyToken,
           messages: [{ type: 'text', text: 'No active order found' }],
         })
+
         return
       }
 
@@ -446,6 +467,7 @@ export class LinePublicService {
 
       if (!order) {
         console.error('No active order found for the user:', userId)
+
         return
       }
 
@@ -469,7 +491,7 @@ export class LinePublicService {
 
       const totalItems = order.pos_order_line.length
       const totalPrice = order.pos_order_line[0].price_subtotal.toNumber()
-      const qrUrl = 'https://placehold.jp/150x150.png'
+      const paymentLink = await this.createPaymentLink(totalPrice)
       let deliveryAddress = ''
 
       const paymentItems = order.pos_order_line.map(line => {
@@ -492,6 +514,12 @@ export class LinePublicService {
         }
       })
 
+      if (!paymentLink) {
+        console.error('Error creating payment link')
+
+        return
+      }
+
       const paymentMessage = createPaymentMessage({
         receiptNumber: `${order.id}`,
         deliveryMethod: deliveryAddress?.toLowerCase().includes('ict')
@@ -501,7 +529,7 @@ export class LinePublicService {
         items: paymentItems,
         totalItems,
         totalPrice,
-        qrUrl,
+        qrUrl: paymentLink,
       })
 
       await this.client.replyMessage({
@@ -557,12 +585,16 @@ export class LinePublicService {
 
       return
     }
+
     return
   }
 
-
-  async handleChatBot(replyToken: string, userId: string, lineMessage: any) {
-    async function fetchChatBotResponse(message: any) {
+  async handleChatBot(
+    replyToken: string,
+    userId: string,
+    lineMessage: unknown,
+  ) {
+    async function fetchChatBotResponse(message: unknown) {
       const response = await fetch(
         'http://localhost:15542/api/v1/prediction/e5fd9fe3-ddf3-438a-a078-f4f4a2e07eef',
         {
@@ -570,21 +602,22 @@ export class LinePublicService {
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify(message)
-        }
-      );
-      const result = await response.json();
+          body: JSON.stringify(message),
+        },
+      )
+      const result = await response.json()
 
-      return result;
+      return result
     }
-    console.log(lineMessage);
-    console.log(userId);
+    console.log(lineMessage)
+    console.log(userId)
 
-
-    await fetchChatBotResponse({"question": lineMessage, "overrideConfig": {"sessionId": userId},})
-    .then((response) => {
+    await fetchChatBotResponse({
+      question: lineMessage,
+      overrideConfig: { sessionId: userId },
+    }).then(response => {
       // console.log(response['text']);
-      try{
+      try {
         this.client.replyMessage({
           replyToken,
           messages: [
@@ -592,16 +625,15 @@ export class LinePublicService {
               type: 'text',
               text: response['text'],
               quickReply: this.getStopChatQuickReply,
-            }
-          ] 
-        });
-      }
-      catch (error) {
+            },
+          ],
+        })
+      } catch (error) {
         console.error('Error sending chatbot response:', error)
       }
-    });
+    })
   }
-  
+
   private getStartChatQuickReply: QuickReply = {
     items: [
       {
@@ -609,12 +641,12 @@ export class LinePublicService {
         action: {
           type: 'postback',
           label: 'คุยกับบอท',
-          data: JSON.stringify({ state: 'start_chat' })
+          data: JSON.stringify({ state: 'start_chat' }),
         },
       },
     ],
-  };
-  
+  }
+
   private getStopChatQuickReply: QuickReply = {
     items: [
       {
@@ -622,14 +654,14 @@ export class LinePublicService {
         action: {
           type: 'postback',
           label: 'หยุดคุยกับบอท',
-          data: JSON.stringify({ state: 'stop_chat' })
+          data: JSON.stringify({ state: 'stop_chat' }),
         },
       },
     ],
-  };
-  
+  }
+
   async handleQuickReply(replyToken: string, quicktype: string) {
-    if(quicktype === 'เริ่มต้น') {
+    if (quicktype === 'เริ่มต้น') {
       await this.client.replyMessage({
         replyToken,
         messages: [
@@ -639,9 +671,8 @@ export class LinePublicService {
             quickReply: this.getStartChatQuickReply,
           },
         ],
-      });
-    }
-    else if(quicktype === 'หยุดคุยกับบอท') {
+      })
+    } else if (quicktype === 'หยุดคุยกับบอท') {
       this.client.replyMessage({
         replyToken,
         messages: [
@@ -651,8 +682,7 @@ export class LinePublicService {
             quickReply: this.getStopChatQuickReply,
           },
         ],
-      });
+      })
     }
   }
-
 }
