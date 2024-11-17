@@ -23,7 +23,9 @@ export class LinePublicController {
     const events = req.body?.events || []
     const userId = events[0]?.source?.userId
 
-    if (!events.length || !userId) {return { status: 'ok' }}
+    if (!events.length || !userId) {
+      return { status: 'ok' }
+    }
 
     await Promise.all(
       events.map(async event => {
@@ -42,17 +44,15 @@ export class LinePublicController {
 
   private async handleMessageEvent(event: MessageEvent, userId: string) {
     const { replyToken, message } = event
-    if (!replyToken || message.type !== 'text' || !message.text) {return;}
-
-    // if (!userStates[userId]) {
-      // userStates[userId] = { state: '' };
-    // }
+    if (!replyToken || message.type !== 'text' || !message.text) {
+      return
+    }
 
     const userState = userStates[userId]?.state
 
-    if (message.text === "คุยกับบอท") {
-      await this.service.handleQuickReply(replyToken, 'หยุดคุยกับบอท');
-        userStates[userId] = { state: 'chatwithbot' }
+    if (message.text === 'คุยกับบอท') {
+      await this.service.handleQuickReply(replyToken, 'หยุดคุยกับบอท')
+      userStates[userId] = { state: 'chatwithbot' }
     }
 
     switch (userState) {
@@ -67,7 +67,7 @@ export class LinePublicController {
         break
 
       case 'chatwithbot':
-        await this.service.handleChatBot(replyToken, userId, message.text);
+        await this.service.handleChatBot(replyToken, userId, message.text)
         break
 
       default:
@@ -77,14 +77,16 @@ export class LinePublicController {
 
   private async handlePostbackEvent(event: PostbackEvent, userId: string) {
     const { replyToken, postback } = event
-    if (!replyToken || !postback.data) {return}
+    if (!replyToken || !postback.data) {
+      return
+    }
 
     const postBackData = JSON.parse(postback.data)
-    console.log(postBackData);
 
     const state = postBackData?.state
-
     const handlers: Record<string, () => Promise<void>> = {
+      backto_menu: () =>
+        this.service.handleMenuMessage(userId, replyToken),
       order: () =>
         this.service.handleMenuClick(userId, replyToken, postBackData.menu),
       add_on_yes: () =>
@@ -115,23 +117,26 @@ export class LinePublicController {
       },
       jump_success: () => this.service.updateMenuStatus(replyToken, userId),
       start_chat: async () => {
-        await this.service.handleQuickReply(replyToken, 'หยุดคุยกับบอท');
+        await this.service.handleQuickReply(replyToken, 'หยุดคุยกับบอท')
         userStates[userId] = { state: 'chatwithbot' }
       },
       stop_chat: async () => {
-        userStates[userId] = { state: '' };
-        await this.service.handleQuickReply(replyToken, 'เริ่มต้น');
-      }
+        userStates[userId] = { state: '' }
+        await this.service.handleQuickReply(replyToken, 'เริ่มต้น')
+      },
     }
-    
-    if (handlers[state]) {await handlers[state]()}
-  }
 
+    if (handlers[state]) {
+      await handlers[state]()
+    }
+  }
 
   public async handleFollowEvent(event: FollowEvent, userId: string) {
     const { replyToken } = event
-    if (!replyToken) {return}
+    if (!replyToken) {
+      return
+    }
 
-    await this.service.handleQuickReply(replyToken, 'เริ่มต้น');  
+    await this.service.handleQuickReply(replyToken, 'เริ่มต้น')
   }
 }

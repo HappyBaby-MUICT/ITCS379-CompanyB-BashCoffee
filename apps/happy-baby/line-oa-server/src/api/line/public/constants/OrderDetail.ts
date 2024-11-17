@@ -1,6 +1,6 @@
 import {
-  FlexContainer,
   FlexComponent,
+  FlexContainer,
 } from '@line/bot-sdk/dist/messaging-api/api'
 
 interface ConfirmOrderProps {

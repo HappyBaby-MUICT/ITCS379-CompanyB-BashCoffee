@@ -2,6 +2,7 @@ import {
   FlexComponent,
   FlexContainer,
 } from '@line/bot-sdk/dist/messaging-api/api'
+
 import { bakeryMenus, jellyMenus, oatMilkMenus } from './EligibleMenus'
 
 interface MenuDetailProps {

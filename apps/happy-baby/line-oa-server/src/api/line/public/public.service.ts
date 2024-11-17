@@ -16,6 +16,22 @@ import { createPaymentMessage } from './constants/Payment'
 import { SweetnessLevel } from './constants/SweetnessLevel'
 import { MenuName } from './dto'
 
+interface OrderItem {
+  customerNote: string
+  menu: string
+  selectedAddOns: string[]
+  sweetness?: number
+  price: number
+}
+
+interface UserOrderState {
+  state: string
+  currentOrder?: OrderItem
+  orderItems: OrderItem[]
+}
+
+const userStates: Record<string, UserOrderState> = {}
+
 @Injectable()
 export class LinePublicService {
   private readonly client
@@ -62,14 +78,33 @@ export class LinePublicService {
     return parsedNote
   }
 
-  private async createPaymentLink(amount: number) {
-    const paymentIntent = await this.payment.paymentIntents.create({
-      amount: amount * 100,
-      currency: 'thb',
-      payment_method_types: ['card', 'promptpay'],
+  private async createPaymentLink(amount: number, orderId: number, lineId: string) {
+    const product = await this.payment.products.create({
+      name: 'Bash Coffee Order',
     })
 
-    return paymentIntent
+    const prices = await this.payment.prices.create({
+      product: product.id,
+      unit_amount: amount * 100,
+      currency: 'thb',
+    })
+
+    const paymentLink = await this.payment.paymentLinks.create({
+      line_items: [
+        {
+          price: prices.id,
+          quantity: 1,
+        },
+      ],
+      metadata: {
+        order_id: orderId, // Attach the custom Order ID here
+        line_id: lineId,
+      },
+
+      payment_method_types: ['promptpay'],
+    })
+
+    return paymentLink.url
   }
 
   async handleMenuMessage(userId: string, replyToken: string) {
@@ -136,13 +171,19 @@ export class LinePublicService {
       return
     }
 
+    // Initialize user state if needed
+    if (!userStates[userId]) {
+      userStates[userId] = { state: '', orderItems: [] }
+    }
+
+    userStates[userId].currentOrder = {
+      menu,
+      selectedAddOns: [],
+      price: menuDetail.list_price?.toNumber() || 0,
+      customerNote: '',
+    }
+
     const messages: Message[] = []
-
-    messages.push({
-      type: 'text',
-      text: 'Please recheck your order details',
-    })
-
     const name = (menuDetail.name as MenuName)?.en_US ?? 'N/A'
     const description = (menuDetail.description as MenuName)?.en_US ?? 'N/A'
 
@@ -155,11 +196,17 @@ export class LinePublicService {
       selctedAddOns: [],
     })
 
-    messages.push({
-      type: 'flex',
-      altText: 'Bash - Menu Detail',
-      contents: flexMessage,
-    })
+    messages.push(
+      {
+        type: 'text',
+        text: 'Please recheck your order details',
+      },
+      {
+        type: 'flex',
+        altText: 'Bash - Menu Detail',
+        contents: flexMessage,
+      },
+    )
 
     try {
       await this.client.replyMessage({
@@ -247,6 +294,12 @@ export class LinePublicService {
     selectedAddOns: string[],
     sweetness: number,
   ) {
+    if (!userStates[userId]?.currentOrder) {
+      console.error('No current order found for user:', userId)
+
+      return
+    }
+
     const menuDetail = await this.db.product_template.findFirst({
       where: {
         name: {
@@ -260,98 +313,133 @@ export class LinePublicService {
     })
 
     if (!menuDetail) {
-      console.error('Menu not found or has missing fields:', menu)
+      console.error('Menu not found:', menu)
 
       return
     }
 
-    const name = (menuDetail.name as MenuName)?.en_US
-    const description = (menuDetail.description as MenuName)?.en_US
-    let price = menuDetail.list_price?.toNumber()
-
-    if (!name || !description || !price) {
-      console.error('Menu has missing fields:', menu)
-
-      return
-    }
-
-    let customerNote = ''
-    if (sweetness) {
-      customerNote += `sweetness: ${sweetness}, `
-    }
-    if (selectedAddOns.length > 0) {
-      customerNote += selectedAddOns.map(addOn => `addOn: ${addOn}`).join(', ')
-    }
-
+    // Calculate price with add-ons
+    let price = menuDetail.list_price?.toNumber() || 0
     selectedAddOns.forEach(addOn => {
-      price =
-        (price ?? 0) +
+      price +=
         (addOn === 'Oat Milk' ? 15 : 0) +
         (addOn === 'Brown Sugar Jelly' ? 10 : 0)
     })
 
-    const order = await this.db.pos_order.create({
-      data: {
-        user_id: 1,
-        company_id: 1,
-        pricelist_id: 1,
-        session_id: 1,
-        state: 'draft',
-        name: `Customer:${userId}`,
-        amount_total: price,
-        amount_tax: 0,
-        amount_paid: 0,
-        amount_return: 0,
-        date_order: new Date(),
-      },
-    })
-
-    await this.db.pos_order_line.create({
-      data: {
-        order_id: order.id,
-        product_id: menuDetail.product_product[0].id,
-        name: `Customer:${userId}`,
-        price_subtotal: price,
-        price_subtotal_incl: price,
-        qty: 1,
-        create_uid: 2,
-        write_uid: 2,
-        company_id: 1,
-        full_product_name: name,
-        price_unit: price,
-        discount: 0,
-        is_total_cost_computed: true,
-        create_date: new Date(),
-        write_date: new Date(),
-        price_extra: 0,
-        customer_note: customerNote.replace(/, $/, ''),
-      },
-    })
-
-    const orderDetail = createOrderDetail({
-      id: order.id,
-      name,
+    // Complete the current order
+    const currentOrder = {
+      menu,
       selectedAddOns,
       sweetness,
       price,
+    }
+
+    // Add to order items array
+    if (!userStates[userId]) {
+      userStates[userId] = { state: '', orderItems: [] }
+    }
+
+    userStates[userId].orderItems.push({
+      menu: currentOrder.menu,
+      selectedAddOns: currentOrder.selectedAddOns,
+      sweetness: currentOrder.sweetness,
+      price: currentOrder.price,
+      customerNote: '',
     })
+
+    // Calculate total price of all items
+    const totalPrice = userStates[userId].orderItems.reduce(
+      (total, item) => total + item.price,
+      0,
+    )
+
+    const orderSummaryMessage: FlexContainer = {
+      type: 'bubble',
+      body: {
+        type: 'box',
+        layout: 'vertical',
+        contents: [
+          {
+            type: 'text',
+            text: 'Current Order Summary',
+            weight: 'bold',
+            size: 'xl',
+          },
+          {
+            type: 'box',
+            layout: 'vertical',
+            margin: 'md',
+            spacing: 'sm',
+            contents: userStates[userId].orderItems.map(item => ({
+              type: 'box',
+              layout: 'horizontal',
+              contents: [
+                {
+                  type: 'text',
+                  text: item.menu,
+                  size: 'sm',
+                  flex: 2,
+                },
+                {
+                  type: 'text',
+                  text: `฿${item.price}`,
+                  size: 'sm',
+                  align: 'end',
+                },
+              ],
+            })),
+          },
+          {
+            type: 'text',
+            text: `Total: ฿${totalPrice}`,
+            weight: 'bold',
+            margin: 'lg',
+          },
+          {
+            type: 'box',
+            layout: 'horizontal',
+            margin: 'lg',
+            spacing: 'sm',
+            contents: [
+              {
+                type: 'button',
+                color: '#4F3A32',
+                action: {
+                  type: 'postback',
+                  label: 'Add More',
+                  data: JSON.stringify({ state: 'backto_menu' }),
+                },
+                style: 'primary',
+              },
+              {
+                type: 'button',
+                color: '#4F3A32',
+                action: {
+                  type: 'postback',
+                  label: 'Checkout',
+                  data: JSON.stringify({ state: 'goto_delivery_address' }),
+                },
+                style: 'primary',
+              },
+            ],
+          },
+        ],
+      },
+    }
+
     try {
       await this.client.replyMessage({
         replyToken,
         messages: [
           {
-            type: 'text',
-            text: 'Your order has been added to the system!',
-          },
-          {
             type: 'flex',
-            altText: 'Payment',
-            contents: orderDetail,
+            altText: 'Order Summary',
+            contents: orderSummaryMessage,
           },
         ],
       })
     } catch (error) {
-      console.error('Error handling checkout:', error)
+      console.error('Error handling order confirmation:', error)
     }
   }
 
@@ -441,77 +529,102 @@ export class LinePublicService {
 
   async savePhoneNumber(userId: string, replyToken: string, phone: string) {
     try {
-      const order = await this.db.pos_order.findFirst({
-        where: {
-          name: `Customer:${userId}`,
-          state: 'draft',
-        },
-        include: {
-          pos_order_line: true,
-        },
-        orderBy: {
-          create_date: 'desc',
-        },
-      })
-
-      if (!order) {
+      const userState = userStates[userId]
+      if (!userState || !userState.orderItems.length) {
         console.error('No active order found for the user:', userId)
 
         return
       }
 
-      const currentNote = order.pos_order_line[0]?.customer_note || ''
-      const updatedNote = `${currentNote}, Phone Number: ${phone}`.replace(
-        /^, /,
-        '',
+      // Create the main order
+      const totalPrice = userState.orderItems.reduce(
+        (total, item) => total + item.price,
+        0,
       )
-
-      await this.db.pos_order.update({
-        where: { id: order.id },
+      const order = await this.db.pos_order.create({
         data: {
-          pos_order_line: {
-            update: {
-              where: { id: order.pos_order_line[0].id },
-              data: { customer_note: updatedNote },
-            },
-          },
+          user_id: 1,
+          company_id: 1,
+          pricelist_id: 1,
+          session_id: 1,
+          state: 'draft',
+          name: `Customer:${userId}`,
+          amount_total: totalPrice,
+          amount_tax: 0,
+          amount_paid: 0,
+          amount_return: 0,
+          date_order: new Date(),
         },
       })
 
-      const totalItems = order.pos_order_line.length
-      const totalPrice = order.pos_order_line[0].price_subtotal.toNumber()
-      const paymentLink = await this.createPaymentLink(totalPrice)
-      let qrUrl = ''
-      if (paymentLink.next_action && paymentLink.next_action.promptpay_display_qr_code) {
-        qrUrl = paymentLink.next_action.promptpay_display_qr_code.image_url_png
-      }
-      let deliveryAddress = ''
+      // Create order lines for each item
+      for (const item of userState.orderItems) {
+        // eslint-disable-next-line no-await-in-loop
+        const menuDetail = await this.db.product_template.findFirst({
+          where: {
+            name: {
+              path: ['en_US'],
+              equals: item.menu,
+            },
+          },
+          include: {
+            product_product: true,
+          },
+        })
 
-      const paymentItems = order.pos_order_line.map(line => {
-        const noteParts = this.parseCustomerNote(line.customer_note ?? '')
-
-        const addOns = Object.keys(noteParts)
-          .filter(key => key.startsWith('addOn'))
-          .map(key => `- add-on: ${noteParts[key]}`)
-
-        // Check for delivery address
-        if (noteParts['DeliveryAddress']) {
-          deliveryAddress = noteParts['DeliveryAddress']
+        if (!menuDetail) {
+          return
         }
 
-        return {
-          name: line.full_product_name ?? 'Unknown',
-          price: line.price_unit ? line.price_unit.toNumber() : 0,
-          sweetness: noteParts['sweetness'] ? `${noteParts['sweetness']}` : '-',
-          addOns,
+        let customerNote = ''
+        if (item.sweetness) {
+          customerNote += `sweetness: ${item.sweetness}, `
         }
-      })
+        if (item.selectedAddOns.length > 0) {
+          customerNote += item.selectedAddOns
+            .map(addOn => `addOn: ${addOn}`)
+            .join(', ')
+        }
 
-      if (!paymentLink) {
-        console.error('Error creating payment link')
-
-        return
+        // eslint-disable-next-line no-await-in-loop
+        await this.db.pos_order_line.create({
+          data: {
+            order_id: order.id,
+            product_id: menuDetail.product_product[0].id,
+            name: `Customer:${userId}`,
+            price_subtotal: item.price,
+            price_subtotal_incl: item.price,
+            qty: 1,
+            create_uid: 2,
+            write_uid: 2,
+            company_id: 1,
+            full_product_name: (menuDetail.name as MenuName)?.en_US ?? 'N/A',
+            price_unit: item.price,
+            discount: 0,
+            is_total_cost_computed: true,
+            create_date: new Date(),
+            write_date: new Date(),
+            price_extra: 0,
+            customer_note:
+              customerNote.replace(/, $/, '') + `, Phone Number: ${phone}`,
+          },
+        })
       }
+
+      // Create payment link and handle payment display
+      const paymentLink = await this.createPaymentLink(totalPrice, order.id, userId)
+
+      const paymentItems = userState.orderItems.map(item => ({
+        name: item.menu,
+        price: item.price,
+        sweetness: item.sweetness ? `${item.sweetness}` : '-',
+        addOns: item.selectedAddOns.map(addOn => `- add-on: ${addOn}`),
+      }))
+
+      const noteParts = this.parseCustomerNote(
+        userState.orderItems[0]?.customerNote ?? '',
+      )
+      const deliveryAddress = noteParts['DeliveryAddress'] || ''
 
       const paymentMessage = createPaymentMessage({
         receiptNumber: `${order.id}`,
@@ -520,9 +633,9 @@ export class LinePublicService {
           : deliveryAddress,
         phoneNumber: phone,
         items: paymentItems,
-        totalItems,
+        totalItems: userState.orderItems.length,
         totalPrice,
-        qrUrl,
+        qrUrl: paymentLink,
       })
 
       await this.client.replyMessage({
@@ -539,6 +652,8 @@ export class LinePublicService {
           },
         ],
       })
+
+      delete userStates[userId]
     } catch (error) {
       console.error('Error saving phone number:', error)
     }
@@ -602,8 +717,6 @@ export class LinePublicService {
 
       return result
     }
-    console.log(lineMessage)
-    console.log(userId)
 
     await fetchChatBotResponse({
       question: lineMessage,
