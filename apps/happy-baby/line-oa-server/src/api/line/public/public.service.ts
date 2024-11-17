@@ -75,6 +75,8 @@ export class LinePublicService {
             unit_amount: amount * 100,
           },
           quantity: 1,
+          success_url: 'https://bash-coffee.com/success',
+          cancel_url: 'https://bash-coffee.com/cancel',
         },
       ],
       mode: 'payment',
