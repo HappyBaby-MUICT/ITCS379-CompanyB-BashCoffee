@@ -8,6 +8,7 @@ export default function Signup() {
     e.preventDefault() // Prevent default form submission
     router.push('/signup/verify') // Navigate to the OTP verification page
   }
+
   return (
     <DefaultLayout>
       <div className="flex flex-col items-center w-full gap-8">
@@ -16,7 +17,7 @@ export default function Signup() {
             SIGN UP
           </p>
           <p className=" text-sm text-center text-[#17181A]">
-            Let's be one of bash members!
+            Let&apos;s be one of bash members!
           </p>
         </div>
 

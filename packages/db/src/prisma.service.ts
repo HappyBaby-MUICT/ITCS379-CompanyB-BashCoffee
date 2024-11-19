@@ -1,6 +1,6 @@
 import { Injectable, OnModuleDestroy, OnModuleInit } from '@nestjs/common'
 
-import { PrismaClient } from '../dist/client'
+import { PrismaClient } from '../odoo/dist/odoo/client'
 
 @Injectable()
 export class PrismaService

@@ -33,13 +33,9 @@ export default function Verify() {
 
   const handleResend = () => {
     // Add your resend OTP logic here
-    console.log('Resending OTP...')
   }
 
   const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    const otpString = otp.join('')
-    console.log('Submitting OTP:', otpString)
   }
 
   const handleVerify = (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -76,7 +72,7 @@ export default function Verify() {
             ))}
           </div>
           <div className="flex gap-2 items-center justify-center">
-            <p className="text-sm">Didn't get OTP code? </p>
+            <p className="text-sm">Didn&apos;t get OTP code? </p>
             <button
               type="button"
               onClick={handleResend}

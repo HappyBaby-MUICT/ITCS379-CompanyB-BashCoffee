@@ -460,7 +460,7 @@ export class LinePublicService {
         messages: [
           {
             type: 'text',
-            text: 'Please enter your delivery address:',
+            text: 'Please enter your delivery address: (We only deliver in the Mahidol University area only)',
           },
         ],
       })

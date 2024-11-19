@@ -1,0 +1,56 @@
+generator client {
+  provider      = "prisma-client-js"
+  output        = "../liff/dist/liff/client"
+  binaryTargets = ["native"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("LINE_DB_URL")
+}
+
+model Coupon {
+  id          String   @id
+  name        String
+  description String
+  points      Int
+  imageUrl    String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  UserCoupons UserCoupons?
+}
+
+model UserCoupons {
+  id        String   @id
+  userId    String
+  couponId  String   @unique
+  amount    Int
+  Coupon    Coupon   @relation(fields: [couponId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model LineUser {
+  id          String @id @default(cuid())
+  lineToken   String @unique
+  email       String
+  firstName   String
+  lastName    String
+  points      Int
+  phoneNumber String @unique
+
+  Otp Otp[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Otp {
+  id        String   @id @default(cuid())
+  userId    String
+  otp       String
+  user      LineUser @relation(fields: [userId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
