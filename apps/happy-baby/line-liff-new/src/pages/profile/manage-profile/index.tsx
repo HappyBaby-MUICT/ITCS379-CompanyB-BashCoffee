@@ -1,28 +1,71 @@
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import MembershipLayout from '@/component/MembershipLayout'
 import { FaUserPen } from 'react-icons/fa6'
 import Link from 'next/link'
 import { IoArrowBack } from 'react-icons/io5'
+import { Button } from '@/modules/ui/button'
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from '@/modules/ui/form'
+import { z } from 'zod'
+import { useForm } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { useSession } from 'next-auth/react'
+import { Input } from '@/modules/ui/input'
+import { updateUser } from '@/service/auth'
+import { useMutation } from '@tanstack/react-query'
+import { toast } from 'sonner'
+import { useRouter } from 'next/router'
+
+const formSchema = z.object({
+  email: z.string().email('Invalid email address'),
+  firstName: z.string(),
+  lastName: z.string(),
+})
 
 export default function Profile() {
-  const [formData, setFormData] = useState({
-    email: 'ictbashcoffee303@gmail.com',
-    firstName: 'Bash',
-    lastName: 'Coffee',
+  const { data: session, update, status } = useSession()
+  const hasUpdatedForm = useRef(false)
+  const router = useRouter()
+
+  const handleUpdateUser = useMutation(updateUser)
+
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      email: '',
+      firstName: '',
+      lastName: '',
+    },
   })
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    })
+  const onSubmit = async (values: z.infer<typeof formSchema>) => {
+    try {
+      await handleUpdateUser.mutateAsync(values)
+      update()
+      toast.success('Profile updated!')
+      router.push('/profile')
+      
+    } catch (e) {
+      toast.error('Failed to update user: ' + (e as Error).message)
+    }
   }
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    console.log('Form submitted with data:', formData)
-    // Here you would typically send the data to your backend
-  }
+  useEffect(() => {
+    if (status === 'authenticated' && !hasUpdatedForm.current) {
+      form.setValue('email', session.user.email)
+      form.setValue('firstName', session.user.firstName)
+      form.setValue('lastName', session.user.lastName)
+      update()
+      hasUpdatedForm.current = true
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   return (
     <MembershipLayout>
@@ -37,48 +80,76 @@ export default function Profile() {
               <p className=" font-bold text-md">Profile</p>
             </div>
           </div>
-          <form onSubmit={handleSubmit} className="w-full max-w-md">
-            <label className="block mb-3 text-sm font-semibold">Email</label>
-            <input
-              type="email"
-              id="email"
-              value={formData.email}
-              onChange={handleChange}
-              className="block p-2.5 w-full z-20 text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-s-gray-700  dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:border-blue-500"
-              placeholder="user@email.com"
-              required
-            />
-            <label className="block my-3 text-sm font-semibold">
-              First name
-            </label>
-            <input
-              type="text"
-              id="firstname"
-              value={formData.firstName}
-              onChange={handleChange}
-              className="block p-2.5 w-full z-20 text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-s-gray-700  dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:border-blue-500"
-              placeholder="first name"
-              required
-            />
-            <label className="block my-3 text-sm font-semibold">
-              Last name
-            </label>
-            <input
-              type="text"
-              id="lastname"
-              value={formData.lastName}
-              onChange={handleChange}
-              className="block p-2.5 w-full z-20 text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-s-gray-700  dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:border-blue-500"
-              placeholder="last name"
-              required
-            />
-            <button
-              type="submit"
-              className="text-white w-full bg-[#2D1810] hover:bg-[#2D1810]/80 font-semibold rounded-lg text-sm py-3 mb-2 mt-4"
-            >
-              SAVE CHANGE
-            </button>
-          </form>
+          <div className="w-full max-w-md">
+            <Form {...form}>
+              <form onSubmit={form.handleSubmit(onSubmit)}>
+                <FormField
+                  control={form.control}
+                  name="email"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="block mb-3 text-sm font-semibold">
+                        Email
+                      </FormLabel>
+                      <FormControl>
+                        <Input
+                          placeholder="ict@bashcoffee.com"
+                          {...field}
+                          className="bg-white"
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="firstName"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="block mb-3 text-sm font-semibold">
+                        First Name
+                      </FormLabel>
+                      <FormControl>
+                        <Input
+                          placeholder="first name"
+                          {...field}
+                          className="bg-white"
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="lastName"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="block mb-3 text-sm font-semibold">
+                        Last Name
+                      </FormLabel>
+                      <FormControl>
+                        <Input
+                          placeholder="last name"
+                          {...field}
+                          className="bg-white"
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <Button
+                  type="submit"
+                  className="w-full text-white bg-[#2D1810] hover:bg-[#2D1810]/80 font-semibold rounded-lg text-sm py-3 mt-4"
+                  // disabled={handleOtp.isLoading || handleRegister.isLoading}
+                >
+                  SAVE CHANGES
+                </Button>
+              </form>
+            </Form>
+          </div>
         </div>
       </div>
     </MembershipLayout>

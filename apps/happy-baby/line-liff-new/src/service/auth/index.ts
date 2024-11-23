@@ -1,6 +1,12 @@
-import { SignInResponse, signIn } from 'next-auth/react'
+import { SignInResponse, getSession, signIn } from 'next-auth/react'
 
-import { GetMeResponse, LoginArgs, RegisterArgs, SendOtpArgs } from './types'
+import {
+  GetMeResponse,
+  LoginArgs,
+  RegisterArgs,
+  SendOtpArgs,
+  UpdateUserArgs,
+} from './types'
 import { ENDPOINT, HTTP_STATUS } from '../../libs/fetchers'
 
 import { fetchers } from '@/libs/utils'
@@ -96,6 +102,25 @@ export const verifyPhoneNumber = async (
     {
       data: { phoneNumber, verificationCode },
     },
+  )
+
+  if (
+    res.statusCode >= HTTP_STATUS.BAD_REQUEST ||
+    res.statusCode === HTTP_STATUS.FAILED_TO_FETCH
+  ) {
+    throw Error(res.message)
+  }
+
+  return res
+}
+
+export const updateUser = async (args: UpdateUserArgs) => {
+  const session = await getSession()
+
+  console.log({ ...args, token: session?.user.accessToken })
+  const res = await fetchers.Post<string>(
+    `${ENDPOINT}/api/liff/public/update`,
+    { data: args, token: session?.user.accessToken },
   )
 
   if (

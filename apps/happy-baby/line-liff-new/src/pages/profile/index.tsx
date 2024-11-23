@@ -8,16 +8,15 @@ import { useRouter } from 'next/router'
 import { RiCoupon2Line } from 'react-icons/ri'
 import { signOut } from 'next-auth/react'
 import { toast } from 'sonner'
-import { useSession } from 'next-auth/react'
 
 export default function Home() {
   const router = useRouter()
 
   const handleLogout = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault()
-    signOut()
+    signOut({ redirect: false })
     toast.success('You have been logged out')
-    router.push('/signin')
+    router.push('/auth/signin')
   }
 
   return (
@@ -55,7 +54,7 @@ export default function Home() {
                   <GrNext color="#5D4336" />
                 </div>
               </Link>
-              <Link href="/profile/mycoupon">
+              <Link href="/profile/my-coupon">
                 <div className="flex w-full items-center justify-between bg-[#BDAA84] rounded-md p-4 gap-4 cursor-pointer">
                   <div className="flex gap-2">
                     <RiCoupon2Line size={24} />

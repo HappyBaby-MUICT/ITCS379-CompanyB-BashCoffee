@@ -2,7 +2,7 @@ import { AuthService, Context, getUserFromContext } from '@bash-coffee/common'
 import { PrismaService } from '@bash-coffee/line-db'
 import { BadRequestException, Injectable } from '@nestjs/common'
 
-import { LoginArgs, RegisterArgs } from './public.dto'
+import { LoginArgs, RegisterArgs, UpdateUserArgs } from './public.dto'
 
 @Injectable()
 export class LiffPublicService {
@@ -38,7 +38,7 @@ export class LiffPublicService {
       },
       include: {
         user: true,
-      }
+      },
     })
 
     if (!exist) {
@@ -55,9 +55,23 @@ export class LiffPublicService {
     return this.authService.generateToken(exist.user.id)
   }
 
+  async updateUser(args: UpdateUserArgs, ctx: Context) {
+    const user = getUserFromContext(ctx)
+    const { firstName, lastName, email } = args
+
+    if (!user) {
+      throw new BadRequestException('User does not exist')
+    }
+
+    await this.db.lineUser.update({
+      where: { id: user.id },
+      data: { firstName, lastName, email },
+    })
+  }
+
   getMe(ctx: Context) {
     const user = getUserFromContext(ctx)
-    
+
     return user
   }
 }

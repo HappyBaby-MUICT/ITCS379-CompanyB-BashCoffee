@@ -10,6 +10,7 @@ export type Context = FastifyRequestContext & {
 
 export const getUserFromContext = (ctx: Context) => {
   const user = ctx.raw.user
+  console.log(user)
   if (!user) {
     throw new UnauthorizedException(
       'You are not authenticated to perform this action.',

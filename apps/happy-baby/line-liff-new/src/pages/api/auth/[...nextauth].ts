@@ -7,15 +7,7 @@ import { getMe, loginFn } from '@/service/auth'
 
 declare module 'next-auth' {
   interface Session extends DefaultSession {
-    user: {
-      id: string
-      firstName: string
-      lastName: string
-      email: string
-      phoneNumber: string
-      lineToken: string
-      points: number
-    }
+    user: User
   }
 
   interface User {
@@ -26,6 +18,7 @@ declare module 'next-auth' {
     phoneNumber: string
     lineToken: string
     points: number
+    accessToken: string
   }
 }
 
@@ -43,19 +36,21 @@ const authOptions: NextAuthOptions = {
           throw new Error('No credentials ')
         }
 
-        const token = await loginFn(credentials)
-        const user = (await getMe(token)) as unknown as User
+        const accessToken = await loginFn(credentials)
+        const user = (await getMe(accessToken)) as unknown as User
 
-        return { token, ...user }
+        user.accessToken = accessToken
+
+        return { ...user }
       },
     }),
   ],
   callbacks: {
     jwt: async ({ token, user, trigger }) => {
       if (trigger === 'update') {
-        const _user = await getMe(token as unknown as string)
+        const _user = await getMe((token as { accessToken: string}).accessToken)
 
-        return { ...token, ..._user }
+        return { ...token, ...user, ..._user }
       }
 
       return { ...token, ...user }
@@ -69,6 +64,7 @@ const authOptions: NextAuthOptions = {
         phoneNumber: string
         lineToken: string
         points: number
+        accessToken: string
       }
 
       session.user = _token
@@ -77,7 +73,7 @@ const authOptions: NextAuthOptions = {
     },
   },
   pages: {
-    signIn: '/',
+    signIn: '/auth/signin',
   },
 }
 

@@ -9,6 +9,7 @@ import { Button } from '@/modules/ui/button'
 import { Form, FormField } from '@/modules/ui/form'
 import { InputOTP, InputOTPGroup, InputOTPSlot } from '@/modules/ui/input-otp'
 import { toast } from 'sonner'
+import { REGEXP_ONLY_DIGITS } from 'input-otp'
 
 const formSchema = z.object({
   phoneNumber: z.string().min(10, 'Phone number must be at least 10 digits'),
@@ -64,23 +65,34 @@ export default function Verify() {
                   control={form.control}
                   name="otp"
                   render={({ field }) => (
-                    <InputOTP maxLength={4} {...field}>
+                    <InputOTP
+                      maxLength={4}
+                      {...field}
+                      pattern={REGEXP_ONLY_DIGITS}
+                    >
                       <InputOTPGroup className="mx-auto">
                         <InputOTPSlot
                           index={0}
                           className="w-16 h-16 text-3xl text-[#846546] bg-white"
+                          inputMode="numeric"
                         />
                         <InputOTPSlot
                           index={1}
+                          itemType="number"
                           className="w-16 h-16 text-3xl text-[#846546] bg-white"
+                          inputMode="numeric"
                         />
                         <InputOTPSlot
                           index={2}
+                          itemType="number"
                           className="w-16 h-16 text-3xl text-[#846546] bg-white"
+                          inputMode="numeric"
                         />
                         <InputOTPSlot
                           index={3}
+                          itemType="number"
                           className="w-16 h-16 text-3xl text-[#846546] bg-white"
+                          inputMode="numeric"
                         />
                       </InputOTPGroup>
                     </InputOTP>

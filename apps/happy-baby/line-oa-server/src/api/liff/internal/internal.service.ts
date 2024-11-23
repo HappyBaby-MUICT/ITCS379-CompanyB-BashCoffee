@@ -12,7 +12,7 @@ export class LiffInternalService {
 
     const token = Math.floor(1000 + Math.random() * 9000).toString()
 
-    const exist = await this.db.lineUser.findMany({
+    const exist = await this.db.lineUser.findUnique({
       where: {
         phoneNumber,
       },

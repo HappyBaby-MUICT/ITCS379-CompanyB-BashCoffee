@@ -10,6 +10,12 @@ export type RegisterArgs = {
   lastName: string
 }
 
+export type UpdateUserArgs = {
+  email: string
+  firstName: string
+  lastName: string
+}
+
 export type SendOtpArgs  = {
   phoneNumber: string
 }
