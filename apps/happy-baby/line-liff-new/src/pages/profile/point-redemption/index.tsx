@@ -18,12 +18,12 @@ export default function PointRedemption() {
               <p className=" font-bold text-md">Point Redemption</p>
             </div>
           </div>
-          <Link href="/point-redemption/1">
+          <Link href="/profile/point-redemption/1">
             <div className="flex flex-col gap-4 w-full bg-[#D5CBB1] p-4 rounded-xl">
               <div className="flex flex-col gap- w-full">
                 <div className="relative w-full rounded-xl overflow-hidden aspect-[16/9]">
                   <img
-                    src="./redeemitem.jpg"
+                    src="/redeemitem.jpg"
                     alt="pointredeempic"
                     className="object-cover"
                   />

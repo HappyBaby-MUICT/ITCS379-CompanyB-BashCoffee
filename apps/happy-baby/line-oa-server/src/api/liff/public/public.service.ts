@@ -12,9 +12,9 @@ export class LiffPublicService {
   ) {}
 
   async register(args: RegisterArgs) {
-    const { firstName, lastName, email, lineToken, phoneNumber } = args
+    const { firstName, lastName, email, phoneNumber } = args
     const exist = await this.db.lineUser.findUnique({
-      where: { lineToken },
+      where: { phoneNumber },
     })
 
     if (exist) {
@@ -22,28 +22,42 @@ export class LiffPublicService {
     }
 
     await this.db.lineUser.create({
-      data: { firstName, lastName, email, lineToken, points: 0, phoneNumber },
+      data: { firstName, lastName, email, points: 0, phoneNumber },
     })
   }
 
   async login(args: LoginArgs) {
-    const { phoneNumber } = args
-    const user = await this.db.lineUser.findFirst({
-      where: { phoneNumber },
+    const { phoneNumber, otp } = args
+
+    const exist = await this.db.otp.findFirst({
+      where: {
+        otp,
+        user: {
+          phoneNumber,
+        },
+      },
+      include: {
+        user: true,
+      }
     })
 
-    if (!user) {
-      throw new BadRequestException('User not found')
+    if (!exist) {
+      throw new BadRequestException('Invalid Credentials')
     }
 
-    return this.authService.generateToken(user.id)
+    if (!exist.user.isVerified) {
+      await this.db.lineUser.update({
+        where: { id: exist.user.id },
+        data: { isVerified: true },
+      })
+    }
+
+    return this.authService.generateToken(exist.user.id)
   }
 
   getMe(ctx: Context) {
     const user = getUserFromContext(ctx)
-
-    return {
-      ...user,
-    }
+    
+    return user
   }
 }

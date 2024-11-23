@@ -8,8 +8,8 @@ import { useRouter } from 'next/router'
 export default function PointRedemptionID() {
   const router = useRouter()
   const handleSubmit = (e: React.MouseEvent<HTMLButtonElement>) => {
-    e.preventDefault() // Prevent default form submission
-    router.push(`${router.asPath}/coupon`)
+    e.preventDefault()
+    router.push(`${router.asPath}/redeem`)
   }
 
   return (
@@ -30,7 +30,7 @@ export default function PointRedemptionID() {
               <div className="flex flex-col gap- w-full">
                 <div className="relative w-full rounded-xl overflow-hidden aspect-[16/9]">
                   <img
-                    src="../redeemitem.jpg"
+                    src="/redeemitem.jpg"
                     alt="pointredeempic"
                     className="object-cover"
                   />

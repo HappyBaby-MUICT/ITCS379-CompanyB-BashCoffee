@@ -27,7 +27,6 @@ export class StripePublicController {
 
     const event = req.body as Stripe.Event
 
-    console.log()
     switch (event.data.object.object) {
       case 'checkout.session':
         // eslint-disable-next-line no-case-declarations

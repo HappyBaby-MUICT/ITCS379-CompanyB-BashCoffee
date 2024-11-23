@@ -33,12 +33,13 @@ model UserCoupons {
 
 model LineUser {
   id          String @id @default(cuid())
-  lineToken   String @unique
+  lineToken   String? @unique
   email       String
   firstName   String
   lastName    String
-  points      Int
+  points      Int @default(0)
   phoneNumber String @unique
+  isVerified  Boolean @default(false)
 
   Otp Otp[]
 

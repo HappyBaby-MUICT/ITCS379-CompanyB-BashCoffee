@@ -1,4 +1,6 @@
-import { GetMeResponse, LoginArgs, SendOtpArgs } from './types'
+import { SignInResponse, signIn } from 'next-auth/react'
+
+import { GetMeResponse, LoginArgs, RegisterArgs, SendOtpArgs } from './types'
 import { ENDPOINT, HTTP_STATUS } from '../../libs/fetchers'
 
 import { fetchers } from '@/libs/utils'
@@ -19,7 +21,7 @@ export const getMe = async (token: string) => {
   return res.data as GetMeResponse
 }
 
-export const login = async (args: LoginArgs) => {
+export const loginFn = async (args: LoginArgs) => {
   const res = await fetchers.Post<string>(`${ENDPOINT}/api/liff/public/login`, {
     data: args,
   })
@@ -34,11 +36,48 @@ export const login = async (args: LoginArgs) => {
   return res.data as string
 }
 
-export const sendOtp = async (args: SendOtpArgs) => { 
-  console.log(args)
-  const res = await fetchers.Post<string>(`${ENDPOINT}/api/liff/internal/otp/send`, {
-    data: args,
+export const login = async (args: LoginArgs) => {
+  const res: SignInResponse | undefined = await signIn('credentials', {
+    phoneNumber: args.phoneNumber,
+    otp: args.otp,
+    redirect: false,
   })
+
+  if (!res?.ok) {
+    switch (res?.status) {
+      case HTTP_STATUS.UNAUTHORIZED:
+        throw Error('Invalid credentials')
+      default:
+        throw Error(res?.error as string)
+    }
+  }
+
+  return res
+}
+
+export const register = async (args: RegisterArgs) => {
+  const res = await fetchers.Post<string>(
+    `${ENDPOINT}/api/liff/public/register`,
+    { data: args },
+  )
+
+  if (
+    res.statusCode >= HTTP_STATUS.BAD_REQUEST ||
+    res.statusCode === HTTP_STATUS.FAILED_TO_FETCH
+  ) {
+    throw Error(res.message)
+  }
+
+  return res
+}
+
+export const sendOtp = async (args: SendOtpArgs) => {
+  const res = await fetchers.Post<string>(
+    `${ENDPOINT}/api/liff/internal/otp/send`,
+    {
+      data: args,
+    },
+  )
 
   if (
     res.statusCode >= HTTP_STATUS.BAD_REQUEST ||
@@ -48,10 +87,16 @@ export const sendOtp = async (args: SendOtpArgs) => {
   }
 }
 
-export const verifyPhoneNumber = async (phoneNumber: string, verificationCode: string) => { 
-  const res = await fetchers.Post<string>(`${ENDPOINT}/api/liff/internal/otp/verify`, {
-    data: { phoneNumber, verificationCode },
-  })
+export const verifyPhoneNumber = async (
+  phoneNumber: string,
+  verificationCode: string,
+) => {
+  const res = await fetchers.Post<string>(
+    `${ENDPOINT}/api/liff/internal/otp/verify`,
+    {
+      data: { phoneNumber, verificationCode },
+    },
+  )
 
   if (
     res.statusCode >= HTTP_STATUS.BAD_REQUEST ||

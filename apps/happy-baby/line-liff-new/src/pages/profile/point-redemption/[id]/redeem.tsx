@@ -22,7 +22,7 @@ export default function Coupon() {
             <div className="flex flex-col gap- w-full">
               <div className="relative w-full rounded-xl overflow-hidden aspect-[16/9]">
                 <img
-                  src="../../redeemitem.jpg"
+                  src="/redeemitem.jpg"
                   alt="pointredeempic"
                   className="object-cover"
                 />

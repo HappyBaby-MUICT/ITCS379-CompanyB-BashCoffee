@@ -1,5 +1,13 @@
 export type LoginArgs = {
   phoneNumber: string
+  otp: string
+}
+
+export type RegisterArgs = {
+  email: string
+  phoneNumber: string
+  firstName: string
+  lastName: string
 }
 
 export type SendOtpArgs  = {

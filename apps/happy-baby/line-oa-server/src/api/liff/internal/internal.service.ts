@@ -12,7 +12,7 @@ export class LiffInternalService {
 
     const token = Math.floor(1000 + Math.random() * 9000).toString()
 
-    const exist = await this.db.lineUser.findFirst({
+    const exist = await this.db.lineUser.findMany({
       where: {
         phoneNumber,
       },
@@ -21,6 +21,14 @@ export class LiffInternalService {
     if (!exist) {
       throw new BadRequestException('User not found')
     }
+
+    await this.db.otp.deleteMany({
+      where: {
+        user: {
+          phoneNumber,
+        },
+      },
+    })
 
     await this.db.otp.create({
       data: {
