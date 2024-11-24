@@ -11,7 +11,6 @@ import {
   addOnConfirmMessage,
   createMenuSelector,
 } from './constants/MenuSelector'
-import { createOrderDetail } from './constants/OrderDetail'
 import { createPaymentMessage } from './constants/Payment'
 import { SweetnessLevel } from './constants/SweetnessLevel'
 import { MenuName } from './dto'
@@ -78,7 +77,11 @@ export class LinePublicService {
     return parsedNote
   }
 
-  private async createPaymentLink(amount: number, orderId: number, lineId: string) {
+  private async createPaymentLink(
+    amount: number,
+    orderId: number,
+    lineId: string,
+  ) {
     const product = await this.payment.products.create({
       name: 'Bash Coffee Order',
     })
@@ -612,7 +615,11 @@ export class LinePublicService {
       }
 
       // Create payment link and handle payment display
-      const paymentLink = await this.createPaymentLink(totalPrice, order.id, userId)
+      const paymentLink = await this.createPaymentLink(
+        totalPrice,
+        order.id,
+        userId,
+      )
 
       const paymentItems = userState.orderItems.map(item => ({
         name: item.menu,

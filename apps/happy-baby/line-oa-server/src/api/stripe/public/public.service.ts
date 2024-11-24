@@ -86,7 +86,7 @@ export class StripePublicService {
     const existMember = await this.lineDb.lineUser.findUnique({
       where: {
         phoneNumber,
-      }
+      },
     })
 
     if (existMember) {

@@ -19,7 +19,10 @@ import { toast } from 'sonner'
 
 const formSchema = z.object({
   email: z.string().email('Invalid email address'),
-  phoneNumber: z.string().min(10, 'Phone number must be at least 10 digits'),
+  phoneNumber: z
+    .string()
+    .min(10, 'Phone number must be 10 digits')
+    .max(10, 'Phone number must be 10 digits'),
   firstName: z.string(),
   lastName: z.string(),
 })
@@ -49,6 +52,8 @@ export default function Signup() {
     try {
       await handleRegister.mutateAsync(values)
       await handleOtp.mutateAsync(values)
+
+      router.push('/auth/verify?phoneNumber=' + values.phoneNumber)
     } catch (e) {
       toast.error('Failed to register: ' + (e as Error).message)
     }

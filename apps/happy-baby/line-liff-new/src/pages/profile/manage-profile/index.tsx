@@ -50,7 +50,6 @@ export default function Profile() {
       update()
       toast.success('Profile updated!')
       router.push('/profile')
-      
     } catch (e) {
       toast.error('Failed to update user: ' + (e as Error).message)
     }

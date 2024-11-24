@@ -1,6 +1,4 @@
-import {
-  FlexContainer,
-} from '@line/bot-sdk/dist/messaging-api/api'
+import { FlexContainer } from '@line/bot-sdk/dist/messaging-api/api'
 
 interface PaymentProps {
   receiptNumber: string

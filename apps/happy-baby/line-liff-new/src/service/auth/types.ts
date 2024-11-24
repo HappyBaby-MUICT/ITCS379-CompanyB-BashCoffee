@@ -16,7 +16,7 @@ export type UpdateUserArgs = {
   lastName: string
 }
 
-export type SendOtpArgs  = {
+export type SendOtpArgs = {
   phoneNumber: string
 }
 

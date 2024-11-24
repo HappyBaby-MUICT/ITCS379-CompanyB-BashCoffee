@@ -38,8 +38,16 @@ export default function MembershipLayout({ children }: MembershipLayoutProps) {
       </div>
     </div>
   ) : (
-    <div className="flex flex-col items-center justify-center w-full h-screen">
-      <SimpleSpinner />
+    <div className="flex flex-col w-full h-screen p-8">
+      <div className="flex flex-col bg-[#E9E5D7] rounded-xl w-full h-screen gap-4">
+        <div className="flex justify-between items-center w-full">
+          <img src="/bash_logo.png" width={40} height={40} alt="logo" />
+          <p className=" font-bold text-[#4F3A32]">BASH MEMBERSHIP</p>
+        </div>
+        <main className="flex flex-col items-center justify-center w-full">
+          <SimpleSpinner />
+        </main>
+      </div>
     </div>
   )
 }

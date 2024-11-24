@@ -37,7 +37,7 @@ services:
     image: flowiseai/flowise:2.1.2
     container_name: flowise
     ports:
-      - "15542:3000"
+      - '15542:3000'
     environment:
       - PORT=3000
       - DEBUG=true
@@ -60,4 +60,3 @@ volumes:
   data:
   db:
   bash_line_data:
-    

@@ -29,40 +29,44 @@ model Coupon {
 }
 
 model UserCoupons {
-  id        String   @id
-  userId    String
-  couponId  String   @unique
-  amount    Int
-  Coupon    Coupon   @relation(fields: [couponId], references: [id])
+  id       String @id @default(cuid())
+  userId   String
+  couponId String @unique
+  amount   Int
+
+  Coupon Coupon   @relation(fields: [couponId], references: [id])
+  User   LineUser @relation(fields: [userId], references: [id])
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
 
 model LineUser {
-  id          String @id @default(cuid())
+  id          String  @id @default(cuid())
   lineToken   String? @unique
   email       String
   firstName   String
   lastName    String
-  points      Int @default(0)
-  phoneNumber String @unique
+  points      Int     @default(0)
+  phoneNumber String  @unique
   isVerified  Boolean @default(false)
 
-  Otp Otp[]
+  Otp                Otp[]
   TransactionHistory TransactionHistory[]
+  coupons            UserCoupons[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
 
 model TransactionHistory {
-  id        String   @id @default(cuid())
-  userId    String
-  amount    Int
+  id     String @id @default(cuid())
+  userId String
+  amount Int
 
-  type      TransactionType
-  user      LineUser @relation(fields: [userId], references: [id])
-  
+  type TransactionType
+  user LineUser        @relation(fields: [userId], references: [id])
+
   createdAt DateTime @default(now())
 }
 

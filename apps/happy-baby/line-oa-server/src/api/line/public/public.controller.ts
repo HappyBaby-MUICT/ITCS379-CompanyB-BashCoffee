@@ -85,8 +85,7 @@ export class LinePublicController {
 
     const state = postBackData?.state
     const handlers: Record<string, () => Promise<void>> = {
-      backto_menu: () =>
-        this.service.handleMenuMessage(userId, replyToken),
+      backto_menu: () => this.service.handleMenuMessage(userId, replyToken),
       order: () =>
         this.service.handleMenuClick(userId, replyToken, postBackData.menu),
       add_on_yes: () =>

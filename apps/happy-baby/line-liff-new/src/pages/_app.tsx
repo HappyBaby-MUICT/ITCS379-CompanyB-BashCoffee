@@ -8,7 +8,10 @@ import { Toaster } from 'sonner'
 
 const queryClient = new QueryClient()
 
-const BashApp: AppType<{ session: Session | null }> = ({ Component, pageProps: { session, ...pageProps } }) => { 
+const BashApp: AppType<{ session: Session | null }> = ({
+  Component,
+  pageProps: { session, ...pageProps },
+}) => {
   return (
     <QueryClientProvider client={queryClient}>
       <SessionProvider session={session}>

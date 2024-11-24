@@ -3,7 +3,7 @@
 @tailwind utilities;
 
 :root {
-  --background: #E9E5D7;
+  --background: #e9e5d7;
   --foreground: #171717;
 }
 
@@ -141,7 +141,6 @@ body {
     padding-bottom: 16px;
   }
 }
-
 
 .sidebar {
   position: relative;

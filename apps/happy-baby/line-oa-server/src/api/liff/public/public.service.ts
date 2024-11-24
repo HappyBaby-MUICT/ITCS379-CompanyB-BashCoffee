@@ -2,7 +2,12 @@ import { AuthService, Context, getUserFromContext } from '@bash-coffee/common'
 import { PrismaService } from '@bash-coffee/line-db'
 import { BadRequestException, Injectable } from '@nestjs/common'
 
-import { LoginArgs, RegisterArgs, UpdateUserArgs } from './public.dto'
+import {
+  LoginArgs,
+  RedeemCouponArgs,
+  RegisterArgs,
+  UpdateUserArgs,
+} from './public.dto'
 
 @Injectable()
 export class LiffPublicService {
@@ -73,5 +78,58 @@ export class LiffPublicService {
     const user = getUserFromContext(ctx)
 
     return user
+  }
+
+  async getCoupons() {
+    const coupons = await this.db.coupon.findMany()
+
+    return coupons
+  }
+
+  async redeemCoupons(args: RedeemCouponArgs, ctx: Context) {
+    const user = getUserFromContext(ctx)
+    const coupon = await this.db.coupon.findUnique({
+      where: { id: args.couponId },
+    })
+
+    if (!coupon) {
+      throw new BadRequestException('Coupon does not exist')
+    }
+
+    const existUser = await this.db.lineUser.findUnique({
+      where: { id: user.id },
+      include: { coupons: true },
+    })
+
+    if (user.points < coupon.points) {
+      throw new BadRequestException('Not enough points')
+    }
+
+    if (!existUser) {
+      throw new BadRequestException('User does not exist')
+    }
+
+    const existCoupon = existUser.coupons.find(c => c.id === coupon.id)
+
+    if (existCoupon) {
+      await this.db.lineUser.update({
+        where: { id: user.id },
+        data: { points: user.points - coupon.points },
+      })
+      await this.db.userCoupons.update({
+        where: { id: existCoupon.id },
+        data: { amount: { increment: 1 } },
+      })
+
+      return
+    }
+
+    await this.db.lineUser.update({
+      where: { id: user.id },
+      data: { points: user.points - coupon.points },
+    })
+    await this.db.userCoupons.create({
+      data: { couponId: coupon.id, userId: user.id, amount: 1 },
+    })
   }
 }

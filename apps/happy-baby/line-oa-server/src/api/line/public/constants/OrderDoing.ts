@@ -50,7 +50,7 @@ export const createOrderDoing = ({
               contents: [
                 {
                   type: 'text',
-                  text: "Order #" + orderId.toString(),
+                  text: 'Order #' + orderId.toString(),
                   size: 'sm',
                   color: '#999999',
                 },

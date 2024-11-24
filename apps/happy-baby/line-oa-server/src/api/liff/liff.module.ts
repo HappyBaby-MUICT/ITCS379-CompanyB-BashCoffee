@@ -4,7 +4,7 @@ import { Module } from '@nestjs/common'
 import { LiffInternalController } from './internal/internal.controller'
 import { LiffInternalService } from './internal/internal.service'
 import { LiffPublicController } from './public/public.controller'
-import { LiffPublicService} from './public/public.service'
+import { LiffPublicService } from './public/public.service'
 
 @Module({
   controllers: [LiffPublicController, LiffInternalController],

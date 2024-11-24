@@ -35,4 +35,11 @@ export class LiffPublicController {
 
     return { statusCode: HttpStatus.OK }
   }
+
+  @Get('/coupons/list')
+  async getCouponsList() {
+    const res = await this.service.getCoupons()
+
+    return { statusCode: HttpStatus.OK, data: res }
+  }
 }

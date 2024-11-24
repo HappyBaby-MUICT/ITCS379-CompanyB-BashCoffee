@@ -22,7 +22,6 @@ declare module 'next-auth' {
   }
 }
 
-
 const authOptions: NextAuthOptions = {
   providers: [
     Credentials({

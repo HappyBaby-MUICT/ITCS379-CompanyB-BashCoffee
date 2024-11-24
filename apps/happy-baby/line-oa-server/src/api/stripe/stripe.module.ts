@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common'
 
-import { StripePublicController} from './public/public.controller'
+import { StripePublicController } from './public/public.controller'
 import { StripePublicService } from './public/public.service'
 
 @Module({

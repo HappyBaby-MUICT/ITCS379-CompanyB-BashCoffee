@@ -24,7 +24,6 @@ export class StripePublicController {
     @Req() req: FastifyRequest,
     @Res() res: FastifyReply,
   ) {
-
     const event = req.body as Stripe.Event
 
     switch (event.data.object.object) {
@@ -36,7 +35,7 @@ export class StripePublicController {
       default:
         throw new HttpException('Invalid event type', HttpStatus.BAD_REQUEST)
     }
-    
+
     res.status(200).send('Received')
   }
 }
