@@ -1,5 +1,5 @@
 {
-  "name": "CompanyB-BashCoffee",
+  "name": "bash-coffee",
   "scripts": {
     "preinstall": "npx only-allow pnpm",
     "dev": "dotenv -- turbo run dev --parallel",

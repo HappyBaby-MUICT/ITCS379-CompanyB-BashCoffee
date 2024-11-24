@@ -2,12 +2,11 @@
   "name": "@bash-coffee/line-liff-new",
   "version": "0.1.0",
   "private": true,
-  "type": "module",
   "scripts": {
     "build": "next build",
     "dev": "next dev",
     "lint": "next lint",
-    "start": "next start",
+    "start": "next start --port ${NEXT_PORT:-3000}",
     "fmt": "prettier --write ."
   },
   "dependencies": {
@@ -57,17 +56,8 @@
     "zod": "3.23.8"
   },
   "devDependencies": {
-    "@types/eslint": "^8.56.2",
-    "@types/node": "^20.11.20",
     "@types/react": "^18.2.57",
     "@types/react-dom": "^18.2.19",
-    "@typescript-eslint/eslint-plugin": "^7.1.1",
-    "@typescript-eslint/parser": "^7.1.1",
-    "eslint": "^8.57.0",
-    "eslint-config-next": "^14.1.3",
-    "eslint-config-prettier": "9.1.0",
-    "eslint-plugin-import": "2.29.1",
-    "eslint-plugin-prettier": "5.1.3",
     "postcss": "^8.4.34",
     "prettier-plugin-tailwindcss": "^0.5.14",
     "tailwindcss": "^3.4.3",
