@@ -48,14 +48,16 @@ const authOptions: NextAuthOptions = {
   callbacks: {
     jwt: async ({ token, user, trigger }) => {
       if (trigger === 'update') {
-        const _user = await getMe((token as { accessToken: string}).accessToken)
+        const _user = await getMe(
+          (token as { accessToken: string }).accessToken,
+        )
 
         return { ...token, ...user, ..._user }
       }
 
       return { ...token, ...user }
     },
-    session: ({ session, token }) => {
+    session: async ({ session, token }) => {
       const _token = token as {
         id: string
         firstName: string
@@ -67,7 +69,13 @@ const authOptions: NextAuthOptions = {
         accessToken: string
       }
 
-      session.user = _token
+      try {
+        const updatedUser = await getMe(_token.accessToken)
+        session.user = { ..._token, ...updatedUser }
+      } catch (error) {
+        console.error('Failed to refresh session:', error)
+        session.user = _token
+      }
 
       return session
     },
