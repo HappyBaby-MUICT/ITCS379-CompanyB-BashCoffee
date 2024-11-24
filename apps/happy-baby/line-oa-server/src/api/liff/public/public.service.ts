@@ -144,4 +144,14 @@ export class LiffPublicService {
 
     return history
   }
+
+  async getUserCoupons(ctx: Context) { 
+    const user = getUserFromContext(ctx)
+    const coupons = await this.db.userCoupons.findMany({
+      where: { userId: user.id },
+      include: { user: true, coupon: true },
+    })
+
+    return coupons
+  }
 }

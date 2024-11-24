@@ -1,8 +1,8 @@
-import { UserCoupon } from '@/service/coupon/types'
+import { Coupon } from '@/service/coupon/types'
 import Link from 'next/link'
 import { TbParkingCircleFilled } from 'react-icons/tb'
 
-type CouponCardProps = UserCoupon
+type CouponCardProps = Coupon
 
 const CouponCard = (props: CouponCardProps) => {
   return (

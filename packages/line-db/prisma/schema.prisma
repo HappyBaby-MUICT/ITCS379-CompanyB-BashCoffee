@@ -25,7 +25,7 @@ model Coupon {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
-  UserCoupons UserCoupons[]
+  userCoupons UserCoupons[]
 }
 
 model UserCoupons {
@@ -34,8 +34,8 @@ model UserCoupons {
   couponId String
   amount   Int
 
-  Coupon Coupon   @relation(fields: [couponId], references: [id])
-  User   LineUser @relation(fields: [userId], references: [id])
+  coupon Coupon   @relation(fields: [couponId], references: [id])
+  user   LineUser @relation(fields: [userId], references: [id])
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
