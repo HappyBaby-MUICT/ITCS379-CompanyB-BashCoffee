@@ -13,6 +13,20 @@ const handleType = (type: string) => {
   }
 }
 
+const formatTime = (time: string) => {
+  const now = new Date(time)
+  const formatter = new Intl.DateTimeFormat('en-GB', {
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric',
+    hour: 'numeric',
+    minute: 'numeric',
+    hour12: false,
+  })
+  
+  return formatter.format(now).replace(',', '')
+}
+
 const HistoryCard = (props: HistoryCardProps) => {
   return (
     <div className="flex flex-col gap-1 w-full bg-[#D5CBB1] p-4 rounded-xl mb-2">
@@ -23,7 +37,7 @@ const HistoryCard = (props: HistoryCardProps) => {
           {props.amount}
         </p>
       </div>
-      <p className="text-sm text-[#454648]">{props.createdAt}</p>
+      <p className="text-sm text-[#454648]">{formatTime(props.createdAt)}</p>
     </div>
   )
 }
