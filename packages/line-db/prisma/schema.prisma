@@ -1,12 +1,19 @@
 generator client {
   provider      = "prisma-client-js"
-  output        = "../liff/dist/liff/client"
+  output        = "../dist/liff/client"
   binaryTargets = ["native"]
 }
 
 datasource db {
   provider = "postgresql"
   url      = env("LINE_DB_URL")
+}
+
+enum TransactionType {
+  POINT_DEDUCT
+  POINT_INCREMENT
+  COUPON_REDEEM
+  COUPON_USE
 }
 
 model Coupon {
@@ -42,9 +49,21 @@ model LineUser {
   isVerified  Boolean @default(false)
 
   Otp Otp[]
+  TransactionHistory TransactionHistory[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+model TransactionHistory {
+  id        String   @id @default(cuid())
+  userId    String
+  amount    Int
+
+  type      TransactionType
+  user      LineUser @relation(fields: [userId], references: [id])
+  
+  createdAt DateTime @default(now())
 }
 
 model Otp {

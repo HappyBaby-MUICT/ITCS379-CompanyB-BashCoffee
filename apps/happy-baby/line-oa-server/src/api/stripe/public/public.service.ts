@@ -1,4 +1,5 @@
 import { PrismaService } from '@bash-coffee/db'
+import { PrismaService as LinePrismaService } from '@bash-coffee/line-db'
 import { messagingApi } from '@line/bot-sdk'
 import { FlexContainer, Message } from '@line/bot-sdk/dist/messaging-api/api'
 import { Injectable } from '@nestjs/common'
@@ -10,7 +11,10 @@ export class StripePublicService {
   private readonly client
   private readonly payment
 
-  constructor(private readonly db: PrismaService) {
+  constructor(
+    private readonly db: PrismaService,
+    private readonly lineDb: LinePrismaService,
+  ) {
     const { MessagingApiClient } = messagingApi
     this.client = new MessagingApiClient({
       channelAccessToken: process.env.HAPPYBABY_LINE_CHANNEL as string,
@@ -34,6 +38,8 @@ export class StripePublicService {
 
   async handleCheckoutComplete(session: stripe.Checkout.Session) {
     const { metadata } = session
+
+    const messages: Message[] = []
 
     if (!metadata) {
       return
@@ -59,8 +65,9 @@ export class StripePublicService {
       return
     }
 
-    const phoneNumber = this.parseCustomerNote(order.pos_order_line[0].customer_note as string)["Phone Number"]
-
+    const phoneNumber = this.parseCustomerNote(
+      order.pos_order_line[0].customer_note as string,
+    )['Phone Number']
 
     const orderDoing = createOrderDoing({
       menuName: order.pos_order_line[0].full_product_name as string,
@@ -68,15 +75,50 @@ export class StripePublicService {
       phoneNumber,
     })
 
+    messages.push({
+      type: 'flex',
+      altText: 'Bash - Menu Detail',
+      contents: orderDoing,
+    })
+
+    // find if user has member in the line db
+
+    const existMember = await this.lineDb.lineUser.findUnique({
+      where: {
+        phoneNumber,
+      }
+    })
+
+    if (existMember) {
+      await this.lineDb.$transaction(async tx => {
+        await tx.lineUser.update({
+          where: {
+            phoneNumber,
+          },
+          data: {
+            points: {
+              increment: order.pos_order_line.length,
+            },
+          },
+        })
+        await tx.transactionHistory.create({
+          data: {
+            userId: existMember.id,
+            amount: order.pos_order_line.length,
+            type: 'POINT_INCREMENT',
+          },
+        })
+      })
+
+      messages.push({
+        type: 'text',
+        text: `You have received ${order.pos_order_line.length} points for this purchase!`,
+      })
+    }
+
     await this.client.pushMessage({
       to: lineUserId as string,
-      messages: [
-        {
-          type: 'flex',
-          altText: 'Bash - Menu Detail',
-          contents: orderDoing,
-        },
-      ],
+      messages,
     })
   }
 }
