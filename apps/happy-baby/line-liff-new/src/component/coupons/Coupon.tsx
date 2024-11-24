@@ -1,10 +1,10 @@
 import { Button } from '@/modules/ui/button'
-import { Coupon } from '@/service/coupon/types'
+import { Coupon as ICoupon } from '@/service/coupon/types'
 import { toast } from 'sonner'
 
 type CouponProps = {
   id: string
-  coupon: Coupon
+  coupon: ICoupon
 }
 
 const Coupon = (props: CouponProps) => {
