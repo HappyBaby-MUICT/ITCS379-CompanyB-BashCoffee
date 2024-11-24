@@ -1,98 +1,98 @@
 {
-    "type": "bubble",
-    "hero": {
-      "type": "image",
-      "url": "https://lh3.googleusercontent.com/p/AF1QipN0EE3HTprZ8VRRgz-Q4mgeIQutuVZxigQHXPuu=s680-w680-h510",
-      "size": "full",
-      "aspectRatio": "20:13",
-      "aspectMode": "cover"
-    },
-    "body": {
-      "type": "box",
-      "layout": "vertical",
-      "contents": [
-        {
-          "type": "text",
-          "text": "Your order is added to the Queue",
-          "weight": "bold",
-          "size": "lg",
-          "wrap": true
-        },
-        {
-          "type": "text",
-          "text": "Espresso shot with fresh milk",
-          "size": "sm",
-          "color": "#999999",
-          "margin": "sm"
-        },
-        {
-          "type": "box",
-          "layout": "vertical",
-          "margin": "lg",
-          "spacing": "sm",
-          "contents": [
-            {
-              "type": "box",
-              "layout": "horizontal",
-              "contents": [
-                {
-                  "type": "text",
-                  "text": "Sweetness level 100%",
-                  "size": "sm",
-                  "color": "#333333"
-                }
-              ]
-            },
-            {
-              "type": "box",
-              "layout": "horizontal",
-              "contents": [
-                {
-                  "type": "text",
-                  "text": "OCT 24 2024 | 3:50PM",
-                  "size": "sm",
-                  "color": "#999999"
-                }
-              ]
-            },
-            {
-              "type": "box",
-              "layout": "horizontal",
-              "contents": [
-                {
-                  "type": "text",
-                  "text": "ABC-1234-5678-123456789",
-                  "size": "sm",
-                  "color": "#999999"
-                }
-              ]
-            }
-          ]
-        },
-        {
-          "type": "text",
-          "text": "Expected deliver time is -$$.$$ minutes",
-          "size": "sm",
-          "color": "#333333",
-          "margin": "sm",
-          "wrap": true
-        }
-      ]
-    },
-    "footer": {
-      "type": "box",
-      "layout": "vertical",
-      "contents": [
-        {
-          "type": "button",
-          "style": "primary",
-          "color": "#36C800",
-          "action": {
-            "type": "message",
-            "label": "View Order Status",
-            "text": "View Order Status"
+  "type": "bubble",
+  "hero": {
+    "type": "image",
+    "url": "https://lh3.googleusercontent.com/p/AF1QipN0EE3HTprZ8VRRgz-Q4mgeIQutuVZxigQHXPuu=s680-w680-h510",
+    "size": "full",
+    "aspectRatio": "20:13",
+    "aspectMode": "cover"
+  },
+  "body": {
+    "type": "box",
+    "layout": "vertical",
+    "contents": [
+      {
+        "type": "text",
+        "text": "Your order is added to the Queue",
+        "weight": "bold",
+        "size": "lg",
+        "wrap": true
+      },
+      {
+        "type": "text",
+        "text": "Espresso shot with fresh milk",
+        "size": "sm",
+        "color": "#999999",
+        "margin": "sm"
+      },
+      {
+        "type": "box",
+        "layout": "vertical",
+        "margin": "lg",
+        "spacing": "sm",
+        "contents": [
+          {
+            "type": "box",
+            "layout": "horizontal",
+            "contents": [
+              {
+                "type": "text",
+                "text": "Sweetness level 100%",
+                "size": "sm",
+                "color": "#333333"
+              }
+            ]
+          },
+          {
+            "type": "box",
+            "layout": "horizontal",
+            "contents": [
+              {
+                "type": "text",
+                "text": "OCT 24 2024 | 3:50PM",
+                "size": "sm",
+                "color": "#999999"
+              }
+            ]
+          },
+          {
+            "type": "box",
+            "layout": "horizontal",
+            "contents": [
+              {
+                "type": "text",
+                "text": "ABC-1234-5678-123456789",
+                "size": "sm",
+                "color": "#999999"
+              }
+            ]
           }
+        ]
+      },
+      {
+        "type": "text",
+        "text": "Expected deliver time is -$$.$$ minutes",
+        "size": "sm",
+        "color": "#333333",
+        "margin": "sm",
+        "wrap": true
+      }
+    ]
+  },
+  "footer": {
+    "type": "box",
+    "layout": "vertical",
+    "contents": [
+      {
+        "type": "button",
+        "style": "primary",
+        "color": "#36C800",
+        "action": {
+          "type": "message",
+          "label": "View Order Status",
+          "text": "View Order Status"
         }
-      ]
-    }
+      }
+    ]
   }
+}

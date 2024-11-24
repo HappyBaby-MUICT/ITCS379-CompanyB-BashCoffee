@@ -1,28 +1,26 @@
 {
-    "type": "bubble",
-    "body": {
-      "type": "box",
-      "layout": "vertical",
-      "contents": [
-        {
-          "type": "text",
-          "text": "Order Status",
-          "weight": "bold",
-          "size": "xl"
+  "type": "bubble",
+  "body": {
+    "type": "box",
+    "layout": "vertical",
+    "contents": [
+      {
+        "type": "text",
+        "text": "Order Status",
+        "weight": "bold",
+        "size": "xl"
+      },
+      {
+        "type": "button",
+        "action": {
+          "type": "postback",
+          "label": "Update Order",
+          "data": "action=updateOrder&orderId=12345",
+          "displayText": "Updating order status..."
         },
-        {
-          "type": "button",
-          "action": {
-            "type": "postback",
-            "label": "Update Order",
-            "data": "action=updateOrder&orderId=12345",
-            "displayText": "Updating order status..."
-          },
-          "style": "primary",
-          "color": "#4CAF50"
-        }
-      ]
-    }
+        "style": "primary",
+        "color": "#4CAF50"
+      }
+    ]
   }
-  
-
+}

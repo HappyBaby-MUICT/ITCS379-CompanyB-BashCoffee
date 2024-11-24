@@ -1,205 +1,205 @@
 {
-    "type": "bubble",
-    "hero": {
-      "type": "image",
-      "size": "full",
-      "aspectRatio": "20:13",
-      "aspectMode": "cover",
-      "url": "https://lh3.googleusercontent.com/p/AF1QipPjYEntLFmNx2IOeVjMq7zHiMLqG-ItZXa3Or4p=s680-w680-h510"
-    },
-    "body": {
-      "type": "box",
-      "layout": "vertical",
-      "contents": [
-        {
-          "type": "text",
-          "text": "Bash Coffee",
-          "weight": "bold",
-          "size": "xl",
-          "align": "center"
-        },
-        {
-          "type": "text",
-          "text": "Order Detail",
-          "size": "md",
-          "align": "center",
-          "margin": "sm"
-        },
-        {
-          "type": "box",
-          "layout": "vertical",
-          "margin": "lg",
-          "spacing": "sm",
-          "contents": [
-            {
-              "type": "text",
-              "text": "OCT 24 2024 | 3:50PM",
-              "size": "sm",
-              "color": "#999999"
-            },
-            {
-              "type": "text",
-              "text": "Bash Coffee",
-              "weight": "bold",
-              "size": "md",
-              "margin": "sm"
-            },
-            {
-              "type": "text",
-              "text": "Street, Revenue, District",
-              "size": "sm",
-              "color": "#999999"
-            },
-            {
-              "type": "text",
-              "text": "Recipient",
-              "weight": "bold",
-              "size": "md",
-              "margin": "md"
-            },
-            {
-              "type": "text",
-              "text": "iCondo, Salaya, District, Street, Subdistrict, Postal Code",
-              "size": "sm",
-              "color": "#999999"
-            },
-            {
-              "type": "text",
-              "text": "Tel: 0000000000",
-              "size": "sm",
-              "color": "#999999"
-            }
-          ]
-        },
-        {
-          "type": "separator",
-          "margin": "lg"
-        },
-        {
-          "type": "box",
-          "layout": "horizontal",
-          "margin": "lg",
-          "contents": [
-            {
-              "type": "text",
-              "text": "Order Type",
-              "size": "md",
-              "weight": "bold"
-            },
-            {
-              "type": "text",
-              "text": "Delivery",
-              "align": "end"
-            }
-          ]
-        },
-        {
-          "type": "box",
-          "layout": "horizontal",
-          "contents": [
-            {
-              "type": "text",
-              "text": "Payment Method",
-              "size": "md",
-              "weight": "bold"
-            },
-            {
-              "type": "text",
-              "text": "QRCode",
-              "align": "end"
-            }
-          ]
-        },
-        {
-          "type": "box",
-          "layout": "horizontal",
-          "contents": [
-            {
-              "type": "text",
-              "text": "Order Price",
-              "size": "md",
-              "weight": "bold"
-            },
-            {
-              "type": "text",
-              "text": "59 THB",
-              "align": "end"
-            }
-          ]
-        },
-        {
-          "type": "box",
-          "layout": "horizontal",
-          "contents": [
-            {
-              "type": "text",
-              "text": "Delivery Fee",
-              "size": "md",
-              "weight": "bold"
-            },
-            {
-              "type": "text",
-              "text": "17 THB",
-              "align": "end"
-            }
-          ]
-        },
-        {
-          "type": "box",
-          "layout": "horizontal",
-          "contents": [
-            {
-              "type": "text",
-              "text": "Coupon",
-              "size": "md",
-              "weight": "bold",
-              "color": "#FF5551"
-            },
-            {
-              "type": "text",
-              "text": "-17 THB",
-              "align": "end",
-              "color": "#FF5551"
-            }
-          ]
-        },
-        {
-          "type": "separator",
-          "margin": "lg"
-        },
-        {
-          "type": "box",
-          "layout": "horizontal",
-          "margin": "lg",
-          "contents": [
-            {
-              "type": "text",
-              "text": "Total",
-              "size": "md",
-              "weight": "bold"
-            },
-            {
-              "type": "text",
-              "text": "59 THB",
-              "align": "end"
-            }
-          ]
-        }
-      ]
-    },
-    "footer": {
-      "type": "box",
-      "layout": "vertical",
-      "contents": [
-        {
-          "type": "button",
-          "style": "primary",
-          "action": {
-            "type": "message",
-            "label": "View Order Status",
-            "text": "View Order Status"
+  "type": "bubble",
+  "hero": {
+    "type": "image",
+    "size": "full",
+    "aspectRatio": "20:13",
+    "aspectMode": "cover",
+    "url": "https://lh3.googleusercontent.com/p/AF1QipPjYEntLFmNx2IOeVjMq7zHiMLqG-ItZXa3Or4p=s680-w680-h510"
+  },
+  "body": {
+    "type": "box",
+    "layout": "vertical",
+    "contents": [
+      {
+        "type": "text",
+        "text": "Bash Coffee",
+        "weight": "bold",
+        "size": "xl",
+        "align": "center"
+      },
+      {
+        "type": "text",
+        "text": "Order Detail",
+        "size": "md",
+        "align": "center",
+        "margin": "sm"
+      },
+      {
+        "type": "box",
+        "layout": "vertical",
+        "margin": "lg",
+        "spacing": "sm",
+        "contents": [
+          {
+            "type": "text",
+            "text": "OCT 24 2024 | 3:50PM",
+            "size": "sm",
+            "color": "#999999"
+          },
+          {
+            "type": "text",
+            "text": "Bash Coffee",
+            "weight": "bold",
+            "size": "md",
+            "margin": "sm"
+          },
+          {
+            "type": "text",
+            "text": "Street, Revenue, District",
+            "size": "sm",
+            "color": "#999999"
+          },
+          {
+            "type": "text",
+            "text": "Recipient",
+            "weight": "bold",
+            "size": "md",
+            "margin": "md"
+          },
+          {
+            "type": "text",
+            "text": "iCondo, Salaya, District, Street, Subdistrict, Postal Code",
+            "size": "sm",
+            "color": "#999999"
+          },
+          {
+            "type": "text",
+            "text": "Tel: 0000000000",
+            "size": "sm",
+            "color": "#999999"
           }
+        ]
+      },
+      {
+        "type": "separator",
+        "margin": "lg"
+      },
+      {
+        "type": "box",
+        "layout": "horizontal",
+        "margin": "lg",
+        "contents": [
+          {
+            "type": "text",
+            "text": "Order Type",
+            "size": "md",
+            "weight": "bold"
+          },
+          {
+            "type": "text",
+            "text": "Delivery",
+            "align": "end"
+          }
+        ]
+      },
+      {
+        "type": "box",
+        "layout": "horizontal",
+        "contents": [
+          {
+            "type": "text",
+            "text": "Payment Method",
+            "size": "md",
+            "weight": "bold"
+          },
+          {
+            "type": "text",
+            "text": "QRCode",
+            "align": "end"
+          }
+        ]
+      },
+      {
+        "type": "box",
+        "layout": "horizontal",
+        "contents": [
+          {
+            "type": "text",
+            "text": "Order Price",
+            "size": "md",
+            "weight": "bold"
+          },
+          {
+            "type": "text",
+            "text": "59 THB",
+            "align": "end"
+          }
+        ]
+      },
+      {
+        "type": "box",
+        "layout": "horizontal",
+        "contents": [
+          {
+            "type": "text",
+            "text": "Delivery Fee",
+            "size": "md",
+            "weight": "bold"
+          },
+          {
+            "type": "text",
+            "text": "17 THB",
+            "align": "end"
+          }
+        ]
+      },
+      {
+        "type": "box",
+        "layout": "horizontal",
+        "contents": [
+          {
+            "type": "text",
+            "text": "Coupon",
+            "size": "md",
+            "weight": "bold",
+            "color": "#FF5551"
+          },
+          {
+            "type": "text",
+            "text": "-17 THB",
+            "align": "end",
+            "color": "#FF5551"
+          }
+        ]
+      },
+      {
+        "type": "separator",
+        "margin": "lg"
+      },
+      {
+        "type": "box",
+        "layout": "horizontal",
+        "margin": "lg",
+        "contents": [
+          {
+            "type": "text",
+            "text": "Total",
+            "size": "md",
+            "weight": "bold"
+          },
+          {
+            "type": "text",
+            "text": "59 THB",
+            "align": "end"
+          }
+        ]
+      }
+    ]
+  },
+  "footer": {
+    "type": "box",
+    "layout": "vertical",
+    "contents": [
+      {
+        "type": "button",
+        "style": "primary",
+        "action": {
+          "type": "message",
+          "label": "View Order Status",
+          "text": "View Order Status"
         }
-      ]
-    }
+      }
+    ]
   }
+}

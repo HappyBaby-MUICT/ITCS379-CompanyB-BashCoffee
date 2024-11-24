@@ -1,0 +1,101 @@
+{
+  "type": "bubble",
+  "body": {
+    "type": "box",
+    "layout": "vertical",
+    "contents": [
+      {
+        "type": "text",
+        "text": "DELIVERY DESTINATION",
+        "weight": "bold",
+        "color": "#9B7C53",
+        "size": "sm"
+      },
+      {
+        "type": "text",
+        "text": "NO. 123",
+        "weight": "bold",
+        "size": "xxl",
+        "margin": "md"
+      },
+      {
+        "type": "text",
+        "text": "Bash Coffee, Mahidol University",
+        "size": "xs",
+        "color": "#aaaaaa",
+        "wrap": true
+      },
+      {
+        "type": "separator",
+        "margin": "xxl"
+      },
+      {
+        "type": "box",
+        "layout": "vertical",
+        "contents": [
+          {
+            "type": "text",
+            "text": "Location",
+            "weight": "bold"
+          },
+          {
+            "type": "box",
+            "layout": "vertical",
+            "contents": [
+              {
+                "type": "text",
+                "text": "Pick-up at Bash Coffee",
+                "align": "start",
+                "offsetStart": "lg"
+              }
+            ],
+            "borderWidth": "light",
+            "borderColor": "#747476",
+            "alignItems": "flex-start",
+            "paddingTop": "sm",
+            "paddingBottom": "sm",
+            "cornerRadius": "md"
+          }
+        ],
+        "margin": "lg",
+        "spacing": "sm"
+      },
+      {
+        "type": "box",
+        "layout": "vertical",
+        "contents": [
+          {
+            "type": "text",
+            "text": "Phone number",
+            "weight": "bold"
+          },
+          {
+            "type": "box",
+            "layout": "vertical",
+            "contents": [
+              {
+                "type": "text",
+                "text": "0911111111",
+                "align": "start",
+                "offsetStart": "lg"
+              }
+            ],
+            "borderWidth": "light",
+            "borderColor": "#747476",
+            "alignItems": "flex-start",
+            "paddingTop": "sm",
+            "paddingBottom": "sm",
+            "cornerRadius": "md"
+          }
+        ],
+        "margin": "md",
+        "spacing": "sm"
+      }
+    ]
+  },
+  "styles": {
+    "footer": {
+      "separator": true
+    }
+  }
+}

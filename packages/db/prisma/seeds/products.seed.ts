@@ -1,4 +1,3 @@
-import path from 'path'
 import { PrismaClient } from '../../dist/client'
 import xlsx from 'xlsx'
 
@@ -8,45 +7,53 @@ type ProductRow = {
   Hot: string
   Cold: string
   'Price (For Bakery)': string
-  'Images (Hot)': Buffer
-  'Images (Cold)': Buffer
-  'Images (Bakery)': Buffer
   'No.': string
 }
 
-const db = new PrismaClient()
-
 export const seedProducts = async () => {
+  const db = new PrismaClient()
+
   const workbook = xlsx.readFile(
-    path.resolve(__dirname, './data/store-menu.xlsx'),
-    { cellDates: true, cellNF: false, cellText: false },
+    '/Users/zkrran/Github/ITCS379-CompanyB-BashCoffee/packages/db/prisma/seeds/data/store-menu.xlsx',
   )
   const sheetName = 'Menu & Details'
+
   const sheet = workbook.Sheets[sheetName]
-  const rows: ProductRow[] = xlsx.utils.sheet_to_json(sheet, { raw: true })
+  const rows: ProductRow[] = xlsx.utils.sheet_to_json(sheet)
 
-  for (const [index, row] of rows.entries()) {
-    const baseName = row['Menu(s) Name']
+  for (const row of rows) {
+    const productName = row['Menu(s) Name']
     const description = row['Description']
-    const hotPrice = parseFloat(row['Hot'])
-    const coldPrice = parseFloat(row['Cold'])
-    const bakeryPrice = parseFloat(row['Price (For Bakery)'])
-    const hotImage = row['Images (Hot)']
-    const coldImage = row['Images (Cold)']
-    const bakeryImage = row['Images (Bakery)']
+    const variants = [
+      { name: 'Hot', price: parseFloat(row['Hot']), defaultCodeSuffix: 'HOT' },
+      {
+        name: 'Iced',
+        price: parseFloat(row['Cold']),
+        defaultCodeSuffix: 'COLD',
+      },
+      {
+        name: 'Bakery',
+        price: parseFloat(row['Price (For Bakery)']),
+        defaultCodeSuffix: 'BAKERY',
+      },
+    ]
 
-    const createProduct = async (
-      name: string,
-      price: number,
-      image: Buffer | null,
-    ) => {
-      if (!isNaN(price)) {
+    // Create a product_template entry
+
+    for (const variant of variants) {
+      if (!isNaN(variant.price)) {
         const productTemplate = await db.product_template.create({
           data: {
-            name: name ? { en_US: name } : {},
+            name: productName
+              ? {
+                  en_US:
+                    variant.name != 'Bakery'
+                      ? variant.name + ' ' + productName
+                      : productName,
+                }
+              : {},
             description: description ? { en_US: description } : {},
-            type: 'service',
-            detailed_type: 'service',
+            detailed_type: 'consu',
             sale_ok: true,
             purchase_ok: true,
             active: true,
@@ -56,66 +63,23 @@ export const seedProducts = async () => {
             categ_id: 1,
             sequence: 1,
             available_in_pos: true,
-            list_price: price.toFixed(2),
-            create_date: new Date(),
-            write_date: new Date(),
-            can_image_1024_be_zoomed: false,
-            create_uid: 1,
-            write_uid: 1,
-            default_code: 'BASH',
-            volume: 0.0,
-            weight: 0.01,
-            has_configurable_attributes: false,
+            list_price: variant.price,
           },
         })
-
         await db.product_product.create({
           data: {
             product_tmpl_id: productTemplate.id,
+            default_code: `PROD-${row['No.']}-${variant.defaultCodeSuffix}`,
             active: true,
-            create_date: new Date(),
-            write_date: new Date(),
-            create_uid: 1,
-            write_uid: 1,
-            barcode: 'BASH',
-            default_code: 'BASH',
-            volume: 0.0,
-            weight: 0.01,
-            can_image_variant_1024_be_zoomed: false,
           },
         })
+
         console.log(
-          `Seeded product: ${name} with price: ${price} and image: ${imageUrl}`,
+          `Seeded product variant: ${productName} (${variant.name}) with price: ${variant.price}`,
         )
       }
-    }
-
-    // Create "Hot" product
-    if (!isNaN(hotPrice)) {
-      const hotName = `Hot ${baseName}`
-      console.log('Hot Image: ', hotImage)
-      await createProduct(hotName, hotPrice, hotImage)
-    }
-
-    // Create "Iced" product
-    if (!isNaN(coldPrice)) {
-      const icedName = `Iced ${baseName}`
-      await createProduct(icedName, coldPrice, coldImage)
-    }
-
-    // Create Bakery product without prefix
-    if (!isNaN(bakeryPrice)) {
-      await createProduct(baseName, bakeryPrice, bakeryImage)
     }
   }
 
   console.log('Seeding completed.')
 }
-
-seedProducts()
-  .catch(error => {
-    console.error('Error during seeding:', error)
-  })
-  .finally(async () => {
-    await db.$disconnect()
-  })

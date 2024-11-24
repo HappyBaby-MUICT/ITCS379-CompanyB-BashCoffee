@@ -1,0 +1,88 @@
+{
+  "type": "bubble",
+  "size": "giga",
+  "header": {
+    "type": "box",
+    "layout": "vertical",
+    "contents": [
+      {
+        "type": "text",
+        "text": "Do you want add-on?",
+        "align": "center"
+      }
+    ]
+  },
+  "body": {
+    "type": "box",
+    "layout": "vertical",
+    "contents": [
+      {
+        "type": "box",
+        "layout": "vertical",
+        "contents": [
+          {
+            "type": "text",
+            "text": "Oat Milk - ฿15"
+          }
+        ],
+        "borderWidth": "light",
+        "borderColor": "#747476",
+        "alignItems": "center",
+        "paddingTop": "sm",
+        "paddingBottom": "sm",
+        "cornerRadius": "md",
+        "action": {
+          "type": "postback",
+          "label": "oatmilk",
+          "data": "oatmilk",
+          "displayText": "Add-On: Oat Milk"
+        }
+      },
+      {
+        "type": "box",
+        "layout": "vertical",
+        "contents": [
+          {
+            "type": "text",
+            "text": "Brown Sugar Jelly - ฿10"
+          }
+        ],
+        "borderWidth": "light",
+        "borderColor": "#747476",
+        "alignItems": "center",
+        "paddingTop": "sm",
+        "paddingBottom": "sm",
+        "cornerRadius": "md",
+        "action": {
+          "type": "postback",
+          "label": "jelly",
+          "data": "jelly",
+          "displayText": "Add-On: Brown Sugar Jelly"
+        }
+      },
+      {
+        "type": "box",
+        "layout": "vertical",
+        "contents": [
+          {
+            "type": "text",
+            "text": "No, thanks!"
+          }
+        ],
+        "borderWidth": "light",
+        "borderColor": "#747476",
+        "alignItems": "center",
+        "paddingTop": "sm",
+        "paddingBottom": "sm",
+        "cornerRadius": "md",
+        "action": {
+          "type": "postback",
+          "label": "no-addon",
+          "data": "gotoreceipt",
+          "displayText": "No more add-on"
+        }
+      }
+    ],
+    "spacing": "md"
+  }
+}

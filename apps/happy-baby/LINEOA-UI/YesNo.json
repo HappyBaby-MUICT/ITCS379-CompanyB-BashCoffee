@@ -1,0 +1,67 @@
+{
+  "type": "bubble",
+  "size": "giga",
+  "body": {
+    "type": "box",
+    "layout": "vertical",
+    "contents": [
+      {
+        "type": "text",
+        "text": "Do you want to ... ?",
+        "align": "center",
+        "wrap": true
+      },
+      {
+        "type": "box",
+        "layout": "horizontal",
+        "contents": [
+          {
+            "type": "box",
+            "layout": "vertical",
+            "contents": [
+              {
+                "type": "text",
+                "text": "Yes"
+              }
+            ],
+            "action": {
+              "type": "postback",
+              "label": "yes",
+              "data": "true"
+            },
+            "alignItems": "center",
+            "justifyContent": "center",
+            "borderWidth": "normal",
+            "borderColor": "#747476",
+            "cornerRadius": "xxl",
+            "paddingTop": "sm",
+            "paddingBottom": "sm"
+          },
+          {
+            "type": "box",
+            "layout": "vertical",
+            "contents": [
+              {
+                "type": "text",
+                "text": "No"
+              }
+            ],
+            "action": {
+              "type": "postback",
+              "label": "no",
+              "data": "false"
+            },
+            "alignItems": "center",
+            "justifyContent": "center",
+            "cornerRadius": "xxl",
+            "borderColor": "#747476",
+            "borderWidth": "normal"
+          }
+        ],
+        "spacing": "xxl"
+      }
+    ],
+    "spacing": "lg",
+    "backgroundColor": "#00000000"
+  }
+}

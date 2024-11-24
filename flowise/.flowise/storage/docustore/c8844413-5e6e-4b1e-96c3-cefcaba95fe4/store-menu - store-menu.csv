@@ -1,0 +1,48 @@
+No.,Menu(s) Name,Categories,Price (For Bakery),Hot,Cold,"Able to add ""Oat-Milk"" (15 THB)","Able to add ""Brown Sugar Jelly"" (10 THB)",Description
+1,Orange Juice,Refreshment,-,-,45,FALSE,TRUE,Pure Orange Juice
+2,Lemon Thai Tea,Refreshment,-,-,55,FALSE,TRUE,Lemon with Thai tea
+3,Honey Lemonade,Refreshment,-,-,55,FALSE,TRUE,Honey with lemonade
+4,Red Lemon Soda,Refreshment,-,-,55,FALSE,TRUE,Red syrup with Lemon juice and Soda
+5,Honey Yuzu Soda,Refreshment,-,-,60,FALSE,TRUE,Honey Yuzu Soda
+6,Breezy Rose,Refreshment,-,-,60,FALSE,TRUE,Rose syrub with soda
+7,Plum Lemon Soda,Refreshment,-,-,60,FALSE,TRUE,Plum  with Lemon and Soda
+8,Craft Cola,Refreshment,-,-,60,FALSE,TRUE,Cola syrup with craft soda
+9,Fruit Sunshine Tea,Refreshment,-,-,70,FALSE,TRUE,Fruit with tea
+10,Water,Refreshment,-,-,10,FALSE,FALSE,-
+11,Coke,Refreshment,-,-,18,FALSE,FALSE,-
+12,Matcha Latte,Matcha (Ceremonial Grade),-,65,70,TRUE,TRUE,Matcha with fresh milk
+13,Orange Matcha,Matcha (Ceremonial Grade),-,-,70,FALSE,TRUE,Matcha with Pure Orange Juice
+14,Coconut Flower Matcha,Matcha (Ceremonial Grade),-,-,90,FALSE,TRUE,Matcha with Coconut juice
+15,Premium Matcha Latte,Matcha (Ceremonial Grade),-,85,90,TRUE,TRUE,Premium matcha with fresh milk
+16,Twist Matcha Latte,Matcha (Ceremonial Grade),-,110,120,TRUE,TRUE,Twist matcha with fresh milk
+17,Clear Matcha,Matcha (Ceremonial Grade),-,60,65,TRUE,TRUE,Clear Matcha
+18,Caramel Fresh Milk,Non-Coffee,-,45,50,TRUE,TRUE,Caramel syrub with fresh Milk
+19,Pinky Milk,Non-Coffee,-,45,50,TRUE,TRUE,Pink strawberry syrub with fresh milk
+20,Black Tea,Non-Coffee,-,50,55,TRUE,TRUE,Black Tea add milk or without milk
+21,Cocoa,Non-Coffee,-,55,60,FALSE,TRUE,Cocoa powder with fresh milk
+22,Thai Milk Tea,Non-Coffee,-,55,60,TRUE,TRUE,Thai tea with fresh milk
+23,Assam Black Milk Tea,Non-Coffee,-,60,65,FALSE,TRUE,Assam Black Tea with fresh Milk
+24,Whipped Cheese Thai Tea,Non-Coffee,-,-,85,TRUE,TRUE,Thai tea with fresh milk with whipped Cheese on top
+25,Dirty,Coffee,-,85,85,FALSE,TRUE,Coffee with cream at the bottom
+26,Espresso,Coffee,-,50,-,TRUE,TRUE,Ground coffee add a bit of the boiling water
+27,Americano,Coffee,-,55,60,TRUE,TRUE,Black coffee with a little bit of hot-water
+28,Latte,Coffee,-,60,65,TRUE,TRUE,Espresso with fresh milk added with milk form
+29,Cappuccino,Coffee,-,60,65,TRUE,TRUE,Espresso and frothed milk upon
+30,Es-Yen,Coffee,-,60,65,TRUE,TRUE,Thai style coffee added with milk
+31,Mocha,Coffee,-,65,70,TRUE,TRUE,Espresso with steamed milk and chocolate
+32,Honey Americano,Coffee,-,65,70,FALSE,TRUE,Honey with americano
+33,Black Yuzu,Coffee,-,-,70,FALSE,TRUE,Americano with yuzu syrub
+34,Orange Coffee,Coffee,-,-,70,FALSE,TRUE,Pure orange juice with americano
+35,Coconut Flower Americano,Coffee,-,-,70,FALSE,TRUE,Coconut juice with Americano
+36,Garlic Parsley,Food & Bakery,39,-,-,FALSE,FALSE,A bread with the bold flavors of garlic and fresh parsley.
+37,Banana Nutella Toast,Food & Bakery,39,-,-,FALSE,FALSE,Bread top up with a banana and nutella.
+38,Sandwich,Food & Bakery,35,-,-,FALSE,FALSE,n/a
+39,Toffy Cake,Food & Bakery,50,-,-,FALSE,FALSE,A sweet and moist cake topped with rich toffee sauce.
+40,Chocolate Chip Muffin,Food & Bakery,45,-,-,FALSE,FALSE,Muffin baked with a chocolate chip.
+41,Congee Cup (Knor),Food & Bakery,20,-,-,FALSE,FALSE,Instant congee cup
+42,Instant Noodle Cup (Mama),Food & Bakery,25,-,-,FALSE,FALSE,Instant noodle cup
+43,Original Cookie,Food & Bakery,45,-,-,FALSE,FALSE,Baked plain cookie
+44,Larva Choc Cookie,Food & Bakery,55,-,-,FALSE,FALSE,Baked Chocolate Cookie with a cocoa larva sauce inside.
+45,Brownies,Food & Bakery,65,-,-,FALSE,FALSE,"Dense and fudgy chocolate squares with a rich, gooey texture."
+46,Donut,Food & Bakery,50,-,-,FALSE,FALSE,Donut with a sugar syrup covering
+47,Kanom Khai,Food & Bakery,25,-,-,FALSE,FALSE,"A traditional Thai egg dessert, soft and sweet with a light texture."
