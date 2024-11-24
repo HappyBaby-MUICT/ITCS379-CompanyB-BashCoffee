@@ -135,10 +135,11 @@ export class LiffPublicService {
     ])
   }
 
-  async getTransactionHistory(ctx: Context) { 
+  async getTransactionHistory(ctx: Context) {
     const user = getUserFromContext(ctx)
     const history = await this.db.transactionHistory.findMany({
       where: { userId: user.id },
+      orderBy: { createdAt: 'desc' },
     })
 
     return history
