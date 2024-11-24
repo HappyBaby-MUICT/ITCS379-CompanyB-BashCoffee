@@ -3,13 +3,33 @@ import Link from 'next/link'
 import { IoArrowBack } from 'react-icons/io5'
 import { IoIosGift } from 'react-icons/io'
 import { TbParkingCircleFilled } from 'react-icons/tb'
+import { useMutation, useQuery } from '@tanstack/react-query'
 import { useRouter } from 'next/router'
+import { getCoupon, redeemCoupon } from '@/service/coupon'
+import { SimpleSpinner } from '@/component/shared/Spinner'
+import { toast } from 'sonner'
+import { useSession } from 'next-auth/react'
 
 export default function PointRedemptionID() {
   const router = useRouter()
-  const handleSubmit = (e: React.MouseEvent<HTMLButtonElement>) => {
-    e.preventDefault()
-    router.push(`${router.asPath}/redeem`)
+  const { update } = useSession()
+
+  const couponId = router.query.id as string
+  const { data, isLoading } = useQuery(['coupons-get-', couponId], () =>
+    getCoupon(couponId),
+  )
+  const handleRedeem = useMutation(redeemCoupon)
+
+  const onClick = async () => {
+    try {
+      await handleRedeem.mutateAsync(couponId)
+      toast.success('Successfully redeemed coupon')
+      update()
+      router.push('/profile')
+    } catch (e) {
+      console.error(e)
+      toast.error('Failed to redeem coupon')
+    }
   }
 
   return (
@@ -25,22 +45,24 @@ export default function PointRedemptionID() {
               <p className=" font-bold text-md">Point Redemption</p>
             </div>
           </div>
-          <Link href="/profile/point-redemption/1">
+          {isLoading || !router.isReady ? (
+            <SimpleSpinner />
+          ) : (
             <div className="flex flex-col gap-4 w-full bg-[#D5CBB1] p-4 rounded-xl">
               <div className="flex flex-col gap- w-full">
                 <div className="relative w-full rounded-xl overflow-hidden aspect-[16/9]">
                   <img
-                    src="/redeemitem.jpg"
+                    src={data?.imageUrl}
                     alt="pointredeempic"
                     className="object-cover"
                   />
                 </div>
                 <div className="flex justify-between items-center mt-4">
                   <p className="text-lg font-bold text-[#2D1810]">
-                    A Free Drink on Us
+                    {data?.name}
                   </p>
                   <div className="flex gap-2 px-1 bg-[#E9E5D7] w-fit rounded-md items-center">
-                    <p className="text-lg text-[#2D1810]">10</p>
+                    <p className="text-lg text-[#2D1810]">{data?.points}</p>
                     <TbParkingCircleFilled size={24} />
                   </div>
                 </div>
@@ -48,21 +70,20 @@ export default function PointRedemptionID() {
                   Condition
                 </p>
                 <ul className="list-disc text-sm text-[#2D1810] ml-5 space-y-1">
-                  <li>The add-on is not included.</li>
-                  <li>
-                    This coupon can be used in online order and at Bash Coffee.
-                  </li>
+                  {data?.description
+                    .split('\n')
+                    .map((line, index) => <li key={index}>{line}</li>)}
                 </ul>
               </div>
               <button
-                type="submit"
-                onClick={handleSubmit}
+                type="button"
+                onClick={onClick}
                 className="text-white w-full bg-[#2D1810] hover:bg-[#2D1810]/80 font-semibold rounded-lg text-sm py-3 mb-2 mt-4"
               >
                 REDEEM NOW
               </button>
             </div>
-          </Link>
+          )}
         </div>
       </div>
     </MembershipLayout>

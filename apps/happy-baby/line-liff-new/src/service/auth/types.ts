@@ -20,6 +20,14 @@ export type SendOtpArgs = {
   phoneNumber: string
 }
 
+export type TransactionHistory = {
+  id: string
+  userId: string
+  amount: number
+  type: string
+  createdAt: string
+}
+
 export type GetMeResponse = {
   id: string
   email: string

@@ -1,7 +1,12 @@
 import { Context } from '@bash-coffee/common'
-import { Body, Controller, Get, HttpStatus, Post, Req } from '@nestjs/common'
+import { Body, Controller, Get, HttpStatus, Param, Post, Req } from '@nestjs/common'
 
-import { LoginArgs, RegisterArgs, UpdateUserArgs } from './public.dto'
+import {
+  LoginArgs,
+  RedeemCouponArgs,
+  RegisterArgs,
+  UpdateUserArgs,
+} from './public.dto'
 import { LiffPublicService } from './public.service'
 
 @Controller('/api/liff/public')
@@ -39,6 +44,29 @@ export class LiffPublicController {
   @Get('/coupons/list')
   async getCouponsList() {
     const res = await this.service.getCoupons()
+
+    return { statusCode: HttpStatus.OK, data: res }
+  }
+
+  @Get('/coupons/:id')
+  async getCoupon(@Param('id') id: string) {
+    const res = await this.service.getCoupon(id)
+
+    return { statusCode: HttpStatus.OK, data: res }
+  }
+
+
+
+  @Post('/coupons/redeem')
+  async redeemCoupon(@Body() args: RedeemCouponArgs, @Req() ctx: Context) {
+    await this.service.redeemCoupon(args, ctx)
+
+    return { statusCode: HttpStatus.OK }
+  }
+
+  @Get('/me/history')
+  async getTrasactionHistory(@Req() ctx: Context) { 
+    const res = await this.service.getTransactionHistory(ctx)
 
     return { statusCode: HttpStatus.OK, data: res }
   }

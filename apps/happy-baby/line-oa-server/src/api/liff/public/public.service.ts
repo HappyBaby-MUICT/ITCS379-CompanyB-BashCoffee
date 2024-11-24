@@ -86,7 +86,15 @@ export class LiffPublicService {
     return coupons
   }
 
-  async redeemCoupons(args: RedeemCouponArgs, ctx: Context) {
+  async getCoupon(id: string) {
+    const coupon = await this.db.coupon.findUnique({
+      where: { id },
+    })
+
+    return coupon
+  }
+
+  async redeemCoupon(args: RedeemCouponArgs, ctx: Context) {
     const user = getUserFromContext(ctx)
     const coupon = await this.db.coupon.findUnique({
       where: { id: args.couponId },
@@ -109,27 +117,30 @@ export class LiffPublicService {
       throw new BadRequestException('User does not exist')
     }
 
-    const existCoupon = existUser.coupons.find(c => c.id === coupon.id)
-
-    if (existCoupon) {
-      await this.db.lineUser.update({
+    await this.db.$transaction([
+      this.db.lineUser.update({
         where: { id: user.id },
-        data: { points: user.points - coupon.points },
-      })
-      await this.db.userCoupons.update({
-        where: { id: existCoupon.id },
-        data: { amount: { increment: 1 } },
-      })
+        data: { points: existUser.points - coupon.points },
+      }),
+      this.db.transactionHistory.create({
+        data: {
+          userId: user.id,
+          amount: coupon.points,
+          type: 'POINT_DEDUCT',
+        },
+      }),
+      this.db.userCoupons.create({
+        data: { couponId: coupon.id, userId: user.id, amount: 1 },
+      }),
+    ])
+  }
 
-      return
-    }
+  async getTransactionHistory(ctx: Context) { 
+    const user = getUserFromContext(ctx)
+    const history = await this.db.transactionHistory.findMany({
+      where: { userId: user.id },
+    })
 
-    await this.db.lineUser.update({
-      where: { id: user.id },
-      data: { points: user.points - coupon.points },
-    })
-    await this.db.userCoupons.create({
-      data: { couponId: coupon.id, userId: user.id, amount: 1 },
-    })
+    return history
   }
 }

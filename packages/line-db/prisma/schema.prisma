@@ -17,7 +17,7 @@ enum TransactionType {
 }
 
 model Coupon {
-  id          String   @id
+  id          String   @id @default(cuid())
   name        String
   description String
   points      Int
@@ -25,13 +25,13 @@ model Coupon {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
-  UserCoupons UserCoupons?
+  UserCoupons UserCoupons[]
 }
 
 model UserCoupons {
   id       String @id @default(cuid())
   userId   String
-  couponId String @unique
+  couponId String
   amount   Int
 
   Coupon Coupon   @relation(fields: [couponId], references: [id])

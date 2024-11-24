@@ -5,6 +5,7 @@ import {
   LoginArgs,
   RegisterArgs,
   SendOtpArgs,
+  TransactionHistory,
   UpdateUserArgs,
 } from './types'
 import { ENDPOINT, HTTP_STATUS } from '../../libs/fetchers'
@@ -25,6 +26,24 @@ export const getMe = async (token: string) => {
   }
 
   return res.data as GetMeResponse
+}
+
+export const getTrasactionHistory = async () => {
+  const session = await getSession()
+
+  const res = await fetchers.Get<TransactionHistory[]>(
+    `${ENDPOINT}/api/liff/public/me/history`,
+    { token: session?.user.accessToken },
+  )
+
+  if (
+    res.statusCode >= HTTP_STATUS.BAD_REQUEST ||
+    res.statusCode === HTTP_STATUS.FAILED_TO_FETCH
+  ) {
+    throw Error(res.message)
+  }
+
+  return res.data as TransactionHistory[]
 }
 
 export const loginFn = async (args: LoginArgs) => {

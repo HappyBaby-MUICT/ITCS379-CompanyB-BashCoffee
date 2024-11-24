@@ -24,7 +24,7 @@ export class UpdateUserArgs extends createZodDto(
     lastName: z.string(),
     email: z.string().email(),
   }),
-) {}
+) { }
 
 export class RedeemCouponArgs extends createZodDto(
   z.object({

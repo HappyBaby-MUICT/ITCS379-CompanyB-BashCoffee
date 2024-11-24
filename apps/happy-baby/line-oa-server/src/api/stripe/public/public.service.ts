@@ -1,7 +1,7 @@
 import { PrismaService } from '@bash-coffee/db'
 import { PrismaService as LinePrismaService } from '@bash-coffee/line-db'
 import { messagingApi } from '@line/bot-sdk'
-import { FlexContainer, Message } from '@line/bot-sdk/dist/messaging-api/api'
+import {  Message } from '@line/bot-sdk/dist/messaging-api/api'
 import { Injectable } from '@nestjs/common'
 import { createOrderDoing } from 'api/line/public/constants/OrderDoing'
 import stripe from 'stripe'
