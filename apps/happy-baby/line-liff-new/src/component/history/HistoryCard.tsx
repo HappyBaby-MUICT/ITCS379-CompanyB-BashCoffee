@@ -29,7 +29,7 @@ const formatTime = (time: string) => {
 
 const HistoryCard = (props: HistoryCardProps) => {
   return (
-    <div className="flex flex-col gap-1 w-full bg-[#D5CBB1] p-4 rounded-xl mb-2">
+    <div className="history-card flex flex-col gap-1 w-full bg-[#D5CBB1] p-4 rounded-xl mb-2">
       <div className="flex items-center w-full justify-between">
         <p className="text-lg text-[#2D1810]">{handleType(props.type)}</p>
         <p className="text-lg text-[#2D1810]">
