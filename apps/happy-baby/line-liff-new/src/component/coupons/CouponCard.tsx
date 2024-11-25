@@ -19,7 +19,7 @@ const CouponCard = (props: CouponCardProps) => {
           <div className="flex justify-between items-center  mt-4">
             <p className="text-lg font-bold text-[#2D1810]">{props.name}</p>
             <div className="flex gap-2 px-1 bg-[#E9E5D7] w-fit rounded-md items-center">
-              <p className="text-lg text-[#2D1810]">10</p>
+              <p className="text-lg text-[#2D1810]">{props.points}</p>
               <TbParkingCircleFilled size={24} />
             </div>
           </div>
