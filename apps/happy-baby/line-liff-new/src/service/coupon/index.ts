@@ -53,9 +53,28 @@ export const getUserCoupons = async () => {
   return res.data as UserCoupon[]
 }
 
+export const getUserCoupon = async (id: string) => {
+  const session = await getSession()
+  const res = await fetchers.Get<UserCoupon>(
+    `${ENDPOINT}/api/liff/public/me/coupon/${id}`,
+    {
+      token: session?.user.accessToken,
+    },
+  )
+
+  if (
+    res.statusCode >= HTTP_STATUS.BAD_REQUEST ||
+    res.statusCode === HTTP_STATUS.FAILED_TO_FETCH
+  ) {
+    throw Error(res.message)
+  }
+
+  return res.data as UserCoupon
+}
+
 export const redeemCoupon = async (id: string) => {
   const session = await getSession()
-  const res = await fetchers.Post<string>(
+  const res = await fetchers.Post<UserCoupon>(
     `${ENDPOINT}/api/liff/public/coupons/redeem`,
     {
       data: { couponId: id },
@@ -69,4 +88,6 @@ export const redeemCoupon = async (id: string) => {
   ) {
     throw Error(res.message)
   }
+
+  return res.data as UserCoupon
 }

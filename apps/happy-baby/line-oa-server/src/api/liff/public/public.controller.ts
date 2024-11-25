@@ -57,9 +57,9 @@ export class LiffPublicController {
 
   @Post('/coupons/redeem')
   async redeemCoupon(@Body() args: RedeemCouponArgs, @Req() ctx: Context) {
-    await this.service.redeemCoupon(args, ctx)
+    const res = await this.service.redeemCoupon(args, ctx)
 
-    return { statusCode: HttpStatus.OK }
+    return { statusCode: HttpStatus.OK, data: res }
   }
 
   @Get('/me/history')
@@ -73,6 +73,13 @@ export class LiffPublicController {
   async getUserCoupons(@Req() ctx: Context) { 
     const res = await this.service.getUserCoupons(ctx)
     
+    return { statusCode: HttpStatus.OK, data: res }
+  }
+
+  @Get('/me/coupon/:id')
+  async getUserCoupon(@Param('id') id: string, @Req() ctx: Context) {
+    const res = await this.service.getUserCoupon(id, ctx)
+
     return { statusCode: HttpStatus.OK, data: res }
   }
 }

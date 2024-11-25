@@ -10,8 +10,6 @@ import { RiCoupon2Line } from 'react-icons/ri'
 export default function MyCoupon() {
   const { data, isLoading } = useQuery(['coupons-get-'], getUserCoupons)
 
-  console.log(data)
-
   return (
     <MembershipLayout>
       <div className="flex flex-col items-center w-full gap-8">

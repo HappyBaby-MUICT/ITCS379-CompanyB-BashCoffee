@@ -15,3 +15,7 @@ export interface UserCoupon {
   createdAt: string
   updatedAt: string
 }
+
+export interface UserCouponWithCoupon extends UserCoupon { 
+  coupon: Coupon
+}

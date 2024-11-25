@@ -22,10 +22,10 @@ export default function PointRedemptionID() {
 
   const onClick = async () => {
     try {
-      await handleRedeem.mutateAsync(couponId)
+      const coupon = await handleRedeem.mutateAsync(couponId)
       toast.success('Successfully redeemed coupon')
       update()
-      router.push('/home/my-coupon')
+      router.push(`/home/point-redemption/${coupon.id}/redeem`)
     } catch (e) {
       console.error(e)
       toast.error('Failed to redeem coupon')

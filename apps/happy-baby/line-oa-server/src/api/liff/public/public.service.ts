@@ -140,10 +140,18 @@ export class LiffPublicService {
           type: 'POINT_DEDUCT',
         },
       }),
-      this.db.userCoupons.create({
-        data: { couponId: coupon.id, userId: user.id, amount: 1 },
-      }),
+    
     ])
+    
+    const userCoupon = await this.db.userCoupons.create({
+      data: {
+        userId: user.id,
+        couponId: coupon.id,
+        amount: 1,
+      },
+    })
+
+    return userCoupon
   }
 
   async getTransactionHistory(ctx: Context) {
@@ -164,5 +172,19 @@ export class LiffPublicService {
     })
 
     return coupons
+  }
+
+  async getUserCoupon(id: string, ctx: Context) {
+    const user = getUserFromContext(ctx)
+    const coupon = await this.db.userCoupons.findUnique({
+      where: { id, userId: user.id },
+      include: { coupon: true },
+    })
+
+    if (!coupon) {
+      throw new BadRequestException('Coupon does not exist or has been redeemed')
+    }
+
+    return coupon
   }
 }
