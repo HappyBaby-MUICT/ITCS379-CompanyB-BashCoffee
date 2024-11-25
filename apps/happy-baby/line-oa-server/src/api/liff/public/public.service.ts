@@ -53,7 +53,7 @@ export class LiffPublicService {
         })
 
         if (!user) {
-          throw new BadRequestException('User does not exist')
+          throw new BadRequestException('This mobile number is not a membership')
         }
 
         return this.authService.generateToken(user.id)

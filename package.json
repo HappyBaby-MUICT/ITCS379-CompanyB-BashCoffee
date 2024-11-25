@@ -28,11 +28,16 @@
     "db:line:studio": "dotenv -- pnpm --filter @bash-coffee/line-db studio",
     "db:line:generate": "dotenv -- pnpm --filter @bash-coffee/line-db generate",
     "lint": "eslint . --no-error-on-unmatched-pattern",
-    "fmt": "prettier --write ."
+    "fmt": "prettier --write .",
+    "test": "dotenv -- pnpm --filter=\"./apps/happy-baby/line-oa-server\" test"
   },
   "dependencies": {
+    "@nestjs/testing": "10.4.8",
+    "@types/jest": "29.5.14",
     "dotenv": "16.4.5",
-    "dotenv-cli": "7.4.2"
+    "dotenv-cli": "7.4.2",
+    "jest": "29.7.0",
+    "ts-jest": "29.2.5"
   },
   "devDependencies": {
     "@types/node": "22.7.9",
