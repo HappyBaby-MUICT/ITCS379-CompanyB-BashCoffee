@@ -1,0 +1,199 @@
+{
+  "type": "bubble",
+  "body": {
+    "type": "box",
+    "layout": "vertical",
+    "contents": [
+      {
+        "type": "text",
+        "text": "RECEIPT",
+        "weight": "bold",
+        "color": "#9B7C53",
+        "size": "sm"
+      },
+      {
+        "type": "text",
+        "text": "NO. 123",
+        "weight": "bold",
+        "size": "xxl",
+        "margin": "md"
+      },
+      {
+        "type": "text",
+        "text": "Delivery: Pick-up at Bash Coffee",
+        "size": "xs",
+        "color": "#aaaaaa",
+        "wrap": true
+      },
+      {
+        "type": "text",
+        "text": "Phone number: 0911111111",
+        "size": "xs",
+        "color": "#aaaaaa",
+        "wrap": true,
+        "margin": "sm"
+      },
+      {
+        "type": "separator",
+        "margin": "xxl"
+      },
+      {
+        "type": "box",
+        "layout": "vertical",
+        "margin": "xxl",
+        "spacing": "sm",
+        "contents": [
+          {
+            "type": "box",
+            "layout": "vertical",
+            "contents": [
+              {
+                "type": "box",
+                "layout": "horizontal",
+                "contents": [
+                  {
+                    "type": "text",
+                    "text": "Latte",
+                    "size": "sm",
+                    "color": "#555555",
+                    "flex": 0
+                  },
+                  {
+                    "type": "text",
+                    "text": "85 THB",
+                    "size": "sm",
+                    "color": "#111111",
+                    "align": "end",
+                    "weight": "regular"
+                  }
+                ]
+              },
+              {
+                "type": "box",
+                "layout": "vertical",
+                "contents": [
+                  {
+                    "type": "text",
+                    "text": "- 100%",
+                    "size": "xs"
+                  },
+                  {
+                    "type": "text",
+                    "text": "- Oat Milk",
+                    "size": "xs"
+                  },
+                  {
+                    "type": "text",
+                    "text": "- note: more ice please",
+                    "size": "xs",
+                    "wrap": true
+                  }
+                ],
+                "paddingStart": "md",
+                "margin": "sm"
+              }
+            ]
+          },
+          {
+            "type": "separator",
+            "margin": "xxl"
+          },
+          {
+            "type": "box",
+            "layout": "horizontal",
+            "margin": "xxl",
+            "contents": [
+              {
+                "type": "text",
+                "text": "ITEMS",
+                "size": "sm",
+                "color": "#555555"
+              },
+              {
+                "type": "text",
+                "text": "1",
+                "size": "sm",
+                "color": "#111111",
+                "align": "end",
+                "weight": "bold"
+              }
+            ]
+          },
+          {
+            "type": "box",
+            "layout": "horizontal",
+            "contents": [
+              {
+                "type": "text",
+                "text": "TOTAL",
+                "size": "sm",
+                "color": "#555555"
+              },
+              {
+                "type": "text",
+                "text": "85 THB",
+                "size": "sm",
+                "color": "#111111",
+                "align": "end",
+                "weight": "bold"
+              }
+            ],
+            "paddingBottom": "xl"
+          }
+        ]
+      },
+      {
+        "type": "box",
+        "layout": "vertical",
+        "margin": "xxl",
+        "contents": [
+          {
+            "type": "image",
+            "url": "https://developers-resource.landpress.line.me/fx/img/linecorp_code_withborder.png",
+            "aspectMode": "cover",
+            "size": "xl",
+            "margin": "md"
+          },
+          {
+            "type": "text",
+            "text": "10:00",
+            "wrap": true,
+            "margin": "md",
+            "size": "xs",
+            "align": "center"
+          },
+          {
+            "type": "text",
+            "text": "scan or save QR to pay your order",
+            "color": "#aaaaaa",
+            "wrap": true,
+            "margin": "md",
+            "size": "xs",
+            "align": "center"
+          }
+        ],
+        "spacing": "lg",
+        "justifyContent": "center",
+        "alignItems": "center"
+      },
+      {
+        "type": "button",
+        "action": {
+          "type": "postback",
+          "label": "Save QR",
+          "data": "saveqr"
+        },
+        "style": "primary",
+        "offsetTop": "sm",
+        "color": "#4F3A32",
+        "offsetBottom": "none",
+        "margin": "md"
+      }
+    ]
+  },
+  "styles": {
+    "footer": {
+      "separator": true
+    }
+  }
+}

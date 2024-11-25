@@ -1,0 +1,80 @@
+generator client {
+  provider      = "prisma-client-js"
+  output        = "../dist/liff/client"
+  binaryTargets = ["native"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("LINE_DB_URL")
+}
+
+enum TransactionType {
+  POINT_DEDUCT
+  POINT_INCREMENT
+  COUPON_REDEEM
+  COUPON_USE
+}
+
+model Coupon {
+  id          String   @id @default(cuid())
+  name        String
+  description String
+  points      Int
+  imageUrl    String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  userCoupons UserCoupons[]
+}
+
+model UserCoupons {
+  id       String @id @default(cuid())
+  userId   String
+  couponId String
+  amount   Int
+
+  coupon Coupon   @relation(fields: [couponId], references: [id])
+  user   LineUser @relation(fields: [userId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model LineUser {
+  id          String  @id @default(cuid())
+  lineToken   String? @unique
+  email       String
+  firstName   String
+  lastName    String
+  points      Int     @default(0)
+  phoneNumber String  @unique
+  isVerified  Boolean @default(false)
+
+  Otp                Otp[]
+  TransactionHistory TransactionHistory[]
+  coupons            UserCoupons[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model TransactionHistory {
+  id     String @id @default(cuid())
+  userId String
+  amount Int
+
+  type TransactionType
+  user LineUser        @relation(fields: [userId], references: [id])
+
+  createdAt DateTime @default(now())
+}
+
+model Otp {
+  id        String   @id @default(cuid())
+  userId    String
+  otp       String
+  user      LineUser @relation(fields: [userId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}

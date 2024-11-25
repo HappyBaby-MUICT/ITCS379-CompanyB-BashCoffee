@@ -1,13 +1,16 @@
 {
-  "name": "chunimai",
+  "name": "bash-coffee",
   "scripts": {
     "preinstall": "npx only-allow pnpm",
     "dev": "dotenv -- turbo run dev --parallel",
+    "dev:happybaby": "dotenv -- turbo run dev --filter=\"./apps/happy-baby/*\"",
+    "dev:happybaby:liff": "dotenv -- turbo run dev --filter=\"./apps/happy-baby/line-liff-new\"",
     "build": "dotenv -- turbo run build",
     "build:package": "dotenv -- turbo run build --filter=\"./packages/*\"",
     "start": "dotenv -- turbo run start",
     "start:client": "dotenv -- turbo run start --filter=\"./apps/client/*\"",
     "start:server": "dotenv -- turbo run start --filter=\"./apps/server\"",
+    "start:happybaby": "dotenv -- turbo run start --filter=\"./apps/happy-baby/*\"",
     "db:push": "dotenv -- pnpm --filter @bash-coffee/db push",
     "db:pull": "dotenv -- pnpm --filter @bash-coffee/db pull",
     "db:migrate:dev": "dotenv -- pnpm --filter @bash-coffee/db migrate:dev",
@@ -16,12 +19,25 @@
     "db:seed": "dotenv -- pnpm --filter @bash-coffee/db seed",
     "db:studio": "dotenv -- pnpm --filter @bash-coffee/db studio",
     "db:generate": "dotenv -- pnpm --filter @bash-coffee/db generate",
+    "db:line:push": "dotenv -- pnpm --filter @bash-coffee/line-db push",
+    "db:line:pull": "dotenv -- pnpm --filter @bash-coffee/line-db pull",
+    "db:line:migrate:dev": "dotenv -- pnpm --filter @bash-coffee/line-db migrate:dev",
+    "db:line:migrate:deploy": "dotenv -- pnpm --filter @bash-coffee/line-db migrate:deploy",
+    "db:line:migrate:reset": "dotenv -- pnpm --filter @bash-coffee/line-db migrate:reset",
+    "db:line:seed": "dotenv -- pnpm --filter @bash-coffee/line-db seed",
+    "db:line:studio": "dotenv -- pnpm --filter @bash-coffee/line-db studio",
+    "db:line:generate": "dotenv -- pnpm --filter @bash-coffee/line-db generate",
     "lint": "eslint . --no-error-on-unmatched-pattern",
-    "fmt": "prettier --write ."
+    "fmt": "prettier --write .",
+    "test": "dotenv -- pnpm --filter=\"./apps/happy-baby/line-oa-server\" test"
   },
   "dependencies": {
+    "@nestjs/testing": "10.4.8",
+    "@types/jest": "29.5.14",
     "dotenv": "16.4.5",
-    "dotenv-cli": "7.4.2"
+    "dotenv-cli": "7.4.2",
+    "jest": "29.7.0",
+    "ts-jest": "29.2.5"
   },
   "devDependencies": {
     "@types/node": "22.7.9",

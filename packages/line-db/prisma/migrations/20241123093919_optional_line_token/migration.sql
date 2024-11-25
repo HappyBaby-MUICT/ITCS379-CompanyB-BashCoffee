@@ -1,0 +1,4 @@
+-- AlterTable
+ALTER TABLE "LineUser" ADD COLUMN     "isVerified" BOOLEAN NOT NULL DEFAULT false,
+ALTER COLUMN "lineToken" DROP NOT NULL,
+ALTER COLUMN "points" SET DEFAULT 0;

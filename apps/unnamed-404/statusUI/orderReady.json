@@ -1,109 +1,109 @@
 {
-    "type": "bubble",
-    "hero": {
-      "type": "image",
-      "url": "https://lh3.googleusercontent.com/p/AF1QipP5skITvuumBb5XoHsr2G86KHERdLY-TsP2w_Es=s680-w680-h510",
-      "size": "full",
-      "aspectRatio": "20:13",
-      "aspectMode": "cover"
-    },
-    "body": {
-      "type": "box",
-      "layout": "vertical",
-      "contents": [
-        {
-          "type": "text",
-          "text": "PICK UP TIME!",
-          "weight": "bold",
-          "size": "xl",
-          "color": "#000000",
-          "wrap": true
-        },
-        {
-          "type": "text",
-          "text": "Espresso shot with fresh milk",
-          "size": "md",
-          "color": "#333333",
-          "margin": "sm",
-          "wrap": true
-        },
-        {
-          "type": "text",
-          "text": "Your order is now ready to be picked up!",
-          "size": "lg",
-          "weight": "regular",
-          "color": "#000000",
-          "wrap": true,
-          "margin": "md"
-        },
-        {
-          "type": "box",
-          "layout": "vertical",
-          "margin": "lg",
-          "spacing": "sm",
-          "contents": [
-            {
-              "type": "box",
-              "layout": "horizontal",
-              "contents": [
-                {
-                  "type": "text",
-                  "text": "Sweetness level 100%",
-                  "size": "sm",
-                  "color": "#333333"
-                }
-              ]
-            },
-            {
-              "type": "box",
-              "layout": "horizontal",
-              "contents": [
-                {
-                  "type": "text",
-                  "text": "OCT 24 2024 | 3:50PM",
-                  "size": "sm",
-                  "color": "#999999"
-                }
-              ]
-            },
-            {
-              "type": "box",
-              "layout": "horizontal",
-              "contents": [
-                {
-                  "type": "text",
-                  "text": "ABC-1234-5678-123456789",
-                  "size": "sm",
-                  "color": "#999999"
-                }
-              ]
-            }
-          ]
-        },
-        {
-          "type": "text",
-          "text": "The items are the best when they are fresh.",
-          "size": "sm",
-          "color": "#666666",
-          "wrap": true,
-          "margin": "md"
-        }
-      ]
-    },
-    "footer": {
-      "type": "box",
-      "layout": "vertical",
-      "contents": [
-        {
-          "type": "button",
-          "style": "primary",
-          "color": "#32CD32",
-          "action": {
-            "type": "message",
-            "label": "View Order Status",
-            "text": "View Order Status"
+  "type": "bubble",
+  "hero": {
+    "type": "image",
+    "url": "https://lh3.googleusercontent.com/p/AF1QipP5skITvuumBb5XoHsr2G86KHERdLY-TsP2w_Es=s680-w680-h510",
+    "size": "full",
+    "aspectRatio": "20:13",
+    "aspectMode": "cover"
+  },
+  "body": {
+    "type": "box",
+    "layout": "vertical",
+    "contents": [
+      {
+        "type": "text",
+        "text": "PICK UP TIME!",
+        "weight": "bold",
+        "size": "xl",
+        "color": "#000000",
+        "wrap": true
+      },
+      {
+        "type": "text",
+        "text": "Espresso shot with fresh milk",
+        "size": "md",
+        "color": "#333333",
+        "margin": "sm",
+        "wrap": true
+      },
+      {
+        "type": "text",
+        "text": "Your order is now ready to be picked up!",
+        "size": "lg",
+        "weight": "regular",
+        "color": "#000000",
+        "wrap": true,
+        "margin": "md"
+      },
+      {
+        "type": "box",
+        "layout": "vertical",
+        "margin": "lg",
+        "spacing": "sm",
+        "contents": [
+          {
+            "type": "box",
+            "layout": "horizontal",
+            "contents": [
+              {
+                "type": "text",
+                "text": "Sweetness level 100%",
+                "size": "sm",
+                "color": "#333333"
+              }
+            ]
+          },
+          {
+            "type": "box",
+            "layout": "horizontal",
+            "contents": [
+              {
+                "type": "text",
+                "text": "OCT 24 2024 | 3:50PM",
+                "size": "sm",
+                "color": "#999999"
+              }
+            ]
+          },
+          {
+            "type": "box",
+            "layout": "horizontal",
+            "contents": [
+              {
+                "type": "text",
+                "text": "ABC-1234-5678-123456789",
+                "size": "sm",
+                "color": "#999999"
+              }
+            ]
           }
+        ]
+      },
+      {
+        "type": "text",
+        "text": "The items are the best when they are fresh.",
+        "size": "sm",
+        "color": "#666666",
+        "wrap": true,
+        "margin": "md"
+      }
+    ]
+  },
+  "footer": {
+    "type": "box",
+    "layout": "vertical",
+    "contents": [
+      {
+        "type": "button",
+        "style": "primary",
+        "color": "#32CD32",
+        "action": {
+          "type": "message",
+          "label": "View Order Status",
+          "text": "View Order Status"
         }
-      ]
-    }
+      }
+    ]
   }
+}

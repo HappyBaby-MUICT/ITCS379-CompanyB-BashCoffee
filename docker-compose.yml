@@ -13,7 +13,7 @@ services:
     depends_on:
       - psql
     ports:
-      - "8069:8069"
+      - '8069:8069'
     volumes:
       - data:/var/lib/odoo
       - ./config:/etc/odoo
@@ -28,10 +28,35 @@ services:
       - HOST=postgres
       - USER=local
       - PASSWORD=local
-    ports: 
-      - "5432:5432"
+    ports:
+      - '5432:5432'
     volumes:
       - db:/var/lib/pgsql/data/pgdata
+
+  flowise:
+    image: flowiseai/flowise:2.1.2
+    container_name: flowise
+    ports:
+      - '15542:3000'
+    environment:
+      - PORT=3000
+      - DEBUG=true
+    volumes:
+      - ./flowise/.flowise:/root/.flowise
+  db:
+    container_name: bash-line-db
+    image: postgres:16-alpine
+    restart: on-failure
+    ports:
+      - 5433:5432
+    environment:
+      - POSTGRES_HOST=localhost
+      - POSTGRES_DB=bash-line-loyalty
+      - POSTGRES_USER=local
+      - POSTGRES_PASSWORD=local
+    volumes:
+      - bash_line_data:/var/lib/postgresql/data
 volumes:
   data:
   db:
+  bash_line_data:
