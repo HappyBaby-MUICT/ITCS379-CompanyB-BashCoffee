@@ -43,7 +43,7 @@ export default function Verify() {
     try {
       await handleLogin.mutateAsync(values)
       toast.success('Successfully logged in!')
-      router.push('/profile')
+      router.push('/home')
     } catch (error) {
       toast.error('Login error: ' + (error as Error).message)
       console.error(error)

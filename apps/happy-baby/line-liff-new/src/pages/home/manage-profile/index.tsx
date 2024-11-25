@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef } from 'react'
 import MembershipLayout from '@/component/MembershipLayout'
 import { FaUserPen } from 'react-icons/fa6'
 import Link from 'next/link'
@@ -49,7 +49,7 @@ export default function Profile() {
       await handleUpdateUser.mutateAsync(values)
       update()
       toast.success('Profile updated!')
-      router.push('/profile')
+      router.push('/home')
     } catch (e) {
       toast.error('Failed to update user: ' + (e as Error).message)
     }
@@ -71,7 +71,7 @@ export default function Profile() {
       <div className="flex flex-col items-center w-full gap-8">
         <div className="flex flex-col items-center gap-2 w-full">
           <div className="flex gap-2 items-center justify-between my-2 w-full">
-            <Link href="/profile">
+            <Link href="/home">
               <IoArrowBack size={24} color="#AB9064" />
             </Link>
             <div className="flex gap-2 items-center my-2">

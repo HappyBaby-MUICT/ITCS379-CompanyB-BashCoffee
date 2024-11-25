@@ -6,7 +6,7 @@ type CouponCardProps = Coupon
 
 const CouponCard = (props: CouponCardProps) => {
   return (
-    <Link href={`/profile/point-redemption/${props.id}`}>
+    <Link href={`/home/point-redemption/${props.id}`}>
       <div className="flex flex-col gap-4 w-full bg-[#D5CBB1] p-4 rounded-xl">
         <div className="flex flex-col gap- w-full">
           <div className="relative w-full rounded-xl overflow-hidden aspect-[16/9]">

@@ -5,7 +5,7 @@ export default function Home() {
   const { push } = useRouter()
 
   useEffect(() => {
-    push('/profile')
+    push('/home')
   }, [push])
 
   return <p></p>

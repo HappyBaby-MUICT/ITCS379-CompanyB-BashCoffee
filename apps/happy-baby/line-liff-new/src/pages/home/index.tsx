@@ -29,7 +29,7 @@ export default function Home() {
               <p className="text-md font-semibold uppercase text-[#2E1F1A]">
                 Account Management
               </p>
-              <Link href="/profile/manage-profile">
+              <Link href="/home/manage-profile">
                 <div className="flex w-full items-center justify-between bg-[#BDAA84] rounded-md p-4 gap-4 cursor-pointer">
                   <div className="flex gap-2">
                     <CgProfile size={24} />
@@ -45,7 +45,7 @@ export default function Home() {
               <p className="text-md font-semibold uppercase text-[#2E1F1A]">
                 Membership Privilege
               </p>
-              <Link href="/profile/point-redemption">
+              <Link href="/home/point-redemption">
                 <div className="flex w-full items-center justify-between bg-[#BDAA84] rounded-md p-4 gap-4 cursor-pointer">
                   <div className="flex gap-2">
                     <MdOutlineRedeem size={24} />
@@ -54,7 +54,7 @@ export default function Home() {
                   <GrNext color="#5D4336" />
                 </div>
               </Link>
-              <Link href="/profile/my-coupon">
+              <Link href="/home/my-coupon">
                 <div className="flex w-full items-center justify-between bg-[#BDAA84] rounded-md p-4 gap-4 cursor-pointer">
                   <div className="flex gap-2">
                     <RiCoupon2Line size={24} />
@@ -70,7 +70,7 @@ export default function Home() {
               <p className="text-md font-semibold uppercase text-[#2E1F1A]">
                 History
               </p>
-              <Link href="/profile/point-history">
+              <Link href="/home/point-history">
                 <div className="flex w-full items-center justify-between bg-[#BDAA84] rounded-md p-4 gap-4 cursor-pointer">
                   <div className="flex gap-2">
                     <RiHistoryFill size={24} />

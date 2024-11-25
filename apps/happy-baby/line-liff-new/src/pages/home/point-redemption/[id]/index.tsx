@@ -25,7 +25,7 @@ export default function PointRedemptionID() {
       await handleRedeem.mutateAsync(couponId)
       toast.success('Successfully redeemed coupon')
       update()
-      router.push('/profile')
+      router.push('/home')
     } catch (e) {
       console.error(e)
       toast.error('Failed to redeem coupon')
@@ -37,7 +37,7 @@ export default function PointRedemptionID() {
       <div className="flex flex-col items-center w-full gap-8">
         <div className="flex flex-col items-center gap-2 w-full">
           <div className="flex gap-2 items-center justify-between my-2 w-full">
-            <Link href="/profile">
+            <Link href="/home">
               <IoArrowBack size={24} color="#AB9064" />
             </Link>
             <div className="flex gap-2 items-center my-2">
