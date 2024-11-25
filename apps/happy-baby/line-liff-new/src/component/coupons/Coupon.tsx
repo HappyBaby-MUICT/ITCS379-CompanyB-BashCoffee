@@ -27,7 +27,7 @@ const Coupon = (props: CouponProps) => {
             <li key={index}>{line}</li>
           ))}
         </ul>
-        <p className="text-3xl text-center font-bold text-[#2D1810] mt-4">
+        <p className="coupon-code text-3xl text-center font-bold text-[#2D1810] mt-4">
           {props.id.substring(14, 20).toLocaleUpperCase()}
         </p>
       </div>
