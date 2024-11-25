@@ -28,7 +28,7 @@ export default function PointRedemptionID() {
       router.push(`/home/point-redemption/${coupon.id}/redeem`)
     } catch (e) {
       console.error(e)
-      toast.error('Failed to redeem coupon')
+      toast.error('Your point are not enough to redeem this coupon.')
     }
   }
 
